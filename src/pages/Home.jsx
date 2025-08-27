@@ -1,22 +1,27 @@
 import { useEffect, useState } from "react";
 import { getProductos } from "../api/api";
 import ProductoCard from "../components/ProductoCard";
-import { useCarrito } from "../context/CarritoContext";
 
 export default function Home() {
-    const [productos, setProductos] = useState([]);
-    const { agregarAlCarrito } = useCarrito();
+  const [productos, setProductos] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        getProductos().then(setProductos);
-    }, []);
+  useEffect(() => {
+    getProductos()
+      .then(setProductos)
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
 
-    return (
-        <div>
-            <h2>Productos</h2>
-            {productos.map(prod => (
-                <ProductoCard key={prod.id} producto={prod} agregarAlCarrito={agregarAlCarrito} />
-            ))}
-        </div>
-    );
+  if (loading) return <div>Cargando productos...</div>;
+
+  return (
+    <div style={{ padding: 16 }}>
+      <h2>Productos</h2>
+      {productos.length === 0 && <p>No hay productos disponibles.</p>}
+      {productos.map((prod) => (
+        <ProductoCard key={prod.id} producto={prod} />
+      ))}
+    </div>
+  );
 }
