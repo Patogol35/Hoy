@@ -1,12 +1,60 @@
-# React + Vite
+🛒 Tienda Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Proyecto creado con **React + Vite**, sin backend, simulando una tienda en línea con carrito de compras funcional.
 
-Currently, two official plugins are available:
+--- 
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+💻 Ver la aplicación desplegada en Vercel:
 
-## Expanding the ESLint configuration
+https://jorgepatriciosantamariacherrezminie.vercel.app/
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+✨ Funcionalidades
+
+- Ver listado de productos
+- Agregar al carrito
+- Aumentar y disminuir cantidad
+- Eliminar productos del carrito
+- Total dinámico
+- Persistencia con LocalStorage
+
+---
+
+⚙️ Tecnologías utilizadas
+
+- React + Vite
+- JavaScript
+- HTML & CSS personalizado
+
+--- 
+
+📦 Instalación y ejecución
+
+1. Clona el repositorio:
+
+git clone https://github.com/Patogol35/mini-ecommerce
+
+2. Ingresa a la carpeta del proyecto:
+
+cd mini-ecommerce
+
+3. Instala las dependencias:
+  
+npm install
+
+4. Ejecuta el proyecto:
+
+npm run dev 
+
+5. Abre en el navegador:
+  
+http://localhost:5173
+
+---
+
+👨‍💻 Autor
+
+Jorge Patricio Santamaría Cherrez
+Máster en Ingeniería de Software y Sistemas Informáticos
+
