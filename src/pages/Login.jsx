@@ -2,6 +2,7 @@ import { useState } from "react";
 import { login as apiLogin } from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import "../App.css";
 
 export default function Login() {
   const [form, setForm] = useState({ username: "", password: "" });
@@ -28,7 +29,7 @@ export default function Login() {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ padding: 16, display: "grid", gap: 8, maxWidth: 360 }}>
+    <form onSubmit={handleSubmit} className="form-container">
       <h2>Iniciar sesión</h2>
       <input
         placeholder="Usuario"
@@ -41,7 +42,9 @@ export default function Login() {
         value={form.password}
         onChange={(e) => setForm({ ...form, password: e.target.value })}
       />
-      <button type="submit" disabled={loading}>{loading ? "Entrando..." : "Iniciar sesión"}</button>
+      <button type="submit" disabled={loading}>
+        {loading ? "Entrando..." : "Iniciar sesión"}
+      </button>
     </form>
   );
 }
