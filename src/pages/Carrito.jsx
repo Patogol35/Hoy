@@ -3,6 +3,7 @@ import { useCarrito } from "../context/CarritoContext";
 import { useAuth } from "../context/AuthContext";
 import { crearPedido } from "../api/api";
 import { useNavigate } from "react-router-dom";
+import "../App.css";
 
 export default function Carrito() {
   const { items, cargarCarrito, loading, limpiarLocal } = useCarrito();
@@ -11,10 +12,13 @@ export default function Carrito() {
 
   useEffect(() => {
     cargarCarrito();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const total = items.reduce((acc, it) => acc + Number(it.subtotal || (it.cantidad * (it.producto?.precio || 0))), 0);
+  const total = items.reduce(
+    (acc, it) =>
+      acc + Number(it.subtotal || it.cantidad * (it.producto?.precio || 0)),
+    0
+  );
 
   const comprar = async () => {
     try {
@@ -32,20 +36,27 @@ export default function Carrito() {
   };
 
   return (
-    <div style={{ padding: 16 }}>
+    <div className="carrito">
       <h2>Carrito</h2>
       {loading && <p>Cargando carrito...</p>}
       {!loading && items.length === 0 && <p>Tu carrito está vacío.</p>}
       {!loading &&
         items.map((it) => (
-          <div key={it.id} style={{ padding: 8, borderBottom: "1px solid #eee" }}>
-            {it.cantidad} x {it.producto?.nombre} — ${Number(it.producto?.precio).toFixed(2)} &nbsp;
-            <b>Subtotal:</b> ${Number(it.subtotal || it.cantidad * it.producto?.precio).toFixed(2)}
+          <div key={it.id} className="carrito-item">
+            <span>
+              {it.cantidad} x {it.producto?.nombre}
+            </span>
+            <span>
+              ${Number(it.subtotal || it.cantidad * it.producto?.precio).toFixed(2)}
+            </span>
           </div>
         ))}
       {!loading && items.length > 0 && (
         <>
-          <h3>Total: ${total.toFixed(2)}</h3>
+          <div className="carrito-total">
+            <span>Total:</span>
+            <span>${total.toFixed(2)}</span>
+          </div>
           <button onClick={comprar}>Comprar</button>
         </>
       )}
