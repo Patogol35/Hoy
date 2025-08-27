@@ -1,78 +1,63 @@
-// Centraliza todas las llamadas a la API y maneja JWT + errores
-const BASE_URL = import.meta?.env?.VITE_API_URL || "http://localhost:8000/api";
+// src/api/Api.js
 
-// Helper: fetch con Authorization si hay token
-async function authFetch(url, options = {}, token) {
-  const headers = {
-    ...(options.headers || {}),
-    ...(options.body && { "Content-Type": "application/json" }),
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
+// Tomamos la URL base del backend desde .env
+const BASE_URL = import.meta.env.VITE_API_URL;
 
-  const res = await fetch(url, { ...options, headers });
-  // Intenta parsear JSON siempre que haya contenido
-  let data = null;
-  const text = await res.text();
-  try {
-    data = text ? JSON.parse(text) : null;
-  } catch {
-    data = null;
-  }
+// Helper para obtener token
+const getToken = () => localStorage.getItem("token");
 
-  if (!res.ok) {
-    const msg = data?.detail || data?.error || `Error ${res.status}`;
-    throw new Error(msg);
-  }
-  return data;
-}
-
-// AUTH
-export const login = async (credentials) => {
-  // Backend: POST /api/token/  (username, password)
-  return authFetch(`${BASE_URL}/token/`, {
-    method: "POST",
-    body: JSON.stringify(credentials),
-  });
+// Headers con autenticación (si hay token)
+const authHeaders = () => {
+  const token = getToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
-export const register = async (data) => {
-  // Backend: POST /api/register/
-  return authFetch(`${BASE_URL}/register/`, {
+// ---------------------- //
+// 🔑 AUTENTICACIÓN
+// ---------------------- //
+export const registerUser = async (data) => {
+  const res = await fetch(`${BASE_URL}/register/`, {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
+  return res.json();
 };
 
-// PRODUCTOS
+export const loginUser = async (data) => {
+  const res = await fetch(`${BASE_URL}/login/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  return res.json();
+};
+
+// ---------------------- //
+// 📦 PRODUCTOS
+// ---------------------- //
 export const getProductos = async () => {
-  return authFetch(`${BASE_URL}/productos/`, { method: "GET" });
+  const res = await fetch(`${BASE_URL}/productos/`, {
+    headers: { "Content-Type": "application/json", ...authHeaders() },
+  });
+  return res.json();
 };
 
-// CARRITO
-export const getCarrito = async (token) => {
-  // Backend: GET /api/carrito/
-  return authFetch(`${BASE_URL}/carrito/`, { method: "GET" }, token);
+// ---------------------- //
+// 🛒 PEDIDOS
+// ---------------------- //
+export const crearPedido = async (productos) => {
+  const res = await fetch(`${BASE_URL}/pedidos/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeaders() },
+    body: JSON.stringify({ productos }),
+  });
+  return res.json();
 };
 
-export const agregarAlCarrito = async (producto_id, cantidad = 1, token) => {
-  // Backend: POST /api/carrito/agregar/  { producto_id, cantidad }
-  return authFetch(
-    `${BASE_URL}/carrito/agregar/`,
-    {
-      method: "POST",
-      body: JSON.stringify({ producto_id, cantidad }),
-    },
-    token
-  );
-};
-
-// PEDIDOS
-export const crearPedido = async (token) => {
-  // Backend crea el pedido desde el carrito del usuario
-  return authFetch(`${BASE_URL}/pedido/crear/`, { method: "POST" }, token);
-};
-
-export const getPedidos = async (token) => {
-  // Backend: GET /api/pedidos/
-  return authFetch(`${BASE_URL}/pedidos/`, { method: "GET" }, token);
+export const getPedidos = async () => {
+  const res = await fetch(`${BASE_URL}/pedidos/`, {
+    headers: { "Content-Type": "application/json", ...authHeaders() },
+  });
+  return res.json();
 };
