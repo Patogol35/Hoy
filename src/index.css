@@ -1,10 +1,9 @@
-/* Fuente limpia y moderna */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
 
 :root {
-  --primary: #2563eb;   /* azul acento */
-  --secondary: #f3f4f6; /* gris claro */
-  --dark: #1f2937;      /* gris oscuro */
+  --primary: #2563eb;
+  --secondary: #f3f4f6;
+  --dark: #1f2937;
   --light: #ffffff;
   --radius: 12px;
 }
@@ -46,4 +45,11 @@ button:hover {
   max-width: 1200px;
   margin: auto;
   padding: 1rem;
+}
+
+.page-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
 }
