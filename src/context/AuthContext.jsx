@@ -1,30 +1,33 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-    const [user, setUser] = useState(null);
+  const [access, setAccess] = useState(null);
 
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) setUser({ token });
-    }, []);
+  useEffect(() => {
+    const saved = localStorage.getItem("access");
+    if (saved) setAccess(saved);
+  }, []);
 
-    const login = (token) => {
-        localStorage.setItem("token", token);
-        setUser({ token });
-    };
+  const isAuthenticated = !!access;
 
-    const logout = () => {
-        localStorage.removeItem("token");
-        setUser(null);
-    };
+  const login = (accessToken) => {
+    localStorage.setItem("access", accessToken);
+    setAccess(accessToken);
+  };
 
-    return (
-        <AuthContext.Provider value={{ user, login, logout }}>
-            {children}
-        </AuthContext.Provider>
-    );
+  const logout = () => {
+    localStorage.removeItem("access");
+    setAccess(null);
+  };
+
+  const value = useMemo(
+    () => ({ access, isAuthenticated, login, logout }),
+    [access, isAuthenticated]
+  );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export const useAuth = () => useContext(AuthContext);
