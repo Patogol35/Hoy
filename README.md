@@ -1,22 +1,24 @@
 🛒 Tienda Frontend
 
-Proyecto creado con **React + Vite**, sin backend, simulando una tienda en línea con carrito de compras funcional.
+Proyecto creado con **React + Vite**, de una tienda en línea con carrito de compras funcional.
 
 --- 
 
 💻 Ver la aplicación desplegada en Vercel:
 
-https://jorgepatriciosantamariacherrezminie.vercel.app/
+
 
 ---
 
 ✨ Funcionalidades
 
 - Ver listado de productos
+- Registro en la aplicación
+- Inicio de sesión 
 - Agregar al carrito
 - Aumentar y disminuir cantidad
 - Eliminar productos del carrito
-- Total dinámico
+- Realizar Pedido
 - Persistencia con LocalStorage
 
 ---
@@ -33,11 +35,11 @@ https://jorgepatriciosantamariacherrezminie.vercel.app/
 
 1. Clona el repositorio:
 
-git clone https://github.com/Patogol35/mini-ecommerce
+https://github.com/Patogol35/Tienda-Frontend-React
 
 2. Ingresa a la carpeta del proyecto:
 
-cd mini-ecommerce
+cd Tienda-Frontend-React
 
 3. Instala las dependencias:
   
