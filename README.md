@@ -6,7 +6,7 @@ Proyecto creado con **React + Vite**, de una tienda en línea con carrito de com
 
 💻 Ver la aplicación desplegada en Vercel:
 
-
+tienda-frontend-react-nine.vercel.app
 
 ---
 
