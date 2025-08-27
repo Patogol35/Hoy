@@ -1,6 +1,18 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useCarrito } from "../context/CarritoContext";
+import "./ProductoCard.css";
+
+export default function ProductoCard({ producto, onAdd }) {
+  return (
+    <div className="producto-card">
+      <h3>{producto.nombre}</h3>
+      <p>{producto.descripcion}</p>
+      <strong>${producto.precio}</strong>
+      <button onClick={() => onAdd(producto)}>Agregar al carrito</button>
+    </div>
+  );
+}
 
 export default function ProductoCard({ producto }) {
   const { isAuthenticated } = useAuth();
