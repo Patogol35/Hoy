@@ -2,6 +2,8 @@
 
 Proyecto creado con **React + Vite**, de una tienda en línea con carrito de compras funcional.
 
+Se integra con:
+
 --- 
 
 💻 Ver la aplicación desplegada en Vercel:
