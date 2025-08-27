@@ -4,10 +4,13 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [access, setAccess] = useState(null);
+  const [loading, setLoading] = useState(true); // nuevo: estado de carga
 
+  // Recuperar token de localStorage al cargar
   useEffect(() => {
     const saved = localStorage.getItem("access");
     if (saved) setAccess(saved);
+    setLoading(false); // ya cargó
   }, []);
 
   const isAuthenticated = !!access;
@@ -23,8 +26,8 @@ export function AuthProvider({ children }) {
   };
 
   const value = useMemo(
-    () => ({ access, isAuthenticated, login, logout }),
-    [access, isAuthenticated]
+    () => ({ access, isAuthenticated, login, logout, loading }),
+    [access, isAuthenticated, loading]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
