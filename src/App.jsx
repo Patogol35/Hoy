@@ -1,45 +1,38 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState } from "react";
 import Navbar from "./components/Navbar";
-import Home from "./pages/Home";
+import Productos from "./pages/Productos";
+import Carrito from "./pages/Carrito";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Carrito from "./pages/Carrito";
 import Pedidos from "./pages/Pedidos";
-import { AuthProvider } from "./context/AuthContext";
-import { CarritoProvider } from "./context/CarritoContext";
-import ProtectedRoute from "./components/ProtectedRoute";
 
-function App() {
+export default function App() {
+  const [user, setUser] = useState(null);
+  const [carrito, setCarrito] = useState([]);
+
+  const productos = [
+    { id: 1, nombre: "Camisa", descripcion: "Camisa de algodón", precio: 20 },
+    { id: 2, nombre: "Pantalón", descripcion: "Jeans azul", precio: 35 },
+    { id: 3, nombre: "Zapatos", descripcion: "Deportivos cómodos", precio: 50 },
+  ];
+
+  const agregarCarrito = (prod) => {
+    setCarrito([...carrito, prod]);
+  };
+
+  const logout = () => setUser(null);
+
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <CarritoProvider>
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route
-              path="/carrito"
-              element={
-                <ProtectedRoute>
-                  <Carrito />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/pedidos"
-              element={
-                <ProtectedRoute>
-                  <Pedidos />
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
-        </CarritoProvider>
-      </AuthProvider>
+      <Navbar user={user} onLogout={logout} />
+      <Routes>
+        <Route path="/" element={<Productos productos={productos} onAdd={agregarCarrito} />} />
+        <Route path="/carrito" element={<Carrito carrito={carrito} />} />
+        <Route path="/login" element={<Login onLogin={setUser} />} />
+        <Route path="/register" element={<Register onRegister={setUser} />} />
+        <Route path="/pedidos" element={<Pedidos user={user} />} />
+      </Routes>
     </BrowserRouter>
   );
 }
-
-export default App;
