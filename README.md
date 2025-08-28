@@ -1,19 +1,40 @@
-🛒  Tienda Frontend
+🛍️ Tienda Frontend
 
-Aplicación desarrollada con React + Vite que implementa una tienda en línea con:
+Aplicación desarrollada con React + Vite que implementa la interfaz de usuario de una tienda en línea, conectada a un backend desarrollado en Django REST Framework.
 
-- Sistema de autenticación (registro e inicio de sesión con JWT).
+El backend se encuentra disponible aquí:
+👉 https://github.com/Patogol35/Tienda-Backend-Django
 
-- Carrito de compras dinámico y persistente.
+---
 
-- Gestión de pedidos conectada al backend.
+Características principales
 
-- Integración completa con una API REST construida en Django REST Framework.
+- Autenticación con JWT
+
+Registro e inicio de sesión de usuarios.
+
+Persistencia de sesión mediante tokens de acceso y refresh.
 
 
-El backend del proyecto se encuentra disponible aquí:
+- Carrito de compras dinámico
 
-https://github.com/Patogol35/Tienda-Backend-Django
+Agregar y eliminar productos en tiempo real.
+
+Persistencia del carrito para cada usuario.
+
+
+- Gestión de pedidos
+
+Creación de pedidos a partir del carrito.
+
+Visualización del historial de pedidos del usuario.
+
+
+- Integración con API REST
+
+Conexión directa al backend en Django REST Framework.
+
+Manejo de peticiones protegidas con autenticación JWT.
 
 --- 
 
@@ -25,8 +46,16 @@ https://tienda-frontend-react-nine.vercel.app/
 
 ⚙️ Tecnologías utilizadas
 
-- React + Vite
+- React 18+
+
+- Vite (entorno de desarrollo rápido)
+
+- React Router (navegación)
+
+- Context API / Local Storage (persistencia de sesión y carrito)
+
 - JavaScript
+- 
 - HTML & CSS personalizado
 
 --- 
