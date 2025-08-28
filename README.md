@@ -88,5 +88,6 @@ http://localhost:5173
 👨‍💻 Autor
 
 Jorge Patricio Santamaría Cherrez
+
 Máster en Ingeniería de Software y Sistemas Informáticos
 
