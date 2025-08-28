@@ -3,6 +3,7 @@
 Aplicación desarrollada con React + Vite que implementa la interfaz de usuario de una tienda en línea, conectada a un backend desarrollado en Django REST Framework.
 
 El backend se encuentra disponible aquí:
+
 👉 https://github.com/Patogol35/Tienda-Backend-Django
 
 ---
