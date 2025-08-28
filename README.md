@@ -8,7 +8,7 @@ El backend se encuentra disponible aquí:
 
 ---
 
-Características principales
+✨ Características principales
 
 - Autenticación con JWT
 
