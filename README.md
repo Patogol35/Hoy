@@ -1,6 +1,6 @@
 🛒 Tienda Frontend
 
-Proyecto creado con **React + Vite**, de una tienda en línea con carrito de compras funcional.
+Proyecto creado con **React + Vite**, de una tienda en línea con carrito de compras funcional se integra con el Backend que se puede encontrar en este repositorio.
 
 Se integra con:
 
@@ -17,7 +17,8 @@ https://tienda-frontend-react-nine.vercel.app/
 - Ver listado de productos
 - Registro en la aplicación
 - Inicio de sesión 
-- Agregar al carrito
+- Agregar productos
+- al carrito
 - Aumentar y disminuir cantidad
 - Eliminar productos del carrito
 - Realizar Pedido
@@ -37,7 +38,7 @@ https://tienda-frontend-react-nine.vercel.app/
 
 1. Clona el repositorio:
 
-https://github.com/Patogol35/Tienda-Frontend-React
+git clone https://github.com/Patogol35/Tienda-Frontend-React
 
 2. Ingresa a la carpeta del proyecto:
 
