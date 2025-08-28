@@ -15,12 +15,12 @@ export default function Login() {
     setLoading(true);
     try {
       const data = await apiLogin(form);
-      if (data?.access) {
-        login(data.access);
-        navigate("/");
-      } else {
-        alert("Credenciales inválidas");
-      }
+if (data?.access && data?.refresh) {
+  login(data.access, data.refresh);
+  navigate("/");
+} else {
+  alert("Credenciales inválidas");
+}
     } catch (e) {
       alert(e.message);
     } finally {

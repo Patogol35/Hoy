@@ -1,27 +1,75 @@
-// Minapi // Centraliza todas las llamadas a la API y maneja JWT + errores
 const BASE_URL = import.meta?.env?.VITE_API_URL || "http://localhost:8000/api";
-// Helper: fetch con Authorization si hay token
+
+// =====================
+// REFRESH TOKEN
+// =====================
+export const refreshToken = async (refresh) => {
+  const res = await fetch(`${BASE_URL}/token/refresh/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ refresh }),
+  });
+
+  if (!res.ok) throw new Error("No se pudo refrescar el token");
+  return res.json();
+};
+
+// =====================
+// FETCH CON AUTO REFRESH
+// =====================
 async function authFetch(url, options = {}, token) {
-  const headers = {
+  let headers = {
     ...(options.headers || {}),
     ...(options.body && { "Content-Type": "application/json" }),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
-  const res = await fetch(url, { ...options, headers });
-  // Intenta parsear JSON siempre que haya contenido
-  let data = null;
+
+  let res = await fetch(url, { ...options, headers });
+
+  // Si expira el access → intentar refrescar
+  if (res.status === 401 && localStorage.getItem("refresh")) {
+    try {
+      const newTokens = await refreshToken(localStorage.getItem("refresh"));
+      if (newTokens?.access) {
+        localStorage.setItem("access", newTokens.access);
+        token = newTokens.access;
+
+        // reintento
+        headers = {
+          ...(options.headers || {}),
+          ...(options.body && { "Content-Type": "application/json" }),
+          Authorization: `Bearer ${token}`,
+        };
+        res = await fetch(url, { ...options, headers });
+      }
+    } catch (err) {
+      console.error("Refresh token inválido:", err);
+      localStorage.removeItem("access");
+      localStorage.removeItem("refresh");
+      throw new Error("⚠️ Tu sesión expiró, vuelve a iniciar sesión.");
+    }
+  }
+
   const text = await res.text();
+  let data = null;
   try {
     data = text ? JSON.parse(text) : null;
   } catch {
     data = null;
   }
+
   if (!res.ok) {
     const msg = data?.detail || data?.error || `Error ${res.status}`;
     throw new Error(msg);
   }
+
   return data;
 }
+
+// =====================
+// ENDPOINTS
+// =====================
+
 // AUTH
 export const login = async (credentials) => {
   return authFetch(`${BASE_URL}/token/`, {
@@ -35,16 +83,17 @@ export const register = async (data) => {
     body: JSON.stringify(data),
   });
 };
+
 // PRODUCTOS
 export const getProductos = async () => {
   return authFetch(`${BASE_URL}/productos/`, { method: "GET" });
 };
+
 // CARRITO
 export const getCarrito = async (token) => {
   return authFetch(`${BASE_URL}/carrito/`, { method: "GET" }, token);
 };
 export const agregarAlCarrito = async (producto_id, cantidad = 1, token) => {
-  // Suma/resta cantidad (si envías -1, decrementa; si queda <=0, lo elimina)
   return authFetch(
     `${BASE_URL}/carrito/agregar/`,
     {
@@ -55,14 +104,12 @@ export const agregarAlCarrito = async (producto_id, cantidad = 1, token) => {
   );
 };
 export const eliminarDelCarrito = async (itemId, token) => {
-  // Elimina por item_id (no por producto)
   return authFetch(
     `${BASE_URL}/carrito/eliminar/${itemId}/`,
     { method: "DELETE" },
     token
   );
 };
-// (Opcional) Setear cantidad absoluta por item_id
 export const setCantidadItem = async (itemId, cantidad, token) => {
   return authFetch(
     `${BASE_URL}/carrito/actualizar/${itemId}/`,
@@ -70,6 +117,7 @@ export const setCantidadItem = async (itemId, cantidad, token) => {
     token
   );
 };
+
 // PEDIDOS
 export const crearPedido = async (token) => {
   return authFetch(`${BASE_URL}/pedido/crear/`, { method: "POST" }, token);
