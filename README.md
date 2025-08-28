@@ -10,32 +10,32 @@ El backend se encuentra disponible aquí:
 
 ✨ Características principales
 
-- Autenticación con JWT
+Autenticación con JWT
 
-Registro e inicio de sesión de usuarios.
+- Registro e inicio de sesión de usuarios.
 
-Persistencia de sesión mediante tokens de acceso y refresh.
-
-
-- Carrito de compras dinámico
-
-Agregar y eliminar productos en tiempo real.
-
-Persistencia del carrito para cada usuario.
+- Persistencia de sesión mediante tokens de acceso y refresh.
 
 
-- Gestión de pedidos
+Carrito de compras dinámico
 
-Creación de pedidos a partir del carrito.
+- Agregar y eliminar productos en tiempo real.
 
-Visualización del historial de pedidos del usuario.
+- Persistencia del carrito para cada usuario.
 
 
-- Integración con API REST
+Gestión de pedidos
 
-Conexión directa al backend en Django REST Framework.
+- Creación de pedidos a partir del carrito.
 
-Manejo de peticiones protegidas con autenticación JWT.
+- Visualización del historial de pedidos del usuario.
+
+
+Integración con API REST
+
+- Conexión directa al backend en Django REST Framework.
+
+- Manejo de peticiones protegidas con autenticación JWT.
 
 --- 
 
