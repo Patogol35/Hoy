@@ -21,6 +21,8 @@ https://github.com/Patogol35/Tienda-Backend-Django
 
 https://tienda-frontend-react-nine.vercel.app/
 
+---
+
 ⚙️ Tecnologías utilizadas
 
 - React + Vite
