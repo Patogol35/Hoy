@@ -56,7 +56,7 @@ https://tienda-frontend-react-nine.vercel.app/
 - Context API / Local Storage (persistencia de sesión y carrito)
 
 - JavaScript
-- 
+
 - HTML & CSS personalizado
 
 --- 
