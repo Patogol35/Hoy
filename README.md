@@ -1,8 +1,6 @@
 🛒 Tienda Frontend
 
-Proyecto creado con **React + Vite**, de una tienda en línea con carrito de compras funcional se integra con el Backend que se puede encontrar en este repositorio.
-
-Se integra con:
+Proyecto creado con **React + Vite**, de una tienda en línea con carrito de compras funcional se integra con el Backend desarrollado con Django que se puede encontrar en este repositorio:
 
 --- 
 
