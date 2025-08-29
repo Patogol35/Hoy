@@ -2,8 +2,16 @@ import { useState } from "react";
 import { register as apiRegister } from "../api/api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import "../App.css";
+// MUI
+import {
+  Container,
+  Paper,
+  Typography,
+  TextField,
+  Button,
+  Box,
+  LinearProgress,
+} from "@mui/material";
 
 export default function Register() {
   const [form, setForm] = useState({
@@ -15,7 +23,6 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Calcula la fuerza de la contraseña
   const passwordStrength = (pwd) => {
     let score = 0;
     if (pwd.length >= 6) score++;
@@ -24,10 +31,10 @@ export default function Register() {
     if (/[0-9]/.test(pwd)) score++;
     if (/[^A-Za-z0-9]/.test(pwd)) score++;
 
-    if (score <= 2) return { label: "Débil", color: "red", width: "40%" };
-    if (score === 3) return { label: "Media", color: "orange", width: "60%" };
-    if (score === 4) return { label: "Fuerte", color: "green", width: "80%" };
-    if (score >= 5) return { label: "Muy fuerte", color: "darkgreen", width: "100%" };
+    if (score <= 2) return { label: "Débil", color: "red", value: 40 };
+    if (score === 3) return { label: "Media", color: "orange", value: 60 };
+    if (score === 4) return { label: "Fuerte", color: "green", value: 80 };
+    if (score >= 5) return { label: "Muy fuerte", color: "darkgreen", value: 100 };
   };
 
   const handleSubmit = async (e) => {
@@ -77,60 +84,79 @@ export default function Register() {
   const strength = passwordStrength(form.password);
 
   return (
-    <form onSubmit={handleSubmit} className="form-container">
-      <h2>Registro</h2>
+    <Container maxWidth="xs" sx={{ mt: 8 }}>
+      <Paper
+        elevation={3}
+        sx={{ p: 4, borderRadius: 2, display: "flex", flexDirection: "column", gap: 2 }}
+      >
+        <Typography variant="h5" align="center" gutterBottom>
+          Registro
+        </Typography>
 
-      <input
-        placeholder="Usuario"
-        value={form.username}
-        onChange={(e) => setForm({ ...form, username: e.target.value })}
-        required
-      />
+        <form onSubmit={handleSubmit}>
+          <TextField
+            label="Usuario"
+            fullWidth
+            margin="normal"
+            value={form.username}
+            onChange={(e) => setForm({ ...form, username: e.target.value })}
+            required
+          />
+          <TextField
+            label="Correo (opcional)"
+            type="email"
+            fullWidth
+            margin="normal"
+            value={form.email}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
+          />
+          <TextField
+            label="Contraseña"
+            type="password"
+            fullWidth
+            margin="normal"
+            value={form.password}
+            onChange={(e) => setForm({ ...form, password: e.target.value })}
+            required
+          />
 
-      <input
-        type="email"
-        placeholder="Correo (opcional)"
-        value={form.email}
-        onChange={(e) => setForm({ ...form, email: e.target.value })}
-      />
+          {form.password && (
+            <Box sx={{ my: 1 }}>
+              <LinearProgress
+                variant="determinate"
+                value={strength.value}
+                sx={{ height: 8, borderRadius: 4, mb: 0.5, backgroundColor: "#ddd",
+                      "& .MuiLinearProgress-bar": { backgroundColor: strength.color } }}
+              />
+              <Typography variant="caption" sx={{ color: strength.color, fontWeight: "bold" }}>
+                {strength.label}
+              </Typography>
+            </Box>
+          )}
 
-      <input
-        type="password"
-        placeholder="Contraseña"
-        value={form.password}
-        onChange={(e) => setForm({ ...form, password: e.target.value })}
-        required
-      />
+          <TextField
+            label="Confirmar contraseña"
+            type="password"
+            fullWidth
+            margin="normal"
+            value={form.confirm}
+            onChange={(e) => setForm({ ...form, confirm: e.target.value })}
+            required
+          />
 
-      {form.password && (
-        <div className="strength-bar-container" style={{ marginBottom: "8px" }}>
-          <div
-            className="strength-bar"
-            style={{
-              width: strength.width,
-              backgroundColor: strength.color,
-              transition: "width 0.3s ease",
-              height: "8px",
-              borderRadius: "4px",
-            }}
-          ></div>
-          <small style={{ color: strength.color, fontWeight: "bold" }}>
-            {strength.label}
-          </small>
-        </div>
-      )}
-
-      <input
-        type="password"
-        placeholder="Confirmar contraseña"
-        value={form.confirm}
-        onChange={(e) => setForm({ ...form, confirm: e.target.value })}
-        required
-      />
-
-      <button type="submit" disabled={loading}>
-        {loading ? "Creando cuenta..." : "Registrarse"}
-      </button>
-    </form>
+          <Box mt={2}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              disabled={loading}
+            >
+              {loading ? "Creando cuenta..." : "Registrarse"}
+            </Button>
+          </Box>
+        </form>
+      </Paper>
+    </Container>
   );
 }

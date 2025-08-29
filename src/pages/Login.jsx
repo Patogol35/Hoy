@@ -3,7 +3,16 @@ import { login as apiLogin } from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import "../App.css";
+// MUI
+import {
+  Container,
+  Paper,
+  Typography,
+  TextField,
+  Button,
+  Box,
+  CircularProgress,
+} from "@mui/material";
 
 export default function Login() {
   const [form, setForm] = useState({ username: "", password: "" });
@@ -31,22 +40,46 @@ export default function Login() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="form-container">
-      <h2>Iniciar sesión</h2>
-      <input
-        placeholder="Usuario"
-        value={form.username}
-        onChange={(e) => setForm({ ...form, username: e.target.value })}
-      />
-      <input
-        type="password"
-        placeholder="Contraseña"
-        value={form.password}
-        onChange={(e) => setForm({ ...form, password: e.target.value })}
-      />
-      <button type="submit" disabled={loading}>
-        {loading ? "Entrando..." : "Iniciar sesión"}
-      </button>
-    </form>
+    <Container maxWidth="xs" sx={{ mt: 8 }}>
+      <Paper
+        elevation={3}
+        sx={{ p: 4, borderRadius: 2, display: "flex", flexDirection: "column", gap: 2 }}
+      >
+        <Typography variant="h5" align="center" gutterBottom>
+          Iniciar sesión
+        </Typography>
+
+        <form onSubmit={handleSubmit}>
+          <TextField
+            label="Usuario"
+            fullWidth
+            margin="normal"
+            value={form.username}
+            onChange={(e) => setForm({ ...form, username: e.target.value })}
+          />
+          <TextField
+            label="Contraseña"
+            type="password"
+            fullWidth
+            margin="normal"
+            value={form.password}
+            onChange={(e) => setForm({ ...form, password: e.target.value })}
+          />
+
+          <Box mt={2}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              disabled={loading}
+              startIcon={loading && <CircularProgress size={20} color="inherit" />}
+            >
+              {loading ? "Entrando..." : "Iniciar sesión"}
+            </Button>
+          </Box>
+        </form>
+      </Paper>
+    </Container>
   );
 }

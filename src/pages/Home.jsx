@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { getProductos } from "../api/api";
 import ProductoCard from "../components/ProductoCard";
-import "../App.css";
+// MUI
+import { Container, Typography, Grid } from "@mui/material";
 
 export default function Home() {
   const [productos, setProductos] = useState([]);
@@ -14,17 +15,30 @@ export default function Home() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="p-6">Cargando productos...</div>;
+  if (loading)
+    return (
+      <Container sx={{ mt: 4 }}>
+        <Typography>Cargando productos...</Typography>
+      </Container>
+    );
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-6">Productos</h2>
-      {productos.length === 0 && <p>No hay productos disponibles.</p>}
-      <div className="grid">
+    <Container sx={{ mt: 4 }}>
+      <Typography variant="h4" fontWeight="bold" gutterBottom>
+        Productos
+      </Typography>
+
+      {productos.length === 0 && (
+        <Typography>No hay productos disponibles.</Typography>
+      )}
+
+      <Grid container spacing={3}>
         {productos.map((prod) => (
-          <ProductoCard key={prod.id} producto={prod} />
+          <Grid item xs={12} sm={6} md={4} lg={3} key={prod.id}>
+            <ProductoCard producto={prod} />
+          </Grid>
         ))}
-      </div>
-    </div>
+      </Grid>
+    </Container>
   );
 }

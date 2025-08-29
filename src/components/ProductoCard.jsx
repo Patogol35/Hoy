@@ -2,7 +2,15 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useCarrito } from "../context/CarritoContext";
 import { toast } from "react-toastify";
-import "../App.css";
+// MUI
+import {
+  Card,
+  CardMedia,
+  CardContent,
+  CardActions,
+  Typography,
+  Button,
+} from "@mui/material";
 
 export default function ProductoCard({ producto }) {
   const { isAuthenticated } = useAuth();
@@ -24,27 +32,46 @@ export default function ProductoCard({ producto }) {
   };
 
   return (
-    <div className="card">
-      {/* ✅ Imagen con estilos inline */}
+    <Card
+      sx={{
+        maxWidth: 300,
+        borderRadius: 3,
+        boxShadow: 3,
+        m: 2,
+      }}
+    >
       {producto.imagen_url && (
-        <img
-          src={producto.imagen_url}
+        <CardMedia
+          component="img"
+          height="200"
+          image={producto.imagen_url}
           alt={producto.nombre}
-          style={{
-            width: "100%",
-            maxWidth: "250px",
-            height: "200px",
-            objectFit: "cover",
-            borderRadius: "12px",
-            marginBottom: "12px",
-          }}
+          sx={{ objectFit: "cover" }}
         />
       )}
 
-      <h3>{producto.nombre}</h3>
-      <p>{producto.descripcion}</p>
-      <p className="price">${producto.precio}</p>
-      <button onClick={onAdd}>Agregar al carrito</button>
-    </div>
+      <CardContent>
+        <Typography variant="h6" gutterBottom>
+          {producto.nombre}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" paragraph>
+          {producto.descripcion}
+        </Typography>
+        <Typography variant="h6" color="primary">
+          ${producto.precio}
+        </Typography>
+      </CardContent>
+
+      <CardActions>
+        <Button
+          variant="contained"
+          color="primary"
+          fullWidth
+          onClick={onAdd}
+        >
+          Agregar al carrito
+        </Button>
+      </CardActions>
+    </Card>
   );
 }

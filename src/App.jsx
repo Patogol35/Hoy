@@ -8,6 +8,8 @@ import Pedidos from "./pages/Pedidos";
 import { AuthProvider } from "./context/AuthContext";
 import { CarritoProvider } from "./context/CarritoContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+// MUI
+import { Container } from "@mui/material";
 
 function App() {
   return (
@@ -15,27 +17,29 @@ function App() {
       <AuthProvider>
         <CarritoProvider>
           <Navbar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route
-              path="/carrito"
-              element={
-                <ProtectedRoute>
-                  <Carrito />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/pedidos"
-              element={
-                <ProtectedRoute>
-                  <Pedidos />
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
+          <Container sx={{ mt: 4 }}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route
+                path="/carrito"
+                element={
+                  <ProtectedRoute>
+                    <Carrito />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/pedidos"
+                element={
+                  <ProtectedRoute>
+                    <Pedidos />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+          </Container>
         </CarritoProvider>
       </AuthProvider>
     </BrowserRouter>

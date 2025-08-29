@@ -4,8 +4,21 @@ import { useAuth } from "../context/AuthContext";
 import { crearPedido } from "../api/api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import "../App.css";
+
+// MUI
+import {
+  Container,
+  Typography,
+  Card,
+  CardContent,
+  CardActions,
+  IconButton,
+  TextField,
+  Button,
+  Grid,
+  Box,
+} from "@mui/material";
+import { Delete, Add, Remove } from "@mui/icons-material";
 
 export default function Carrito() {
   const {
@@ -46,51 +59,95 @@ export default function Carrito() {
   };
 
   const incrementar = (it) => setCantidad(it.id, it.cantidad + 1);
-  const decrementar = (it) => it.cantidad > 1 && setCantidad(it.id, it.cantidad - 1);
+  const decrementar = (it) =>
+    it.cantidad > 1 && setCantidad(it.id, it.cantidad - 1);
 
   return (
-    <div className="carrito">
-      <h2>Carrito</h2>
-      {loading && <p>Cargando carrito...</p>}
-      {!loading && items.length === 0 && <p>Tu carrito está vacío.</p>}
+    <Container sx={{ mt: 4 }}>
+      <Typography variant="h4" gutterBottom>
+        Carrito
+      </Typography>
+
+      {loading && <Typography>Cargando carrito...</Typography>}
+      {!loading && items.length === 0 && (
+        <Typography>Tu carrito está vacío.</Typography>
+      )}
 
       {!loading &&
         items.map((it) => (
-          <div key={it.id} className="carrito-item">
-            <span>{it.producto?.nombre}</span>
+          <Card
+            key={it.id}
+            sx={{ mb: 2, borderRadius: 2, boxShadow: 2 }}
+          >
+            <CardContent>
+              <Grid container alignItems="center" spacing={2}>
+                <Grid item xs={12} sm={4}>
+                  <Typography variant="subtitle1" fontWeight="bold">
+                    {it.producto?.nombre}
+                  </Typography>
+                </Grid>
 
-            <div className="carrito-controls">
-              <button onClick={() => decrementar(it)}>-</button>
+                <Grid item xs={12} sm={4}>
+                  <Box display="flex" alignItems="center" gap={1}>
+                    <IconButton onClick={() => decrementar(it)}>
+                      <Remove />
+                    </IconButton>
 
-              <input
-                type="number"
-                min="1"
-                value={it.cantidad}
-                onChange={(e) => {
-                  const nuevaCantidad = Number(e.target.value);
-                  if (nuevaCantidad >= 1) setCantidad(it.id, nuevaCantidad);
-                }}
-              />
+                    <TextField
+                      type="number"
+                      size="small"
+                      value={it.cantidad}
+                      inputProps={{ min: 1 }}
+                      onChange={(e) => {
+                        const nuevaCantidad = Number(e.target.value);
+                        if (nuevaCantidad >= 1)
+                          setCantidad(it.id, nuevaCantidad);
+                      }}
+                      sx={{ width: 70 }}
+                    />
 
-              <button onClick={() => incrementar(it)}>+</button>
-            </div>
+                    <IconButton onClick={() => incrementar(it)}>
+                      <Add />
+                    </IconButton>
+                  </Box>
+                </Grid>
 
-            <span>${Number(it.subtotal || it.cantidad * it.producto?.precio).toFixed(2)}</span>
+                <Grid item xs={12} sm={3}>
+                  <Typography variant="body1" color="primary">
+                    ${Number(
+                      it.subtotal || it.cantidad * it.producto?.precio
+                    ).toFixed(2)}
+                  </Typography>
+                </Grid>
 
-            <button className="btn-eliminar" onClick={() => eliminarItem(it.id)}>❌</button>
-          </div>
+                <Grid item xs={12} sm={1}>
+                  <IconButton
+                    color="error"
+                    onClick={() => eliminarItem(it.id)}
+                  >
+                    <Delete />
+                  </IconButton>
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Card>
         ))}
 
       {!loading && items.length > 0 && (
-        <>
-          <div className="carrito-total">
-            <span>Total:</span>
-            <span>${total.toFixed(2)}</span>
-          </div>
-          <button className="checkout-btn" onClick={comprar}>Comprar</button>
-        </>
+        <Box mt={3} textAlign="right">
+          <Typography variant="h6" gutterBottom>
+            Total: ${total.toFixed(2)}
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={comprar}
+          >
+            Comprar
+          </Button>
+        </Box>
       )}
-    </div>
+    </Container>
   );
 }
-

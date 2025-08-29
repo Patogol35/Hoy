@@ -1,7 +1,18 @@
 import { useEffect, useState } from "react";
 import { getPedidos } from "../api/api";
 import { useAuth } from "../context/AuthContext";
-import "../App.css";
+// MUI
+import {
+  Container,
+  Typography,
+  Card,
+  CardContent,
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
+  Box,
+} from "@mui/material";
 
 export default function Pedidos() {
   const { access } = useAuth();
@@ -15,32 +26,52 @@ export default function Pedidos() {
       .finally(() => setLoading(false));
   }, [access]);
 
-  if (loading) return <div className="p-6">Cargando pedidos...</div>;
+  if (loading)
+    return (
+      <Container sx={{ mt: 4 }}>
+        <Typography>Cargando pedidos...</Typography>
+      </Container>
+    );
 
   return (
-    <div className="p-6">
-      <h2>Mis pedidos</h2>
-      {pedidos.length === 0 && <p>Aún no tienes pedidos.</p>}
+    <Container sx={{ mt: 4 }}>
+      <Typography variant="h4" gutterBottom>
+        Mis pedidos
+      </Typography>
+
+      {pedidos.length === 0 && (
+        <Typography>Aún no tienes pedidos.</Typography>
+      )}
+
       {pedidos.map((p) => (
-        <div key={p.id} className="pedido-card">
-          <h4>Pedido #{p.id}</h4>
-          <p>
-            <b>Fecha:</b> {new Date(p.fecha).toLocaleString()}
-          </p>
-          <p>
-            <b>Total:</b> ${Number(p.total).toFixed(2)}
-          </p>
-          <ul>
-            {p.items?.map((item, i) => (
-              <li key={i}>
-                {item.cantidad} x {item.producto?.nombre} — $
-                {Number(item.precio_unitario).toFixed(2)} &nbsp;
-                <i>Subtotal: ${Number(item.subtotal).toFixed(2)}</i>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <Card key={p.id} sx={{ mb: 3, borderRadius: 2, boxShadow: 3 }}>
+          <CardContent>
+            <Typography variant="h6">Pedido #{p.id}</Typography>
+            <Typography variant="body2" color="text.secondary">
+              Fecha: {new Date(p.fecha).toLocaleString()}
+            </Typography>
+            <Typography variant="body1" color="primary" sx={{ mb: 1 }}>
+              Total: ${Number(p.total).toFixed(2)}
+            </Typography>
+
+            <List dense>
+              {p.items?.map((item, i) => (
+                <Box key={i}>
+                  <ListItem>
+                    <ListItemText
+                      primary={`${item.cantidad} x ${item.producto?.nombre} — $${Number(
+                        item.precio_unitario
+                      ).toFixed(2)}`}
+                      secondary={`Subtotal: $${Number(item.subtotal).toFixed(2)}`}
+                    />
+                  </ListItem>
+                  {i < p.items.length - 1 && <Divider component="li" />}
+                </Box>
+              ))}
+            </List>
+          </CardContent>
+        </Card>
       ))}
-    </div>
+    </Container>
   );
 }
