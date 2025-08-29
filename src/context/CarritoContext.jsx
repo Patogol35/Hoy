@@ -6,6 +6,7 @@ import {
   setCantidadItem as apiSetCantidad,
 } from "../api/api";
 import { useAuth } from "./AuthContext";
+import { toast } from "react-toastify";
 
 const CarritoContext = createContext();
 
@@ -36,57 +37,56 @@ export function CarritoProvider({ children }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [access]);
 
-  // Actualizar cantidad localmente para evitar parpadeo
-  const actualizarCantidad = async (producto_id, delta) => {
-    if (!access) throw new Error("Debes iniciar sesión.");
-
-    const item = carrito.items.find(it => it.producto.id === producto_id);
-    if (!item) return;
-
-    const nuevaCantidad = item.cantidad + delta;
-    if (nuevaCantidad < 1) return;
-
-    // Actualizamos localmente
-    setCarrito(prev => ({
-      ...prev,
-      items: prev.items.map(it =>
-        it.producto.id === producto_id
-          ? { ...it, cantidad: nuevaCantidad, subtotal: nuevaCantidad * it.producto.precio }
-          : it
-      )
-    }));
-
-    // Luego sincronizamos con la API
-    await apiAgregar(producto_id, delta, access);
-  };
-
-  // Opcional: setear cantidad absoluta
+  // Set cantidad absoluta y sincronizada con backend
   const setCantidad = async (itemId, cantidad) => {
     if (!access) throw new Error("Debes iniciar sesión.");
-    setCarrito(prev => ({
-      ...prev,
-      items: prev.items.map(it =>
-        it.id === itemId
-          ? { ...it, cantidad, subtotal: cantidad * it.producto.precio }
-          : it
-      )
-    }));
-    await apiSetCantidad(itemId, cantidad, access);
+    if (cantidad < 1) return;
+
+    try {
+      const res = await apiSetCantidad(itemId, cantidad, access);
+
+      // La API debería devolver la cantidad final confirmada
+      const cantidadFinal = res?.cantidad ?? cantidad;
+
+      setCarrito(prev => ({
+        ...prev,
+        items: prev.items.map(it =>
+          it.id === itemId
+            ? { ...it, cantidad: cantidadFinal, subtotal: cantidadFinal * it.producto.precio }
+            : it
+        )
+      }));
+    } catch (e) {
+      console.error(e);
+      toast.error("No se pudo actualizar la cantidad");
+    }
   };
 
   const agregarAlCarrito = async (producto_id, cantidad = 1) => {
     if (!access) throw new Error("Debes iniciar sesión.");
-    await apiAgregar(producto_id, cantidad, access);
-    await cargarCarrito();
+    try {
+      await apiAgregar(producto_id, cantidad, access);
+      await cargarCarrito();
+      // toast.success("Producto agregado 🛒"); // Toast eliminado
+    } catch (e) {
+      console.error(e);
+      toast.error("No se pudo agregar el producto");
+    }
   };
 
   const eliminarItem = async (itemId) => {
     if (!access) throw new Error("Debes iniciar sesión.");
-    setCarrito(prev => ({
-      ...prev,
-      items: prev.items.filter(it => it.id !== itemId)
-    }));
-    await apiEliminar(itemId, access);
+    try {
+      await apiEliminar(itemId, access);
+      setCarrito(prev => ({
+        ...prev,
+        items: prev.items.filter(it => it.id !== itemId)
+      }));
+      toast.warn("Producto eliminado ❌");
+    } catch (e) {
+      console.error(e);
+      toast.error("No se pudo eliminar el producto");
+    }
   };
 
   const limpiarLocal = () => setCarrito({ items: [] });
@@ -99,7 +99,6 @@ export function CarritoProvider({ children }) {
         loading,
         cargarCarrito,
         agregarAlCarrito,
-        actualizarCantidad,
         setCantidad,
         eliminarItem,
         limpiarLocal,

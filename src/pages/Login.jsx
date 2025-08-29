@@ -2,6 +2,7 @@ import { useState } from "react";
 import { login as apiLogin } from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import "../App.css";
 
 export default function Login() {
@@ -15,14 +16,15 @@ export default function Login() {
     setLoading(true);
     try {
       const data = await apiLogin(form);
-if (data?.access && data?.refresh) {
-  login(data.access, data.refresh);
-  navigate("/");
-} else {
-  alert("Credenciales inválidas");
-}
+      if (data?.access && data?.refresh) {
+        login(data.access, data.refresh);
+        toast.success("Bienvenido 👋");
+        navigate("/");
+      } else {
+        toast.error("Credenciales inválidas");
+      }
     } catch (e) {
-      alert(e.message);
+      toast.error(e.message);
     } finally {
       setLoading(false);
     }

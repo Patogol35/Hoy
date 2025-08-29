@@ -1,41 +1,46 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useCarrito } from "../context/CarritoContext";
+import { toast } from "react-toastify";
 import "../App.css";
+
 export default function ProductoCard({ producto }) {
   const { isAuthenticated } = useAuth();
   const { agregarAlCarrito } = useCarrito();
   const navigate = useNavigate();
+
   const onAdd = async () => {
     if (!isAuthenticated) {
+      toast.warn("Debes iniciar sesión para agregar productos 🛒");
       navigate("/login");
       return;
     }
     try {
       await agregarAlCarrito(producto.id, 1);
-      alert("Producto agregado al carrito");
+      toast.success(`"${producto.nombre}" agregado al carrito ✅`);
     } catch (e) {
-      alert(e.message);
+      toast.error(e.message);
     }
   };
+
   return (
     <div className="card">
-      {/* ✅ Imagen del producto */}
+      {/* ✅ Imagen con estilos inline */}
       {producto.imagen_url && (
         <img
-  src={producto.imagen_url}
-  alt={producto.nombre}
-  style={{
-    width: '100%',
-    maxWidth: '250px',
-    height: '200px',
-    objectFit: 'cover',
-    borderRadius: '12px',
-    marginBottom: '12px'
-  }}
-/>
-
+          src={producto.imagen_url}
+          alt={producto.nombre}
+          style={{
+            width: "100%",
+            maxWidth: "250px",
+            height: "200px",
+            objectFit: "cover",
+            borderRadius: "12px",
+            marginBottom: "12px",
+          }}
+        />
       )}
+
       <h3>{producto.nombre}</h3>
       <p>{producto.descripcion}</p>
       <p className="price">${producto.precio}</p>

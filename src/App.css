@@ -330,3 +330,40 @@ body {
     padding: 20px;
   }
 }
+
+.carrito-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.carrito-controls input[type="number"] {
+  width: 50px;
+  text-align: center;
+  padding: 4px 6px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+}
+
+.carrito-controls input[type="number"]:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 3px rgba(0,123,255,0.5);
+}
+
+.carrito-controls button {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s;
+}
+
+.carrito-controls button:hover {
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
