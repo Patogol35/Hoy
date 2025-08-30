@@ -3,7 +3,6 @@ import { login as apiLogin } from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-// MUI
 import {
   Container,
   Paper,
@@ -42,13 +41,19 @@ export default function Login() {
   return (
     <Container maxWidth="xs" sx={{ mt: 8 }}>
       <Paper
-        elevation={3}
-        sx={{ p: 4, borderRadius: 2, display: "flex", flexDirection: "column", gap: 2 }}
+        elevation={4}
+        sx={{
+          p: 4,
+          borderRadius: 4,
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+          boxShadow: "0 8px 30px rgba(0,0,0,0.1)",
+        }}
       >
-        <Typography variant="h5" align="center" gutterBottom>
+        <Typography variant="h5" align="center" fontWeight="bold" gutterBottom>
           Iniciar sesión
         </Typography>
-
         <form onSubmit={handleSubmit}>
           <TextField
             label="Usuario"
@@ -56,6 +61,7 @@ export default function Login() {
             margin="normal"
             value={form.username}
             onChange={(e) => setForm({ ...form, username: e.target.value })}
+            required
           />
           <TextField
             label="Contraseña"
@@ -64,8 +70,8 @@ export default function Login() {
             margin="normal"
             value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
+            required
           />
-
           <Box mt={2}>
             <Button
               type="submit"

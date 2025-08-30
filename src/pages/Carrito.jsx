@@ -18,7 +18,6 @@ import {
   Grid,
   Box,
 } from "@mui/material";
-import { Delete, Add, Remove } from "@mui/icons-material";
 
 export default function Carrito() {
   const {
@@ -89,9 +88,7 @@ export default function Carrito() {
 
                 <Grid item xs={12} sm={4}>
                   <Box display="flex" alignItems="center" gap={1}>
-                    <IconButton onClick={() => decrementar(it)}>
-                      <Remove />
-                    </IconButton>
+                    <IconButton onClick={() => decrementar(it)}>-</IconButton>
 
                     <TextField
                       type="number"
@@ -106,9 +103,7 @@ export default function Carrito() {
                       sx={{ width: 70 }}
                     />
 
-                    <IconButton onClick={() => incrementar(it)}>
-                      <Add />
-                    </IconButton>
+                    <IconButton onClick={() => incrementar(it)}>+</IconButton>
                   </Box>
                 </Grid>
 
@@ -125,7 +120,7 @@ export default function Carrito() {
                     color="error"
                     onClick={() => eliminarItem(it.id)}
                   >
-                    <Delete />
+                    🗑️
                   </IconButton>
                 </Grid>
               </Grid>

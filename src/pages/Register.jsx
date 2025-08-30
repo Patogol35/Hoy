@@ -2,7 +2,6 @@ import { useState } from "react";
 import { register as apiRegister } from "../api/api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-// MUI
 import {
   Container,
   Paper,
@@ -34,31 +33,18 @@ export default function Register() {
     if (score <= 2) return { label: "Débil", color: "red", value: 40 };
     if (score === 3) return { label: "Media", color: "orange", value: 60 };
     if (score === 4) return { label: "Fuerte", color: "green", value: 80 };
-    if (score >= 5) return { label: "Muy fuerte", color: "darkgreen", value: 100 };
+    return { label: "Muy fuerte", color: "darkgreen", value: 100 };
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!form.username.trim()) {
-      toast.error("El usuario es obligatorio");
-      return;
-    }
-
-    if (form.email && !/\S+@\S+\.\S+/.test(form.email)) {
-      toast.error("El correo no es válido");
-      return;
-    }
-
-    if (form.password.length < 6) {
-      toast.error("La contraseña debe tener al menos 6 caracteres");
-      return;
-    }
-
-    if (form.password !== form.confirm) {
-      toast.error("Las contraseñas no coinciden");
-      return;
-    }
+    if (!form.username.trim()) return toast.error("El usuario es obligatorio");
+    if (form.email && !/\S+@\S+\.\S+/.test(form.email))
+      return toast.error("El correo no es válido");
+    if (form.password.length < 6)
+      return toast.error("La contraseña debe tener al menos 6 caracteres");
+    if (form.password !== form.confirm)
+      return toast.error("Las contraseñas no coinciden");
 
     setLoading(true);
     try {
@@ -67,13 +53,10 @@ export default function Register() {
         email: form.email,
         password: form.password,
       });
-
       if (data?.id) {
         toast.success("✅ Usuario registrado correctamente");
         navigate("/login");
-      } else {
-        toast.error("❌ No se pudo registrar");
-      }
+      } else toast.error("❌ No se pudo registrar");
     } catch (e) {
       toast.error(e.message);
     } finally {
@@ -86,13 +69,19 @@ export default function Register() {
   return (
     <Container maxWidth="xs" sx={{ mt: 8 }}>
       <Paper
-        elevation={3}
-        sx={{ p: 4, borderRadius: 2, display: "flex", flexDirection: "column", gap: 2 }}
+        elevation={4}
+        sx={{
+          p: 4,
+          borderRadius: 4,
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+          boxShadow: "0 8px 30px rgba(0,0,0,0.1)",
+        }}
       >
-        <Typography variant="h5" align="center" gutterBottom>
-          Registro
+        <Typography variant="h5" align="center" fontWeight="bold" gutterBottom>
+          Crear cuenta
         </Typography>
-
         <form onSubmit={handleSubmit}>
           <TextField
             label="Usuario"
@@ -119,21 +108,27 @@ export default function Register() {
             onChange={(e) => setForm({ ...form, password: e.target.value })}
             required
           />
-
           {form.password && (
             <Box sx={{ my: 1 }}>
               <LinearProgress
                 variant="determinate"
                 value={strength.value}
-                sx={{ height: 8, borderRadius: 4, mb: 0.5, backgroundColor: "#ddd",
-                      "& .MuiLinearProgress-bar": { backgroundColor: strength.color } }}
+                sx={{
+                  height: 8,
+                  borderRadius: 4,
+                  mb: 0.5,
+                  backgroundColor: "#ddd",
+                  "& .MuiLinearProgress-bar": { backgroundColor: strength.color },
+                }}
               />
-              <Typography variant="caption" sx={{ color: strength.color, fontWeight: "bold" }}>
+              <Typography
+                variant="caption"
+                sx={{ color: strength.color, fontWeight: "bold" }}
+              >
                 {strength.label}
               </Typography>
             </Box>
           )}
-
           <TextField
             label="Confirmar contraseña"
             type="password"
@@ -143,7 +138,6 @@ export default function Register() {
             onChange={(e) => setForm({ ...form, confirm: e.target.value })}
             required
           />
-
           <Box mt={2}>
             <Button
               type="submit"

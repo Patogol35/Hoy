@@ -8,7 +8,6 @@ import Pedidos from "./pages/Pedidos";
 import { AuthProvider } from "./context/AuthContext";
 import { CarritoProvider } from "./context/CarritoContext";
 import ProtectedRoute from "./components/ProtectedRoute";
-// MUI
 import { Container } from "@mui/material";
 
 function App() {

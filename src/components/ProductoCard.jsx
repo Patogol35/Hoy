@@ -2,15 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useCarrito } from "../context/CarritoContext";
 import { toast } from "react-toastify";
-// MUI
-import {
-  Card,
-  CardMedia,
-  CardContent,
-  CardActions,
-  Typography,
-  Button,
-} from "@mui/material";
+import { Card, CardMedia, CardContent, CardActions, Typography, Button } from "@mui/material";
 
 export default function ProductoCard({ producto }) {
   const { isAuthenticated } = useAuth();
@@ -34,10 +26,14 @@ export default function ProductoCard({ producto }) {
   return (
     <Card
       sx={{
-        maxWidth: 300,
+        maxWidth: 320,
         borderRadius: 3,
-        boxShadow: 3,
-        m: 2,
+        boxShadow: 4,
+        transition: "transform 0.3s ease, box-shadow 0.3s ease",
+        "&:hover": {
+          transform: "translateY(-6px)",
+          boxShadow: 6,
+        },
       }}
     >
       {producto.imagen_url && (
@@ -46,27 +42,32 @@ export default function ProductoCard({ producto }) {
           height="200"
           image={producto.imagen_url}
           alt={producto.nombre}
-          sx={{ objectFit: "cover" }}
+          sx={{
+            objectFit: "cover",
+            borderTopLeftRadius: 12,
+            borderTopRightRadius: 12,
+          }}
         />
       )}
-
       <CardContent>
-        <Typography variant="h6" gutterBottom>
+        <Typography variant="h6" gutterBottom noWrap>
           {producto.nombre}
         </Typography>
-        <Typography variant="body2" color="text.secondary" paragraph>
+        <Typography variant="body2" color="text.secondary" noWrap>
           {producto.descripcion}
         </Typography>
-        <Typography variant="h6" color="primary">
+        <Typography variant="h6" color="primary" sx={{ mt: 1 }}>
           ${producto.precio}
         </Typography>
       </CardContent>
-
       <CardActions>
         <Button
           variant="contained"
-          color="primary"
           fullWidth
+          sx={{
+            bgcolor: "secondary.main",
+            "&:hover": { bgcolor: "secondary.dark" },
+          }}
           onClick={onAdd}
         >
           Agregar al carrito
