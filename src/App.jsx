@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Carrito from "./pages/Carrito";
 import Pedidos from "./pages/Pedidos";
+import ProductoDetalle from "./pages/ProductoDetalle"; // 🔥 NUEVO
 import { AuthProvider } from "./context/AuthContext";
 import { CarritoProvider } from "./context/CarritoContext";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -37,6 +38,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route path="/producto/:id" element={<ProductoDetalle />} /> {/* 🔥 NUEVO */}
             </Routes>
           </Container>
         </CarritoProvider>
@@ -46,3 +48,4 @@ function App() {
 }
 
 export default App;
+
