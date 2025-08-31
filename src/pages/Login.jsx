@@ -1,4 +1,4 @@
-import { useState } from "react";
+            import { useState } from "react";
 import { login as apiLogin } from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -11,11 +11,13 @@ import {
   Button,
   Box,
   CircularProgress,
+  InputAdornment,
 } from "@mui/material";
 
 export default function Login() {
   const [form, setForm] = useState({ username: "", password: "" });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -65,12 +67,25 @@ export default function Login() {
           />
           <TextField
             label="Contraseña"
-            type="password"
+            type={showPassword ? "text" : "password"}
             fullWidth
             margin="normal"
             value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
             required
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Button
+                    onClick={() => setShowPassword(!showPassword)}
+                    size="small"
+                    variant="text"
+                  >
+                    {showPassword ? "Ocultar" : "Mostrar"}
+                  </Button>
+                </InputAdornment>
+              ),
+            }}
           />
           <Box mt={2}>
             <Button
@@ -88,4 +103,4 @@ export default function Login() {
       </Paper>
     </Container>
   );
-}
+            }
