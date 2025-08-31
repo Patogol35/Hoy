@@ -36,12 +36,12 @@ export default function ProductoDetalle() {
         <Grid item xs={12} md={6}>
           <Box
             component="img"
-            src={producto.imagen_url}
+            src={producto.imagen}  // <-- CORRECCIÓN: usamos el campo imagen directamente
             alt={producto.nombre}
             sx={{
               width: "100%",
-              height: 400,          // más grande que la card
-              objectFit: "cover",   // recorta para mantener proporción
+              height: 400,          
+              objectFit: "cover",   
               objectPosition: "center",
               borderRadius: 3,
               boxShadow: 3,
