@@ -36,17 +36,18 @@ export default function ProductoCard({ producto }) {
         width: "100%",
         maxWidth: 320,
         borderRadius: 3,
-        boxShadow: 6,
+        boxShadow: 3,
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
+        transition: "transform 0.3s ease, box-shadow 0.3s ease",
         "&:hover": {
-          transform: "translateY(-5px)",
-          boxShadow: 12,
+          transform: "translateY(-10px)",
+          boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
         },
       }}
     >
-      {/* Contenedor imagen fijo */}
+      {/* Imagen */}
       <Box
         sx={{
           position: "relative",
@@ -66,6 +67,8 @@ export default function ProductoCard({ producto }) {
             maxWidth: "100%",
             maxHeight: "100%",
             objectFit: "contain",
+            transition: "transform 0.5s ease",
+            "&:hover": { transform: "scale(1.1)" },
           }}
         />
 
@@ -119,7 +122,17 @@ export default function ProductoCard({ producto }) {
             variant="contained"
             color="primary"
             fullWidth
-            sx={{ borderRadius: 2, textTransform: "none", py: 1 }}
+            sx={{
+              borderRadius: 2,
+              textTransform: "none",
+              py: 1,
+              fontWeight: "bold",
+              transition: "all 0.3s ease",
+              "&:hover": {
+                transform: "scale(1.05)",
+                boxShadow: "0 6px 15px rgba(0,0,0,0.2)",
+              },
+            }}
             onClick={onAdd}
           >
             Agregar al carrito 🛒
@@ -129,7 +142,17 @@ export default function ProductoCard({ producto }) {
             variant="outlined"
             color="inherit"
             fullWidth
-            sx={{ borderRadius: 2, textTransform: "none", py: 1 }}
+            sx={{
+              borderRadius: 2,
+              textTransform: "none",
+              py: 1,
+              fontWeight: "medium",
+              transition: "all 0.3s ease",
+              "&:hover": {
+                transform: "scale(1.05)",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+              },
+            }}
             onClick={() =>
               navigate(`/producto/${producto.id}`, { state: { producto } })
             }
@@ -140,4 +163,5 @@ export default function ProductoCard({ producto }) {
       </Box>
     </Card>
   );
-}
+              }
+          
