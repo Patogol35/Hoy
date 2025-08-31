@@ -4,8 +4,6 @@ import { useAuth } from "../context/AuthContext";
 import { crearPedido } from "../api/api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
-// MUI
 import {
   Container,
   Typography,
@@ -18,14 +16,7 @@ import {
 } from "@mui/material";
 
 export default function Carrito() {
-  const {
-    items,
-    cargarCarrito,
-    loading,
-    limpiarLocal,
-    setCantidad,
-    eliminarItem,
-  } = useCarrito();
+  const { items, cargarCarrito, loading, limpiarLocal, setCantidad, eliminarItem } = useCarrito();
   const { access } = useAuth();
   const navigate = useNavigate();
 
@@ -34,8 +25,7 @@ export default function Carrito() {
   }, []);
 
   const total = items.reduce(
-    (acc, it) =>
-      acc + Number(it.subtotal || it.cantidad * (it.producto?.precio || 0)),
+    (acc, it) => acc + Number(it.subtotal || it.cantidad * (it.producto?.precio || 0)),
     0
   );
 
@@ -55,19 +45,16 @@ export default function Carrito() {
   };
 
   const incrementar = (it) => setCantidad(it.id, it.cantidad + 1);
-  const decrementar = (it) =>
-    it.cantidad > 1 && setCantidad(it.id, it.cantidad - 1);
+  const decrementar = (it) => it.cantidad > 1 && setCantidad(it.id, it.cantidad - 1);
 
   return (
-    <Container sx={{ mt: 4, mb: 6 }}>
+    <Container sx={{ mt: 4, mb: { xs: 12, sm: 6 } }}>
       <Typography variant="h4" gutterBottom fontWeight="bold">
         Carrito
       </Typography>
 
       {loading && <Typography>Cargando carrito...</Typography>}
-      {!loading && items.length === 0 && (
-        <Typography>Tu carrito está vacío.</Typography>
-      )}
+      {!loading && items.length === 0 && <Typography>Tu carrito está vacío.</Typography>}
 
       {!loading &&
         items.map((it) => (
@@ -75,7 +62,7 @@ export default function Carrito() {
             key={it.id}
             sx={{
               display: "flex",
-              flexDirection: { xs: "column", sm: "row" }, // Vertical en móviles
+              flexDirection: { xs: "column", sm: "row" },
               mb: 2,
               borderRadius: 3,
               boxShadow: 3,
@@ -83,7 +70,6 @@ export default function Carrito() {
               "&:hover": { boxShadow: 8, transform: "scale(1.01)" },
             }}
           >
-            {/* Imagen */}
             <CardMedia
               component="img"
               image={it.producto?.imagen_url}
@@ -96,7 +82,6 @@ export default function Carrito() {
               }}
             />
 
-            {/* Contenido */}
             <CardContent sx={{ flex: 1 }}>
               <Typography variant="h6" fontWeight="bold">
                 {it.producto?.nombre}
@@ -116,14 +101,10 @@ export default function Carrito() {
                 {it.producto?.descripcion}
               </Typography>
               <Typography variant="subtitle1" color="primary" fontWeight="bold">
-                $
-                {Number(
-                  it.subtotal || it.cantidad * it.producto?.precio
-                ).toFixed(2)}
+                ${Number(it.subtotal || it.cantidad * it.producto?.precio).toFixed(2)}
               </Typography>
             </CardContent>
 
-            {/* Controles */}
             <Box
               sx={{
                 display: "flex",
@@ -134,7 +115,6 @@ export default function Carrito() {
               }}
             >
               <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-                {/* Botón - */}
                 <Button
                   onClick={() => decrementar(it)}
                   size="small"
@@ -143,17 +123,13 @@ export default function Carrito() {
                     minWidth: 30,
                     fontWeight: "bold",
                     backgroundColor: "#f0f0f0",
-                    "&:hover": {
-                      backgroundColor: "#e0e0e0",
-                      transform: "scale(1.1)",
-                    },
+                    "&:hover": { backgroundColor: "#e0e0e0", transform: "scale(1.1)" },
                     transition: "all 0.2s",
                   }}
                 >
                   -
                 </Button>
 
-                {/* Cantidad */}
                 <TextField
                   type="number"
                   size="small"
@@ -166,7 +142,6 @@ export default function Carrito() {
                   sx={{ width: 60, "& input": { textAlign: "center" } }}
                 />
 
-                {/* Botón + */}
                 <Button
                   onClick={() => incrementar(it)}
                   size="small"
@@ -175,17 +150,13 @@ export default function Carrito() {
                     minWidth: 30,
                     fontWeight: "bold",
                     backgroundColor: "#f0f0f0",
-                    "&:hover": {
-                      backgroundColor: "#e0e0e0",
-                      transform: "scale(1.1)",
-                    },
+                    "&:hover": { backgroundColor: "#e0e0e0", transform: "scale(1.1)" },
                     transition: "all 0.2s",
                   }}
                 >
                   +
                 </Button>
 
-                {/* Botón Eliminar */}
                 <Button
                   onClick={() => eliminarItem(it.id)}
                   variant="contained"
@@ -194,10 +165,7 @@ export default function Carrito() {
                     minWidth: 40,
                     fontWeight: "bold",
                     ml: 1,
-                    "&:hover": {
-                      backgroundColor: "#d32f2f",
-                      transform: "scale(1.1)",
-                    },
+                    "&:hover": { backgroundColor: "#d32f2f", transform: "scale(1.1)" },
                     transition: "all 0.2s",
                   }}
                 >
@@ -208,10 +176,8 @@ export default function Carrito() {
           </Card>
         ))}
 
-      {/* Total y comprar */}
       {!loading && items.length > 0 && (
         <Box
-          mt={3}
           sx={{
             textAlign: "right",
             position: { xs: "fixed", sm: "static" },
@@ -221,6 +187,9 @@ export default function Carrito() {
             bgcolor: { xs: "white", sm: "transparent" },
             p: { xs: 2, sm: 0 },
             boxShadow: { xs: "0 -4px 10px rgba(0,0,0,0.1)", sm: "none" },
+            display: "flex",
+            justifyContent: { xs: "space-between", sm: "flex-end" },
+            alignItems: "center",
           }}
         >
           <Typography variant="h6" gutterBottom>
@@ -231,7 +200,7 @@ export default function Carrito() {
             color="primary"
             size="large"
             sx={{
-              width: { xs: "100%", sm: "auto" },
+              width: { xs: "45%", sm: "auto" },
               transition: "all 0.3s",
               fontWeight: "bold",
               "&:hover": { transform: "scale(1.05)", boxShadow: 6 },
@@ -244,4 +213,4 @@ export default function Carrito() {
       )}
     </Container>
   );
-            }
+                }
