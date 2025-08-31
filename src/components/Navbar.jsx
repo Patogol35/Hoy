@@ -31,21 +31,23 @@ export default function Navbar() {
     ? [
         { text: "🛒 Carrito", path: "/carrito" },
         { text: "📦 Mis pedidos", path: "/pedidos" },
-        { text: "Cerrar sesión", action: handleLogout },
+        { text: "Cerrar sesión", action: handleLogout, highlight: true },
       ]
     : [
-        { text: "Iniciar sesión", path: "/login" },
-        { text: "Registrarse", path: "/register" },
+        { text: "Iniciar sesión", path: "/login", highlight: true },
+        { text: "Registrarse", path: "/register", highlight: true },
       ];
 
   return (
     <>
+      {/* Navbar */}
       <AppBar
         position="sticky"
         sx={{
           bgcolor: "white",
           color: "primary.main",
-          boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
+          borderBottom: "1px solid #eee",
         }}
       >
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -59,13 +61,15 @@ export default function Navbar() {
               color: "primary.main",
               fontWeight: "bold",
               letterSpacing: 1,
-              fontSize: "1.3rem",
+              fontSize: "1.4rem",
+              transition: "0.3s",
+              "&:hover": { color: "secondary.main" },
             }}
           >
             🛍️ MiTienda
           </Typography>
 
-          {/* Menú */}
+          {/* Botones */}
           {isMobile ? (
             <Button
               onClick={() => setOpen(true)}
@@ -78,9 +82,11 @@ export default function Navbar() {
                 py: 0.5,
                 fontWeight: 600,
                 textTransform: "none",
+                transition: "0.3s",
                 "&:hover": {
                   backgroundColor: "primary.main",
                   color: "white",
+                  transform: "scale(1.05)",
                 },
               }}
             >
@@ -99,11 +105,17 @@ export default function Navbar() {
                       fontWeight: 600,
                       borderRadius: "999px",
                       px: 2,
-                      color: "primary.main",
+                      color: item.highlight ? "white" : "primary.main",
+                      bgcolor: item.highlight ? "primary.main" : "transparent",
+                      border: item.highlight ? "none" : "1px solid #ddd",
                       "&:hover": {
-                        backgroundColor: "primary.main",
+                        bgcolor: item.highlight
+                          ? "secondary.main"
+                          : "primary.light",
                         color: "white",
+                        transform: "scale(1.05)",
                       },
+                      transition: "0.3s",
                     }}
                   >
                     {item.text}
@@ -112,12 +124,18 @@ export default function Navbar() {
                   <Button
                     key={idx}
                     onClick={item.action}
-                    variant="contained"
                     sx={{
                       textTransform: "none",
                       fontWeight: 600,
                       borderRadius: "999px",
                       px: 2,
+                      color: "white",
+                      bgcolor: "primary.main",
+                      "&:hover": {
+                        bgcolor: "secondary.main",
+                        transform: "scale(1.05)",
+                      },
+                      transition: "0.3s",
                     }}
                   >
                     {item.text}
@@ -129,32 +147,34 @@ export default function Navbar() {
         </Toolbar>
       </AppBar>
 
-      {/* Drawer para móvil */}
+      {/* Drawer para móviles */}
       <Drawer
         anchor="right"
         open={open}
         onClose={() => setOpen(false)}
         PaperProps={{
           sx: {
-            width: 260,
-            bgcolor: "#f9fafb",
+            width: 280,
             borderRadius: "16px 0 0 16px",
-            p: 1,
+            bgcolor: "linear-gradient(to bottom, #ffffff, #f9fafb)",
+            p: 2,
           },
         }}
       >
-        <Typography
-          variant="h6"
-          sx={{
-            textAlign: "center",
-            my: 2,
-            fontWeight: "bold",
-            color: "primary.main",
-          }}
-        >
-          Menú
-        </Typography>
-        <Divider />
+        <Box sx={{ textAlign: "center", mb: 2 }}>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: "bold",
+              color: "primary.main",
+              mb: 1,
+            }}
+          >
+            MiTienda
+          </Typography>
+          <Divider />
+        </Box>
+
         <List>
           {menuItems.map((item, idx) => (
             <ListItem
@@ -164,9 +184,15 @@ export default function Navbar() {
               to={item.path}
               onClick={item.action || (() => setOpen(false))}
               sx={{
-                borderRadius: 2,
                 mb: 1,
-                "&:hover": { backgroundColor: "primary.light" },
+                borderRadius: 2,
+                bgcolor: item.highlight ? "primary.main" : "transparent",
+                color: item.highlight ? "white" : "text.primary",
+                "&:hover": {
+                  bgcolor: item.highlight ? "secondary.main" : "primary.light",
+                  color: "white",
+                },
+                transition: "0.3s",
               }}
             >
               <ListItemText
@@ -182,4 +208,4 @@ export default function Navbar() {
       </Drawer>
     </>
   );
-}
+                    }
