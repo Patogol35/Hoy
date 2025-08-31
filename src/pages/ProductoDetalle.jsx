@@ -7,7 +7,7 @@ export default function ProductoDetalle() {
   const { state } = useLocation();
   const producto = state?.producto;
   const { agregarAlCarrito } = useCarrito();
-  const navigate = useNavigate(); // 🔥 para regresar
+  const navigate = useNavigate();
 
   if (!producto) return <Typography>Producto no encontrado</Typography>;
 
@@ -22,35 +22,38 @@ export default function ProductoDetalle() {
 
   return (
     <Box sx={{ maxWidth: 1200, mx: "auto", p: 3 }}>
-      {/* Botón regresar */}
-      <Button
-        variant="outlined"
-        sx={{ mb: 3 }}
-        onClick={() => navigate(-1)} // 🔥 vuelve a la página anterior
-      >
+      <Button variant="outlined" sx={{ mb: 3 }} onClick={() => navigate(-1)}>
         ← Regresar a productos
       </Button>
 
       <Grid container spacing={4}>
-        {/* Imagen más grande */}
         <Grid item xs={12} md={6}>
           <Box
-            component="img"
-            src={producto.imagen}  // <-- usamos el campo imagen directamente
-            alt={producto.nombre}
             sx={{
               width: "100%",
-              height: 400,
-              objectFit: "contain",   // <-- CORRECCIÓN: se ve toda la imagen
-              objectPosition: "center",
+              height: 500,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              bgcolor: "#f5f5f5",
               borderRadius: 3,
-              boxShadow: 3,
-              backgroundColor: "#f5f5f5", // opcional, para que se vea mejor si hay espacios
+              overflow: "hidden",
+              boxShadow: "0 10px 20px rgba(0,0,0,0.2)",
             }}
-          />
+          >
+            <Box
+              component="img"
+              src={producto.imagen}
+              alt={producto.nombre}
+              sx={{
+                maxWidth: "100%",
+                maxHeight: "100%",
+                objectFit: "contain",
+              }}
+            />
+          </Box>
         </Grid>
 
-        {/* Detalles */}
         <Grid item xs={12} md={6}>
           <Stack spacing={2}>
             <Typography variant="h4" fontWeight="bold">
@@ -59,10 +62,16 @@ export default function ProductoDetalle() {
             <Typography variant="h5" color="primary">
               ${producto.precio}
             </Typography>
-            <Typography variant="body1">
-              {producto.descripcion}
-            </Typography>
-            <Button variant="contained" size="large" onClick={handleAdd}>
+            <Typography variant="body1">{producto.descripcion}</Typography>
+            <Button
+              variant="contained"
+              size="large"
+              onClick={handleAdd}
+              sx={{
+                transition: "all 0.3s ease",
+                "&:hover": { transform: "scale(1.05)", boxShadow: "0 6px 15px rgba(0,0,0,0.2)" },
+              }}
+            >
               Agregar al carrito
             </Button>
           </Stack>
@@ -71,4 +80,3 @@ export default function ProductoDetalle() {
     </Box>
   );
 }
-
