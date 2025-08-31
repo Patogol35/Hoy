@@ -86,13 +86,15 @@ export default function Carrito() {
             {/* Imagen */}
             <CardMedia
               component="img"
-              image={it.producto?.imagen_url}
+              image={it.producto?.imagen} // 🔥 aquí el cambio importante
               alt={it.producto?.nombre}
               sx={{
                 width: { xs: "100%", sm: 150 },
                 height: { xs: 180, sm: 150 },
-                objectFit: "cover",
+                objectFit: "contain",     // se ve toda la imagen
+                bgcolor: "#f5f5f5",
                 borderRadius: { xs: "8px 8px 0 0", sm: "8px 0 0 8px" },
+                p: 1,
               }}
             />
 
@@ -245,4 +247,4 @@ export default function Carrito() {
       )}
     </Container>
   );
-                        }
+                }
