@@ -100,7 +100,12 @@ export default function Navbar() {
               <Button color="inherit" component={Link} to="/login">
                 Iniciar sesión
               </Button>
-              <Button color="inherit" sx={{ ml: 1 }} component={Link} to="/register">
+              <Button
+                color="inherit"
+                sx={{ ml: 1 }}
+                component={Link}
+                to="/register"
+              >
                 Registrarse
               </Button>
             </>
