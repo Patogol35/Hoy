@@ -59,7 +59,7 @@ export default function Carrito() {
     it.cantidad > 1 && setCantidad(it.id, it.cantidad - 1);
 
   return (
-    <Container sx={{ mt: 4, mb: { xs: 12, sm: 6 } }}>
+    <Container sx={{ mt: 4, pb: { xs: 12, sm: 6 } }}>
       <Typography variant="h4" gutterBottom fontWeight="bold">
         Carrito
       </Typography>
@@ -245,4 +245,4 @@ export default function Carrito() {
       )}
     </Container>
   );
-  }
+                        }
