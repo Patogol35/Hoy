@@ -9,6 +9,7 @@ import {
   Button,
   Chip,
   Box,
+  Divider,
 } from "@mui/material";
 
 export default function ProductoCard({ producto }) {
@@ -34,38 +35,31 @@ export default function ProductoCard({ producto }) {
     <Card
       sx={{
         width: "100%",
-        maxWidth: 300,
-        borderRadius: 4,
-        boxShadow: 4,
+        maxWidth: 320,
+        borderRadius: 3,
+        boxShadow: 6,
         overflow: "hidden",
-        position: "relative",
-        cursor: "pointer",
+        display: "flex",
+        flexDirection: "column",
         transition: "transform 0.3s ease, box-shadow 0.3s ease",
         "&:hover": {
-          transform: "translateY(-10px)",
+          transform: "translateY(-8px)",
           boxShadow: 12,
         },
       }}
     >
-      {/* Imagen con efecto zoom */}
-      <Box
-        sx={{
-          width: "100%",
-          height: 220,
-          overflow: "hidden",
-          position: "relative",
-        }}
-      >
+      {/* Imagen */}
+      <Box sx={{ position: "relative" }}>
         <CardMedia
           component="img"
           image={producto.imagen_url}
           alt={producto.nombre}
           sx={{
+            height: 220,
             width: "100%",
-            height: "100%",
             objectFit: "cover",
             transition: "transform 0.5s ease",
-            "&:hover": { transform: "scale(1.1)" },
+            "&:hover": { transform: "scale(1.07)" },
           }}
         />
 
@@ -75,14 +69,25 @@ export default function ProductoCard({ producto }) {
             label="Nuevo"
             color="secondary"
             size="small"
-            sx={{ position: "absolute", top: 10, left: 10, zIndex: 2 }}
+            sx={{
+              position: "absolute",
+              top: 12,
+              left: 12,
+              fontWeight: "bold",
+              bgcolor: "secondary.main",
+              color: "white",
+            }}
           />
         )}
       </Box>
 
       {/* Contenido */}
-      <Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 1 }}>
-        <Typography variant="h6" fontWeight="bold" noWrap>
+      <Box sx={{ p: 2, flexGrow: 1, display: "flex", flexDirection: "column" }}>
+        <Typography
+          variant="h6"
+          fontWeight="bold"
+          sx={{ mb: 1, color: "text.primary" }}
+        >
           {producto.nombre}
         </Typography>
 
@@ -90,9 +95,11 @@ export default function ProductoCard({ producto }) {
           variant="body2"
           color="text.secondary"
           sx={{
-            minHeight: 48,
+            flexGrow: 1,
+            mb: 2,
+            lineHeight: 1.4,
             display: "-webkit-box",
-            WebkitLineClamp: 2,
+            WebkitLineClamp: 3,
             WebkitBoxOrient: "vertical",
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -101,23 +108,33 @@ export default function ProductoCard({ producto }) {
           {producto.descripcion}
         </Typography>
 
-        <Typography variant="h6" color="primary" fontWeight="bold">
+        <Divider sx={{ my: 1 }} />
+
+        <Typography
+          variant="h6"
+          color="primary"
+          fontWeight="bold"
+          sx={{ mb: 2 }}
+        >
           ${producto.precio}
         </Typography>
 
         {/* Botones */}
-        <Box sx={{ display: "flex", gap: 1, mt: 1, flexDirection: "column" }}>
+        <Box sx={{ display: "flex", gap: 1, flexDirection: "column" }}>
           <Button
             variant="contained"
             color="primary"
             fullWidth
             sx={{
-              transition: "all 0.3s ease",
+              borderRadius: 2,
+              textTransform: "none",
+              fontWeight: "bold",
+              py: 1,
               "&:hover": { transform: "scale(1.05)", boxShadow: 6 },
             }}
             onClick={onAdd}
           >
-            Agregar 🛒
+            Agregar al carrito 🛒
           </Button>
 
           <Button
@@ -125,14 +142,17 @@ export default function ProductoCard({ producto }) {
             color="inherit"
             fullWidth
             sx={{
-              transition: "all 0.3s ease",
+              borderRadius: 2,
+              textTransform: "none",
+              fontWeight: "medium",
+              py: 1,
               "&:hover": { transform: "scale(1.05)", boxShadow: 3 },
             }}
             onClick={() =>
               navigate(`/producto/${producto.id}`, { state: { producto } })
             }
           >
-            Ver más 🔎
+            Ver detalles 🔎
           </Button>
         </Box>
       </Box>
