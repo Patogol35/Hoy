@@ -11,7 +11,6 @@ import {
   Box,
   Divider,
 } from "@mui/material";
-import { MEDIA_URL } from "../api/api.js"; // ✅ ruta corregida
 
 export default function ProductoCard({ producto }) {
   const { isAuthenticated } = useAuth();
@@ -53,7 +52,7 @@ export default function ProductoCard({ producto }) {
       <Box sx={{ position: "relative" }}>
         <CardMedia
           component="img"
-          image={`${MEDIA_URL}${producto.image || producto.imagen_url}`} // ✅ ahora toma bien la URL
+          image={producto.imagen_url}
           alt={producto.nombre}
           sx={{
             height: 220,
