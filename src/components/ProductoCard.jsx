@@ -4,7 +4,6 @@ import { useCarrito } from "../context/CarritoContext";
 import { toast } from "react-toastify";
 import {
   Card,
-  CardMedia,
   Typography,
   Button,
   Chip,
@@ -52,27 +51,27 @@ export default function ProductoCard({ producto }) {
       <Box
         sx={{
           position: "relative",
-          height: 220, // alto fijo para que todos los cards tengan el mismo tamaño
+          height: 220, // alto fijo para que todas las cards sean iguales
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          bgcolor: "#f5f5f5", // fondo opcional para que se vea mejor si la imagen no llena todo
+          bgcolor: "#f5f5f5", // fondo gris opcional
         }}
       >
         <Box
           component="img"
-          src={producto.imagen} // usamos la URL directa
+          src={producto.imagen} // URL del producto
           alt={producto.nombre}
           sx={{
-            maxHeight: "100%",
-            maxWidth: "100%",
-            objectFit: "contain", // se ve toda la imagen
+            width: "100%",   // ocupa todo el ancho del contenedor
+            height: "auto",  // mantiene proporción
+            maxHeight: "100%", // no excede la altura del contenedor
+            objectFit: "contain", // se ve completa
             transition: "transform 0.5s ease",
             "&:hover": { transform: "scale(1.07)" },
           }}
         />
 
-        {/* Badge NUEVO */}
         {producto.nuevo && (
           <Chip
             label="Nuevo"
@@ -167,4 +166,4 @@ export default function ProductoCard({ producto }) {
       </Box>
     </Card>
   );
-            }
+          }
