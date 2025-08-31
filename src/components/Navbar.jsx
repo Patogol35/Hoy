@@ -4,35 +4,65 @@ import {
   AppBar,
   Toolbar,
   Typography,
-  IconButton,
-  Box,
   Button,
+  Box,
+  IconButton,
+  Menu,
+  MenuItem,
 } from "@mui/material";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import ListAltIcon from "@mui/icons-material/ListAlt";
-import LoginIcon from "@mui/icons-material/Login";
-import LogoutIcon from "@mui/icons-material/Logout";
+import MenuIcon from "@mui/icons-material/Menu";
+import { useState } from "react";
 
 export default function Navbar() {
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
 
+  const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
+  const handleMenuClose = () => setAnchorEl(null);
+
+  const menuItems = isAuthenticated ? (
+    <>
+      <MenuItem component={Link} to="/carrito" onClick={handleMenuClose}>
+        Carrito
+      </MenuItem>
+      <MenuItem component={Link} to="/pedidos" onClick={handleMenuClose}>
+        Mis pedidos
+      </MenuItem>
+      <MenuItem
+        onClick={() => {
+          handleLogout();
+          handleMenuClose();
+        }}
+      >
+        Cerrar sesión
+      </MenuItem>
+    </>
+  ) : (
+    <>
+      <MenuItem component={Link} to="/login" onClick={handleMenuClose}>
+        Iniciar sesión
+      </MenuItem>
+      <MenuItem component={Link} to="/register" onClick={handleMenuClose}>
+        Registrarse
+      </MenuItem>
+    </>
+  );
+
   return (
     <AppBar
       position="sticky"
       sx={{
         bgcolor: "primary.main",
-        px: 2,
-        boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+        boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
       }}
     >
       <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-        {/* Logo */}
         <Typography
           variant="h6"
           component={Link}
@@ -47,60 +77,51 @@ export default function Navbar() {
           🛍️ MiTienda
         </Typography>
 
-        {/* Menú móvil */}
-        <Box sx={{ display: { xs: "flex", md: "none" }, gap: 1 }}>
-          {isAuthenticated ? (
-            <>
-              <IconButton color="inherit" component={Link} to="/carrito">
-                <ShoppingCartIcon />
-              </IconButton>
-              <IconButton color="inherit" component={Link} to="/pedidos">
-                <ListAltIcon />
-              </IconButton>
-              <IconButton color="inherit" onClick={handleLogout}>
-                <LogoutIcon />
-              </IconButton>
-            </>
-          ) : (
-            <>
-              <IconButton color="inherit" component={Link} to="/login">
-                <LoginIcon />
-              </IconButton>
-            </>
-          )}
-        </Box>
-
         {/* Menú escritorio */}
-        <Box sx={{ display: { xs: "none", md: "flex" }, gap: 2 }}>
+        <Box sx={{ display: { xs: "none", md: "flex" }, gap: 1 }}>
           {isAuthenticated ? (
             <>
-              <Button color="inherit" component={Link} to="/carrito" startIcon={<ShoppingCartIcon />}>
+              <Button color="inherit" component={Link} to="/carrito">
                 Carrito
               </Button>
-              <Button color="inherit" component={Link} to="/pedidos" startIcon={<ListAltIcon />}>
-                Pedidos
+              <Button color="inherit" component={Link} to="/pedidos">
+                Mis pedidos
               </Button>
               <Button
                 variant="outlined"
                 sx={{ bgcolor: "white", color: "primary.main", ml: 1 }}
                 onClick={handleLogout}
-                startIcon={<LogoutIcon />}
               >
                 Cerrar sesión
               </Button>
             </>
           ) : (
             <>
-              <Button color="inherit" component={Link} to="/login" startIcon={<LoginIcon />}>
+              <Button color="inherit" component={Link} to="/login">
                 Iniciar sesión
               </Button>
-              <Button color="inherit" component={Link} to="/register">
+              <Button color="inherit" sx={{ ml: 1 }} component={Link} to="/register">
                 Registrarse
               </Button>
             </>
           )}
         </Box>
+
+        {/* Menú móvil */}
+        <Box sx={{ display: { xs: "flex", md: "none" } }}>
+          <IconButton edge="end" color="inherit" onClick={handleMenuOpen}>
+            <MenuIcon />
+          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
+            keepMounted
+          >
+            {menuItems}
+          </Menu>
+        </Box>
       </Toolbar>
     </AppBar>
   );
-}
+      }
