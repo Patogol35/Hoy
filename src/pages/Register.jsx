@@ -10,6 +10,7 @@ import {
   Button,
   Box,
   LinearProgress,
+  InputAdornment,
 } from "@mui/material";
 
 export default function Register() {
@@ -20,6 +21,8 @@ export default function Register() {
     confirm: "",
   });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const navigate = useNavigate();
 
   const passwordStrength = (pwd) => {
@@ -99,15 +102,32 @@ export default function Register() {
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
           />
+
+          {/* Contraseña con mostrar/ocultar */}
           <TextField
             label="Contraseña"
-            type="password"
+            type={showPassword ? "text" : "password"}
             fullWidth
             margin="normal"
             value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
             required
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Button
+                    size="small"
+                    variant="text"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? "Ocultar" : "Mostrar"}
+                  </Button>
+                </InputAdornment>
+              ),
+            }}
           />
+
+          {/* Barra de fuerza de contraseña */}
           {form.password && (
             <Box sx={{ my: 1 }}>
               <LinearProgress
@@ -129,15 +149,31 @@ export default function Register() {
               </Typography>
             </Box>
           )}
+
+          {/* Confirmar contraseña con mostrar/ocultar */}
           <TextField
             label="Confirmar contraseña"
-            type="password"
+            type={showConfirm ? "text" : "password"}
             fullWidth
             margin="normal"
             value={form.confirm}
             onChange={(e) => setForm({ ...form, confirm: e.target.value })}
             required
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Button
+                    size="small"
+                    variant="text"
+                    onClick={() => setShowConfirm(!showConfirm)}
+                  >
+                    {showConfirm ? "Ocultar" : "Mostrar"}
+                  </Button>
+                </InputAdornment>
+              ),
+            }}
           />
+
           <Box mt={2}>
             <Button
               type="submit"
