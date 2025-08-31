@@ -6,7 +6,6 @@ import {
   Typography,
   Button,
   Box,
-  IconButton,
   Drawer,
   List,
   ListItem,
@@ -14,7 +13,6 @@ import {
   Divider,
   useMediaQuery,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
 import { useState } from "react";
 
 export default function Navbar() {
@@ -62,9 +60,17 @@ export default function Navbar() {
           </Typography>
 
           {isMobile ? (
-            <IconButton color="inherit" onClick={() => setOpen(true)}>
-              <MenuIcon />
-            </IconButton>
+            <Button
+              color="inherit"
+              onClick={() => setOpen(true)}
+              sx={{
+                border: "1px solid white",
+                fontWeight: "bold",
+                textTransform: "none",
+              }}
+            >
+              ☰ Menú
+            </Button>
           ) : (
             <Box>
               {menuItems.map((item, idx) =>
@@ -94,7 +100,7 @@ export default function Navbar() {
         </Toolbar>
       </AppBar>
 
-      {/* Drawer para móviles */}
+      {/* Drawer lateral en móvil */}
       <Drawer anchor="right" open={open} onClose={() => setOpen(false)}>
         <Box sx={{ width: 250, p: 2 }}>
           <Typography variant="h6" mb={2}>
