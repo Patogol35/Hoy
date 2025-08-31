@@ -10,13 +10,11 @@ import {
   Container,
   Typography,
   Card,
+  CardMedia,
   CardContent,
-  CardActions,
-  IconButton,
-  TextField,
   Button,
-  Grid,
   Box,
+  TextField,
 } from "@mui/material";
 
 export default function Carrito() {
@@ -33,7 +31,6 @@ export default function Carrito() {
 
   useEffect(() => {
     cargarCarrito();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const total = items.reduce(
@@ -76,55 +73,129 @@ export default function Carrito() {
         items.map((it) => (
           <Card
             key={it.id}
-            sx={{ mb: 2, borderRadius: 2, boxShadow: 2 }}
+            sx={{
+              display: "flex",
+              mb: 2,
+              borderRadius: 3,
+              boxShadow: 3,
+              transition: "all 0.3s",
+              "&:hover": { boxShadow: 8, transform: "scale(1.01)" },
+            }}
           >
-            <CardContent>
-              <Grid container alignItems="center" spacing={2}>
-                <Grid item xs={12} sm={4}>
-                  <Typography variant="subtitle1" fontWeight="bold">
-                    {it.producto?.nombre}
-                  </Typography>
-                </Grid>
+            {/* Imagen */}
+            <CardMedia
+              component="img"
+              image={it.producto?.imagen_url}
+              alt={it.producto?.nombre}
+              sx={{
+                width: { xs: 100, sm: 150 },
+                height: { xs: 100, sm: 150 },
+                objectFit: "cover",
+                borderRadius: "8px 0 0 8px",
+              }}
+            />
 
-                <Grid item xs={12} sm={4}>
-                  <Box display="flex" alignItems="center" gap={1}>
-                    <IconButton onClick={() => decrementar(it)}>-</IconButton>
+            {/* Contenido */}
+            <CardContent sx={{ flex: 1 }}>
+              <Typography variant="h6" fontWeight="bold">
+                {it.producto?.nombre}
+              </Typography>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{
+                  display: "-webkit-box",
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  mb: 1,
+                }}
+              >
+                {it.producto?.descripcion}
+              </Typography>
 
-                    <TextField
-                      type="number"
-                      size="small"
-                      value={it.cantidad}
-                      inputProps={{ min: 1 }}
-                      onChange={(e) => {
-                        const nuevaCantidad = Number(e.target.value);
-                        if (nuevaCantidad >= 1)
-                          setCantidad(it.id, nuevaCantidad);
-                      }}
-                      sx={{ width: 70 }}
-                    />
-
-                    <IconButton onClick={() => incrementar(it)}>+</IconButton>
-                  </Box>
-                </Grid>
-
-                <Grid item xs={12} sm={3}>
-                  <Typography variant="body1" color="primary">
-                    ${Number(
-                      it.subtotal || it.cantidad * it.producto?.precio
-                    ).toFixed(2)}
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={12} sm={1}>
-                  <IconButton
-                    color="error"
-                    onClick={() => eliminarItem(it.id)}
-                  >
-                    🗑️
-                  </IconButton>
-                </Grid>
-              </Grid>
+              <Typography variant="subtitle1" color="primary" fontWeight="bold">
+                ${Number(it.subtotal || it.cantidad * it.producto?.precio).toFixed(2)}
+              </Typography>
             </CardContent>
+
+            {/* Controles */}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                p: 2,
+              }}
+            >
+              <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                <Button
+                  onClick={() => decrementar(it)}
+                  size="small"
+                  variant="outlined"
+                  sx={{
+                    minWidth: 30,
+                    fontWeight: "bold",
+                    backgroundColor: "#f0f0f0",
+                    "&:hover": {
+                      backgroundColor: "#e0e0e0",
+                      transform: "scale(1.1)",
+                    },
+                    transition: "all 0.2s",
+                  }}
+                >
+                  -
+                </Button>
+                <TextField
+                  type="number"
+                  size="small"
+                  value={it.cantidad}
+                  inputProps={{ min: 1 }}
+                  onChange={(e) => {
+                    const nuevaCantidad = Number(e.target.value);
+                    if (nuevaCantidad >= 1) setCantidad(it.id, nuevaCantidad);
+                  }}
+                  sx={{ width: 60, "& input": { textAlign: "center" } }}
+                />
+                <Button
+                  onClick={() => incrementar(it)}
+                  size="small"
+                  variant="outlined"
+                  sx={{
+                    minWidth: 30,
+                    fontWeight: "bold",
+                    backgroundColor: "#f0f0f0",
+                    "&:hover": {
+                      backgroundColor: "#e0e0e0",
+                      transform: "scale(1.1)",
+                    },
+                    transition: "all 0.2s",
+                  }}
+                >
+                  +
+                </Button>
+                {/* Botón eliminar a la derecha */}
+                <Button
+                  onClick={() => eliminarItem(it.id)}
+                  variant="contained"
+                  color="error"
+                  sx={{
+                    minWidth: 40,
+                    fontWeight: "bold",
+                    ml: 1,
+                    "&:hover": {
+                      backgroundColor: "#d32f2f",
+                      transform: "scale(1.1)",
+                    },
+                    transition: "all 0.2s",
+                  }}
+                >
+                  ✖️
+                </Button>
+              </Box>
+            </Box>
           </Card>
         ))}
 
@@ -137,6 +208,10 @@ export default function Carrito() {
             variant="contained"
             color="primary"
             size="large"
+            sx={{
+              transition: "all 0.3s",
+              "&:hover": { transform: "scale(1.05)", boxShadow: 6 },
+            }}
             onClick={comprar}
           >
             Comprar
