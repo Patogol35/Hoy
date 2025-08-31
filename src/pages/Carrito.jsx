@@ -83,15 +83,15 @@ export default function Carrito() {
               "&:hover": { boxShadow: 8, transform: "scale(1.01)" },
             }}
           >
-            {/* Imagen */}
+            {/* Imagen más pequeña */}
             <CardMedia
               component="img"
-              image={it.producto?.imagen} // 🔥 aquí el cambio importante
+              image={it.producto?.imagen} // campo correcto
               alt={it.producto?.nombre}
               sx={{
-                width: { xs: "100%", sm: 150 },
-                height: { xs: 180, sm: 150 },
-                objectFit: "contain",     // se ve toda la imagen
+                width: { xs: "100%", sm: 100 },    // más pequeña en desktop
+                height: { xs: 120, sm: 100 },      // más compacta
+                objectFit: "contain",              // se ve toda la imagen
                 bgcolor: "#f5f5f5",
                 borderRadius: { xs: "8px 8px 0 0", sm: "8px 0 0 8px" },
                 p: 1,
@@ -136,7 +136,6 @@ export default function Carrito() {
               }}
             >
               <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-                {/* Botón - */}
                 <Button
                   onClick={() => decrementar(it)}
                   size="small"
@@ -155,7 +154,6 @@ export default function Carrito() {
                   -
                 </Button>
 
-                {/* Cantidad */}
                 <TextField
                   type="number"
                   size="small"
@@ -168,7 +166,6 @@ export default function Carrito() {
                   sx={{ width: 60, "& input": { textAlign: "center" } }}
                 />
 
-                {/* Botón + */}
                 <Button
                   onClick={() => incrementar(it)}
                   size="small"
@@ -187,7 +184,6 @@ export default function Carrito() {
                   +
                 </Button>
 
-                {/* Botón Eliminar */}
                 <Button
                   onClick={() => eliminarItem(it.id)}
                   variant="contained"
@@ -247,4 +243,4 @@ export default function Carrito() {
       )}
     </Container>
   );
-                }
+}
