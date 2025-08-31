@@ -1,19 +1,15 @@
 // =====================
-// BASE URLS
+// BASE URL
 // =====================
-export const API_URL =
+const BASE_URL =
   import.meta?.env?.VITE_API_URL ||
   "https://tiendaback-p3sl.onrender.com/api";
-
-export const MEDIA_URL =
-  import.meta?.env?.VITE_MEDIA_URL ||
-  "https://tiendaback-p3sl.onrender.com";
 
 // =====================
 // REFRESH TOKEN
 // =====================
 export const refreshToken = async (refresh) => {
-  const res = await fetch(`${API_URL}/token/refresh/`, {
+  const res = await fetch(`${BASE_URL}/token/refresh/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ refresh }),
@@ -81,14 +77,14 @@ async function authFetch(url, options = {}, token) {
 
 // AUTH
 export const login = async (credentials) => {
-  return authFetch(`${API_URL}/token/`, {
+  return authFetch(`${BASE_URL}/token/`, {
     method: "POST",
     body: JSON.stringify(credentials),
   });
 };
 
 export const register = async (data) => {
-  return authFetch(`${API_URL}/register/`, {
+  return authFetch(`${BASE_URL}/register/`, {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -96,17 +92,17 @@ export const register = async (data) => {
 
 // PRODUCTOS
 export const getProductos = async () => {
-  return authFetch(`${API_URL}/productos/`, { method: "GET" });
+  return authFetch(`${BASE_URL}/productos/`, { method: "GET" });
 };
 
 // CARRITO
 export const getCarrito = async (token) => {
-  return authFetch(`${API_URL}/carrito/`, { method: "GET" }, token);
+  return authFetch(`${BASE_URL}/carrito/`, { method: "GET" }, token);
 };
 
 export const agregarAlCarrito = async (producto_id, cantidad = 1, token) => {
   return authFetch(
-    `${API_URL}/carrito/agregar/`,
+    `${BASE_URL}/carrito/agregar/`,
     {
       method: "POST",
       body: JSON.stringify({ producto_id, cantidad }),
@@ -117,7 +113,7 @@ export const agregarAlCarrito = async (producto_id, cantidad = 1, token) => {
 
 export const eliminarDelCarrito = async (itemId, token) => {
   return authFetch(
-    `${API_URL}/carrito/eliminar/${itemId}/`,
+    `${BASE_URL}/carrito/eliminar/${itemId}/`,
     { method: "DELETE" },
     token
   );
@@ -125,7 +121,7 @@ export const eliminarDelCarrito = async (itemId, token) => {
 
 export const setCantidadItem = async (itemId, cantidad, token) => {
   return authFetch(
-    `${API_URL}/carrito/actualizar/${itemId}/`,
+    `${BASE_URL}/carrito/actualizar/${itemId}/`,
     { method: "PUT", body: JSON.stringify({ cantidad }) },
     token
   );
@@ -133,9 +129,9 @@ export const setCantidadItem = async (itemId, cantidad, token) => {
 
 // PEDIDOS
 export const crearPedido = async (token) => {
-  return authFetch(`${API_URL}/pedido/crear/`, { method: "POST" }, token);
+  return authFetch(`${BASE_URL}/pedido/crear/`, { method: "POST" }, token);
 };
 
 export const getPedidos = async (token) => {
-  return authFetch(`${API_URL}/pedidos/`, { method: "GET" }, token);
+  return authFetch(`${BASE_URL}/pedidos/`, { method: "GET" }, token);
 };
