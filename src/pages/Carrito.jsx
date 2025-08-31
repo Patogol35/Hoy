@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+  import { useEffect } from "react";
 import { useCarrito } from "../context/CarritoContext";
 import { useAuth } from "../context/AuthContext";
 import { crearPedido } from "../api/api";
@@ -213,4 +213,4 @@ export default function Carrito() {
       )}
     </Container>
   );
-                }
+}
