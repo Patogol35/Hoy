@@ -49,15 +49,24 @@ export default function ProductoCard({ producto }) {
       }}
     >
       {/* Imagen */}
-      <Box sx={{ position: "relative" }}>
-        <CardMedia
+      <Box
+        sx={{
+          position: "relative",
+          height: 220, // alto fijo para que todos los cards tengan el mismo tamaño
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          bgcolor: "#f5f5f5", // fondo opcional para que se vea mejor si la imagen no llena todo
+        }}
+      >
+        <Box
           component="img"
-          image={producto.imagen}  // <-- CORRECCIÓN: usamos el campo imagen directamente
+          src={producto.imagen} // usamos la URL directa
           alt={producto.nombre}
           sx={{
-            height: 220,
-            width: "100%",
-            objectFit: "cover",
+            maxHeight: "100%",
+            maxWidth: "100%",
+            objectFit: "contain", // se ve toda la imagen
             transition: "transform 0.5s ease",
             "&:hover": { transform: "scale(1.07)" },
           }}
@@ -158,4 +167,4 @@ export default function ProductoCard({ producto }) {
       </Box>
     </Card>
   );
-              }
+            }
