@@ -59,8 +59,8 @@ export default function Carrito() {
     it.cantidad > 1 && setCantidad(it.id, it.cantidad - 1);
 
   return (
-    <Container sx={{ mt: 4 }}>
-      <Typography variant="h4" gutterBottom>
+    <Container sx={{ mt: 4, mb: 6 }}>
+      <Typography variant="h4" gutterBottom fontWeight="bold">
         Carrito
       </Typography>
 
@@ -75,6 +75,7 @@ export default function Carrito() {
             key={it.id}
             sx={{
               display: "flex",
+              flexDirection: { xs: "column", sm: "row" }, // Vertical en móviles
               mb: 2,
               borderRadius: 3,
               boxShadow: 3,
@@ -88,10 +89,10 @@ export default function Carrito() {
               image={it.producto?.imagen_url}
               alt={it.producto?.nombre}
               sx={{
-                width: { xs: 100, sm: 150 },
-                height: { xs: 100, sm: 150 },
+                width: { xs: "100%", sm: 150 },
+                height: { xs: 180, sm: 150 },
                 objectFit: "cover",
-                borderRadius: "8px 0 0 8px",
+                borderRadius: { xs: "8px 8px 0 0", sm: "8px 0 0 8px" },
               }}
             />
 
@@ -114,9 +115,11 @@ export default function Carrito() {
               >
                 {it.producto?.descripcion}
               </Typography>
-
               <Typography variant="subtitle1" color="primary" fontWeight="bold">
-                ${Number(it.subtotal || it.cantidad * it.producto?.precio).toFixed(2)}
+                $
+                {Number(
+                  it.subtotal || it.cantidad * it.producto?.precio
+                ).toFixed(2)}
               </Typography>
             </CardContent>
 
@@ -131,6 +134,7 @@ export default function Carrito() {
               }}
             >
               <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                {/* Botón - */}
                 <Button
                   onClick={() => decrementar(it)}
                   size="small"
@@ -148,6 +152,8 @@ export default function Carrito() {
                 >
                   -
                 </Button>
+
+                {/* Cantidad */}
                 <TextField
                   type="number"
                   size="small"
@@ -159,6 +165,8 @@ export default function Carrito() {
                   }}
                   sx={{ width: 60, "& input": { textAlign: "center" } }}
                 />
+
+                {/* Botón + */}
                 <Button
                   onClick={() => incrementar(it)}
                   size="small"
@@ -176,7 +184,8 @@ export default function Carrito() {
                 >
                   +
                 </Button>
-                {/* Botón eliminar a la derecha */}
+
+                {/* Botón Eliminar */}
                 <Button
                   onClick={() => eliminarItem(it.id)}
                   variant="contained"
@@ -192,15 +201,28 @@ export default function Carrito() {
                     transition: "all 0.2s",
                   }}
                 >
-                  ✖️
+                  X
                 </Button>
               </Box>
             </Box>
           </Card>
         ))}
 
+      {/* Total y comprar */}
       {!loading && items.length > 0 && (
-        <Box mt={3} textAlign="right">
+        <Box
+          mt={3}
+          sx={{
+            textAlign: "right",
+            position: { xs: "fixed", sm: "static" },
+            bottom: { xs: 0, sm: "auto" },
+            left: 0,
+            right: 0,
+            bgcolor: { xs: "white", sm: "transparent" },
+            p: { xs: 2, sm: 0 },
+            boxShadow: { xs: "0 -4px 10px rgba(0,0,0,0.1)", sm: "none" },
+          }}
+        >
           <Typography variant="h6" gutterBottom>
             Total: ${total.toFixed(2)}
           </Typography>
@@ -209,7 +231,9 @@ export default function Carrito() {
             color="primary"
             size="large"
             sx={{
+              width: { xs: "100%", sm: "auto" },
               transition: "all 0.3s",
+              fontWeight: "bold",
               "&:hover": { transform: "scale(1.05)", boxShadow: 6 },
             }}
             onClick={comprar}
@@ -220,4 +244,4 @@ export default function Carrito() {
       )}
     </Container>
   );
-}
+            }
