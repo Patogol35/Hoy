@@ -46,7 +46,7 @@ export default function Navbar() {
         sx={{
           bgcolor: "white",
           color: "primary.main",
-          boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+          boxShadow: "0 2px 12px rgba(0,0,0,0.05)",
           px: 2,
         }}
       >
@@ -64,7 +64,7 @@ export default function Navbar() {
               fontSize: "1.4rem",
             }}
           >
-            🛍️ Tienda - Jorge Patricio Santamaría Cherrez
+            🛍️ MiTienda
           </Typography>
 
           {/* Menú */}
@@ -75,7 +75,7 @@ export default function Navbar() {
                 border: "1px solid",
                 borderColor: "primary.main",
                 color: "primary.main",
-                borderRadius: "999px",
+                borderRadius: "8px",
                 px: 2,
                 py: 0.5,
                 fontWeight: 600,
@@ -99,7 +99,7 @@ export default function Navbar() {
                     sx={{
                       textTransform: "none",
                       fontWeight: 600,
-                      borderRadius: "999px",
+                      borderRadius: "8px",
                       px: 2,
                       color: "primary.main",
                       "&:hover": {
@@ -118,7 +118,7 @@ export default function Navbar() {
                     sx={{
                       textTransform: "none",
                       fontWeight: 600,
-                      borderRadius: "999px",
+                      borderRadius: "8px",
                       px: 2,
                     }}
                   >
@@ -131,7 +131,7 @@ export default function Navbar() {
         </Toolbar>
       </AppBar>
 
-      {/* Drawer flotante para móvil */}
+      {/* Drawer flotante elegante */}
       <Drawer
         anchor="right"
         open={open}
@@ -143,8 +143,8 @@ export default function Navbar() {
             borderRadius: "16px 0 0 16px",
             bgcolor: "white",
             boxShadow: "0px 4px 20px rgba(0,0,0,0.1)",
-            mt: 10, // baja un poco desde arriba
-            overflow: "auto", // scroll interno
+            mt: 10,
+            overflow: "auto",
           },
         }}
       >
@@ -170,7 +170,7 @@ export default function Navbar() {
               onClick={item.action || (() => setOpen(false))}
               sx={{
                 mb: 1,
-                borderRadius: 2,
+                borderRadius: 1.5,
                 bgcolor: item.highlight ? "primary.main" : "transparent",
                 color: item.highlight ? "white" : "text.primary",
                 "&:hover": {
