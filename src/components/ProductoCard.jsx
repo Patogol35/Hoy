@@ -52,7 +52,7 @@ export default function ProductoCard({ producto }) {
       <Box sx={{ position: "relative" }}>
         <CardMedia
           component="img"
-          image={producto.imagen_url}
+          image={producto.imagen}  // <-- CORRECCIÓN: usamos el campo imagen directamente
           alt={producto.nombre}
           sx={{
             height: 220,
@@ -158,4 +158,4 @@ export default function ProductoCard({ producto }) {
       </Box>
     </Card>
   );
-}
+              }
