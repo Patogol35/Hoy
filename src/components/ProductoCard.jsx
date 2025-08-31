@@ -40,23 +40,22 @@ export default function ProductoCard({ producto }) {
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
-        transition: "transform 0.3s ease, box-shadow 0.3s ease",
         "&:hover": {
-          transform: "translateY(-8px)",
+          transform: "translateY(-5px)",
           boxShadow: 12,
         },
       }}
     >
-      {/* Imagen */}
+      {/* Contenedor imagen fijo */}
       <Box
         sx={{
           position: "relative",
-          height: 220, 
+          height: 220,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          bgcolor: "#f5f5f5", 
-          overflow: "hidden",  // 🔹 recorta espacios extra fuera del contenedor
+          bgcolor: "#f5f5f5",
+          overflow: "hidden",
         }}
       >
         <Box
@@ -64,9 +63,9 @@ export default function ProductoCard({ producto }) {
           src={producto.imagen}
           alt={producto.nombre}
           sx={{
-            width: "100%",
-            height: "100%", // ocupa todo el contenedor
-            objectFit: "contain", // se ve completa
+            maxWidth: "100%",
+            maxHeight: "100%",
+            objectFit: "contain",
           }}
         />
 
@@ -89,11 +88,7 @@ export default function ProductoCard({ producto }) {
 
       {/* Contenido */}
       <Box sx={{ p: 2, flexGrow: 1, display: "flex", flexDirection: "column" }}>
-        <Typography
-          variant="h6"
-          fontWeight="bold"
-          sx={{ mb: 1, color: "text.primary" }}
-        >
+        <Typography variant="h6" fontWeight="bold" sx={{ mb: 1 }}>
           {producto.nombre}
         </Typography>
 
@@ -103,7 +98,6 @@ export default function ProductoCard({ producto }) {
           sx={{
             flexGrow: 1,
             mb: 2,
-            lineHeight: 1.4,
             display: "-webkit-box",
             WebkitLineClamp: 3,
             WebkitBoxOrient: "vertical",
@@ -116,12 +110,7 @@ export default function ProductoCard({ producto }) {
 
         <Divider sx={{ my: 1 }} />
 
-        <Typography
-          variant="h6"
-          color="primary"
-          fontWeight="bold"
-          sx={{ mb: 2 }}
-        >
+        <Typography variant="h6" color="primary" fontWeight="bold" sx={{ mb: 2 }}>
           ${producto.precio}
         </Typography>
 
@@ -130,12 +119,7 @@ export default function ProductoCard({ producto }) {
             variant="contained"
             color="primary"
             fullWidth
-            sx={{
-              borderRadius: 2,
-              textTransform: "none",
-              fontWeight: "bold",
-              py: 1,
-            }}
+            sx={{ borderRadius: 2, textTransform: "none", py: 1 }}
             onClick={onAdd}
           >
             Agregar al carrito 🛒
@@ -145,12 +129,7 @@ export default function ProductoCard({ producto }) {
             variant="outlined"
             color="inherit"
             fullWidth
-            sx={{
-              borderRadius: 2,
-              textTransform: "none",
-              fontWeight: "medium",
-              py: 1,
-            }}
+            sx={{ borderRadius: 2, textTransform: "none", py: 1 }}
             onClick={() =>
               navigate(`/producto/${producto.id}`, { state: { producto } })
             }
