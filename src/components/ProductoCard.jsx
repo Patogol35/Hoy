@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+            import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useCarrito } from "../context/CarritoContext";
 import { toast } from "react-toastify";
@@ -11,6 +11,7 @@ import {
   Box,
   Divider,
 } from "@mui/material";
+import { MEDIA_URL } from "../api"; // 👈 importante
 
 export default function ProductoCard({ producto }) {
   const { isAuthenticated } = useAuth();
@@ -52,7 +53,7 @@ export default function ProductoCard({ producto }) {
       <Box sx={{ position: "relative" }}>
         <CardMedia
           component="img"
-          image={producto.imagen_url}
+          image={`${MEDIA_URL}${producto.image || producto.imagen_url}`} // 👈 aquí el fix
           alt={producto.nombre}
           sx={{
             height: 220,
