@@ -36,15 +36,16 @@ export default function ProductoDetalle() {
         <Grid item xs={12} md={6}>
           <Box
             component="img"
-            src={producto.imagen}  // <-- CORRECCIÓN: usamos el campo imagen directamente
+            src={producto.imagen}  // <-- usamos el campo imagen directamente
             alt={producto.nombre}
             sx={{
               width: "100%",
-              height: 400,          
-              objectFit: "cover",   
+              height: 400,
+              objectFit: "contain",   // <-- CORRECCIÓN: se ve toda la imagen
               objectPosition: "center",
               borderRadius: 3,
               boxShadow: 3,
+              backgroundColor: "#f5f5f5", // opcional, para que se vea mejor si hay espacios
             }}
           />
         </Grid>
@@ -70,5 +71,4 @@ export default function ProductoDetalle() {
     </Box>
   );
 }
-
 
