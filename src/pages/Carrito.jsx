@@ -59,7 +59,7 @@ export default function Carrito() {
     it.cantidad > 1 && setCantidad(it.id, it.cantidad - 1);
 
   return (
-    <Container sx={{ mt: 4, mb: 6 }}>
+    <Container sx={{ mt: 4, mb: { xs: 12, sm: 6 } }}>
       <Typography variant="h4" gutterBottom fontWeight="bold">
         Carrito
       </Typography>
@@ -75,7 +75,7 @@ export default function Carrito() {
             key={it.id}
             sx={{
               display: "flex",
-              flexDirection: { xs: "column", sm: "row" }, // Vertical en móviles
+              flexDirection: { xs: "column", sm: "row" },
               mb: 2,
               borderRadius: 3,
               boxShadow: 3,
@@ -221,6 +221,7 @@ export default function Carrito() {
             bgcolor: { xs: "white", sm: "transparent" },
             p: { xs: 2, sm: 0 },
             boxShadow: { xs: "0 -4px 10px rgba(0,0,0,0.1)", sm: "none" },
+            borderTop: { xs: "1px solid #ddd", sm: "none" },
           }}
         >
           <Typography variant="h6" gutterBottom>
@@ -244,4 +245,4 @@ export default function Carrito() {
       )}
     </Container>
   );
-                              }
+  }
