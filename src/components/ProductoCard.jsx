@@ -51,24 +51,22 @@ export default function ProductoCard({ producto }) {
       <Box
         sx={{
           position: "relative",
-          height: 220, // alto fijo para que todas las cards sean iguales
+          height: 220, 
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          bgcolor: "#f5f5f5", // fondo gris opcional
+          bgcolor: "#f5f5f5", 
+          overflow: "hidden",  // 🔹 recorta espacios extra fuera del contenedor
         }}
       >
         <Box
           component="img"
-          src={producto.imagen} // URL del producto
+          src={producto.imagen}
           alt={producto.nombre}
           sx={{
-            width: "100%",   // ocupa todo el ancho del contenedor
-            height: "auto",  // mantiene proporción
-            maxHeight: "100%", // no excede la altura del contenedor
+            width: "100%",
+            height: "100%", // ocupa todo el contenedor
             objectFit: "contain", // se ve completa
-            transition: "transform 0.5s ease",
-            "&:hover": { transform: "scale(1.07)" },
           }}
         />
 
@@ -127,7 +125,6 @@ export default function ProductoCard({ producto }) {
           ${producto.precio}
         </Typography>
 
-        {/* Botones */}
         <Box sx={{ display: "flex", gap: 1, flexDirection: "column" }}>
           <Button
             variant="contained"
@@ -138,7 +135,6 @@ export default function ProductoCard({ producto }) {
               textTransform: "none",
               fontWeight: "bold",
               py: 1,
-              "&:hover": { transform: "scale(1.05)", boxShadow: 6 },
             }}
             onClick={onAdd}
           >
@@ -154,7 +150,6 @@ export default function ProductoCard({ producto }) {
               textTransform: "none",
               fontWeight: "medium",
               py: 1,
-              "&:hover": { transform: "scale(1.05)", boxShadow: 3 },
             }}
             onClick={() =>
               navigate(`/producto/${producto.id}`, { state: { producto } })
@@ -166,4 +161,4 @@ export default function ProductoCard({ producto }) {
       </Box>
     </Card>
   );
-          }
+}
