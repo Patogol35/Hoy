@@ -36,14 +36,14 @@ export default function ProductoCard({ producto }) {
         width: "100%",
         maxWidth: 320,
         borderRadius: 3,
-        boxShadow: 3,
+        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
         transition: "transform 0.3s ease, box-shadow 0.3s ease",
         "&:hover": {
-          transform: "translateY(-10px)",
-          boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
+          transform: "translateY(-8px)",
+          boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
         },
       }}
     >
@@ -163,5 +163,4 @@ export default function ProductoCard({ producto }) {
       </Box>
     </Card>
   );
-              }
-          
+}
