@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+                import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
   AppBar,
@@ -51,7 +51,7 @@ export default function Navbar() {
         }}
       >
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-          {/* Logo */}
+          {/* Logo y nombre del usuario */}
           <Box
             component={Link}
             to="/"
@@ -88,7 +88,7 @@ export default function Navbar() {
             </Typography>
           </Box>
 
-          {/* Menú Desktop/Mobile */}
+          {/* Menú para desktop o mobile */}
           {isMobile ? (
             <Button
               onClick={() => setOpen(true)}
@@ -152,7 +152,7 @@ export default function Navbar() {
         </Toolbar>
       </AppBar>
 
-      {/* Drawer flotante */}
+      {/* Drawer para mobile */}
       <Drawer
         anchor="right"
         open={open}
