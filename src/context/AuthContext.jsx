@@ -2,10 +2,14 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 const AuthContext = createContext();
 
-// 🔥 Función para decodificar JWT sin librerías
+// Función segura para decodificar JWT
 function decodeJWT(token) {
+  if (!token || typeof token !== "string") return null;
   try {
-    const base64Url = token.split(".")[1];
+    const parts = token.split(".");
+    if (parts.length !== 3) return null;
+
+    const base64Url = parts[1];
     const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
     const jsonPayload = decodeURIComponent(
       atob(base64)
@@ -13,6 +17,7 @@ function decodeJWT(token) {
         .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
         .join("")
     );
+
     return JSON.parse(jsonPayload);
   } catch (error) {
     console.error("Error al decodificar token:", error);
@@ -27,15 +32,22 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const savedAccess = localStorage.getItem("access");
-    const savedRefresh = localStorage.getItem("refresh");
-    if (savedAccess) {
-      setAccess(savedAccess);
-      const decoded = decodeJWT(savedAccess); // 👈 Usamos la función
-      setUser(decoded);
+    try {
+      const savedAccess = localStorage.getItem("access");
+      const savedRefresh = localStorage.getItem("refresh");
+
+      if (savedAccess) {
+        setAccess(savedAccess);
+        const decoded = decodeJWT(savedAccess);
+        if (decoded) setUser(decoded);
+      }
+
+      if (savedRefresh) setRefresh(savedRefresh);
+    } catch (error) {
+      console.error("Error cargando sesión:", error);
+    } finally {
+      setLoading(false);
     }
-    if (savedRefresh) setRefresh(savedRefresh);
-    setLoading(false);
   }, []);
 
   const isAuthenticated = !!access;
@@ -47,7 +59,7 @@ export function AuthProvider({ children }) {
     setRefresh(refreshToken);
 
     const decoded = decodeJWT(accessToken);
-    setUser(decoded);
+    if (decoded) setUser(decoded);
   };
 
   const logout = () => {
