@@ -1,4 +1,4 @@
-                import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
   AppBar,
@@ -16,7 +16,7 @@ import {
 import { useState } from "react";
 
 export default function Navbar() {
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width:600px)");
   const [open, setOpen] = useState(false);
@@ -51,7 +51,7 @@ export default function Navbar() {
         }}
       >
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-          {/* Logo y nombre del usuario */}
+          {/* Logo con subtítulo */}
           <Box
             component={Link}
             to="/"
@@ -82,13 +82,11 @@ export default function Navbar() {
                 color: "primary.main",
               }}
             >
-              {isAuthenticated
-                ? `Hola, ${user?.name || user?.username || "Usuario"}`
-                : "Bienvenido"}
+              Desarrollado por Jorge Patricio Santamaría Cherrez
             </Typography>
           </Box>
 
-          {/* Menú para desktop o mobile */}
+          {/* Menú */}
           {isMobile ? (
             <Button
               onClick={() => setOpen(true)}
@@ -152,7 +150,7 @@ export default function Navbar() {
         </Toolbar>
       </AppBar>
 
-      {/* Drawer para mobile */}
+      {/* Drawer flotante elegante */}
       <Drawer
         anchor="right"
         open={open}
@@ -214,4 +212,4 @@ export default function Navbar() {
       </Drawer>
     </>
   );
-}
+              }
