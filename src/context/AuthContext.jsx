@@ -8,7 +8,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Recuperar sesión desde localStorage
+  // Recuperar sesión guardada
   useEffect(() => {
     const savedAccess = localStorage.getItem("access");
     const savedRefresh = localStorage.getItem("refresh");
@@ -24,10 +24,12 @@ export function AuthProvider({ children }) {
   const isAuthenticated = !!access;
 
   const login = (accessToken, refreshToken, userData) => {
+    // Guardar en localStorage
     localStorage.setItem("access", accessToken);
     localStorage.setItem("refresh", refreshToken);
     localStorage.setItem("user", JSON.stringify(userData));
 
+    // Actualizar estado
     setAccess(accessToken);
     setRefresh(refreshToken);
     setUser(userData);
