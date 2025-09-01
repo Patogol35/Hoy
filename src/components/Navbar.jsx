@@ -1,4 +1,3 @@
-
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
@@ -17,7 +16,7 @@ import {
 import { useState } from "react";
 
 export default function Navbar() {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width:600px)");
   const [open, setOpen] = useState(false);
@@ -83,9 +82,24 @@ export default function Navbar() {
                 color: "primary.main",
               }}
             >
-              Jorge Patricio Santamaría Cherrez
+              Bienvenido
             </Typography>
           </Box>
+
+          {/* Nombre del usuario autenticado */}
+          {isAuthenticated && user && !isMobile && (
+            <Typography
+              variant="body1"
+              sx={{
+                fontWeight: 600,
+                color: "primary.main",
+                mr: 2,
+                whiteSpace: "nowrap",
+              }}
+            >
+              👤 {user.username || user.name || user.email}
+            </Typography>
+          )}
 
           {/* Menú */}
           {isMobile ? (
@@ -178,6 +192,15 @@ export default function Navbar() {
           >
             Menú
           </Typography>
+          {/* Nombre del usuario en menú móvil */}
+          {isAuthenticated && user && (
+            <Typography
+              variant="body2"
+              sx={{ fontWeight: 600, color: "text.secondary", mt: 1 }}
+            >
+              👤 {user.username || user.name || user.email}
+            </Typography>
+          )}
         </Box>
         <Divider />
         <List sx={{ p: 2 }}>
