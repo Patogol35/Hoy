@@ -2,44 +2,57 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 const AuthContext = createContext();
 
+// 🔥 Función para decodificar JWT sin librerías
+function decodeJWT(token) {
+  try {
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join("")
+    );
+    return JSON.parse(jsonPayload);
+  } catch (error) {
+    console.error("Error al decodificar token:", error);
+    return null;
+  }
+}
+
 export function AuthProvider({ children }) {
   const [access, setAccess] = useState(null);
   const [refresh, setRefresh] = useState(null);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Recuperar sesión guardada
   useEffect(() => {
     const savedAccess = localStorage.getItem("access");
     const savedRefresh = localStorage.getItem("refresh");
-    const savedUser = localStorage.getItem("user");
-
-    if (savedAccess) setAccess(savedAccess);
+    if (savedAccess) {
+      setAccess(savedAccess);
+      const decoded = decodeJWT(savedAccess); // 👈 Usamos la función
+      setUser(decoded);
+    }
     if (savedRefresh) setRefresh(savedRefresh);
-    if (savedUser) setUser(JSON.parse(savedUser));
-
     setLoading(false);
   }, []);
 
   const isAuthenticated = !!access;
 
-  const login = (accessToken, refreshToken, userData) => {
-    // Guardar en localStorage
+  const login = (accessToken, refreshToken) => {
     localStorage.setItem("access", accessToken);
     localStorage.setItem("refresh", refreshToken);
-    localStorage.setItem("user", JSON.stringify(userData));
-
-    // Actualizar estado
     setAccess(accessToken);
     setRefresh(refreshToken);
-    setUser(userData);
+
+    const decoded = decodeJWT(accessToken);
+    setUser(decoded);
   };
 
   const logout = () => {
     localStorage.removeItem("access");
     localStorage.removeItem("refresh");
-    localStorage.removeItem("user");
-
     setAccess(null);
     setRefresh(null);
     setUser(null);
