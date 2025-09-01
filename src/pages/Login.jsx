@@ -1,4 +1,4 @@
-            import { useState } from "react";
+import { useState } from "react";
 import { login as apiLogin } from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -87,7 +87,7 @@ export default function Login() {
               ),
             }}
           />
-          <Box mt={2}>
+          <Box mt={2} display="flex" flexDirection="column" gap={2}>
             <Button
               type="submit"
               variant="contained"
@@ -98,9 +98,19 @@ export default function Login() {
             >
               {loading ? "Entrando..." : "Iniciar sesión"}
             </Button>
+
+            {/* Botón de registro */}
+            <Button
+              variant="outlined"
+              color="secondary"
+              fullWidth
+              onClick={() => navigate("/register")}
+            >
+              Registrarse
+            </Button>
           </Box>
         </form>
       </Paper>
     </Container>
   );
-            }
+}
