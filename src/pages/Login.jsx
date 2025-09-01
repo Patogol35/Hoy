@@ -99,10 +99,10 @@ export default function Login() {
               {loading ? "Entrando..." : "Iniciar sesión"}
             </Button>
 
-            {/* Botón de registro */}
+            {/* Botón de registro con el mismo diseño */}
             <Button
-              variant="outlined"
-              color="secondary"
+              variant="contained"
+              color="primary"
               fullWidth
               onClick={() => navigate("/register")}
             >
@@ -113,4 +113,4 @@ export default function Login() {
       </Paper>
     </Container>
   );
-}
+          }
