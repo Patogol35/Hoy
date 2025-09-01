@@ -64,7 +64,7 @@ export default function Navbar() {
               fontSize: "1.4rem",
             }}
           >
-            🛍️ MiTienda
+            🛍️ MiTienda Jorge Patricio Santamaría Cherrez
           </Typography>
 
           {/* Menú */}
