@@ -51,21 +51,39 @@ export default function Navbar() {
         }}
       >
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-          {/* Logo */}
-          <Typography
-            variant="h6"
+          {/* Logo con subtítulo */}
+          <Box
             component={Link}
             to="/"
             sx={{
               textDecoration: "none",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
               color: "primary.main",
-              fontWeight: "bold",
-              letterSpacing: 1,
-              fontSize: "1.4rem",
             }}
           >
-            🛍️ MiTienda Jorge Patricio Santamaría Cherrez
-          </Typography>
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: "bold",
+                letterSpacing: 1,
+                fontSize: "1.4rem",
+                lineHeight: 1.2,
+              }}
+            >
+              🛍️ MiTienda
+            </Typography>
+            <Typography
+              variant="caption"
+              sx={{
+                fontSize: "0.75rem",
+                color: "text.secondary",
+              }}
+            >
+              Jorge Patricio Santamaría Cherrez
+            </Typography>
+          </Box>
 
           {/* Menú */}
           {isMobile ? (
@@ -193,4 +211,4 @@ export default function Navbar() {
       </Drawer>
     </>
   );
-}
+      }
