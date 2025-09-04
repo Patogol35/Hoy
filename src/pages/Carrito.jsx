@@ -17,6 +17,26 @@ import {
   TextField,
 } from "@mui/material";
 
+// Banner de demo
+function DemoBanner() {
+  return (
+    <Box
+      sx={{
+        bgcolor: "#FFF3CD",
+        color: "#856404",
+        p: 2,
+        borderRadius: 2,
+        mb: 3,
+        border: "1px solid #FFEEBA",
+      }}
+    >
+      <Typography variant="body1" fontWeight="bold">
+        ⚠️ Esta es una aplicación demostrativa. Los pedidos no son reales y no se piden datos sensibles.
+      </Typography>
+    </Box>
+  );
+}
+
 export default function Carrito() {
   const {
     items,
@@ -60,6 +80,9 @@ export default function Carrito() {
 
   return (
     <Container sx={{ mt: 4, pb: { xs: 12, sm: 6 } }}>
+      {/* Banner de demo */}
+      <DemoBanner />
+
       <Typography variant="h4" gutterBottom fontWeight="bold">
         Carrito
       </Typography>
@@ -83,15 +106,15 @@ export default function Carrito() {
               "&:hover": { boxShadow: 8, transform: "scale(1.01)" },
             }}
           >
-            {/* Imagen más pequeña */}
+            {/* Imagen */}
             <CardMedia
               component="img"
-              image={it.producto?.imagen} // campo correcto
+              image={it.producto?.imagen}
               alt={it.producto?.nombre}
               sx={{
-                width: { xs: "100%", sm: 100 },    // más pequeña en desktop
-                height: { xs: 120, sm: 100 },      // más compacta
-                objectFit: "contain",              // se ve toda la imagen
+                width: { xs: "100%", sm: 100 },
+                height: { xs: 120, sm: 100 },
+                objectFit: "contain",
                 bgcolor: "#f5f5f5",
                 borderRadius: { xs: "8px 8px 0 0", sm: "8px 0 0 8px" },
                 p: 1,
@@ -118,10 +141,7 @@ export default function Carrito() {
                 {it.producto?.descripcion}
               </Typography>
               <Typography variant="subtitle1" color="primary" fontWeight="bold">
-                $
-                {Number(
-                  it.subtotal || it.cantidad * it.producto?.precio
-                ).toFixed(2)}
+                ${Number(it.subtotal || it.cantidad * it.producto?.precio).toFixed(2)}
               </Typography>
             </CardContent>
 
@@ -136,24 +156,7 @@ export default function Carrito() {
               }}
             >
               <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-                <Button
-                  onClick={() => decrementar(it)}
-                  size="small"
-                  variant="outlined"
-                  sx={{
-                    minWidth: 30,
-                    fontWeight: "bold",
-                    backgroundColor: "#f0f0f0",
-                    "&:hover": {
-                      backgroundColor: "#e0e0e0",
-                      transform: "scale(1.1)",
-                    },
-                    transition: "all 0.2s",
-                  }}
-                >
-                  -
-                </Button>
-
+                <Button onClick={() => decrementar(it)} size="small" variant="outlined" sx={{ minWidth: 30, fontWeight: "bold", backgroundColor: "#f0f0f0", "&:hover": { backgroundColor: "#e0e0e0", transform: "scale(1.1)" }, transition: "all 0.2s" }}>-</Button>
                 <TextField
                   type="number"
                   size="small"
@@ -165,42 +168,8 @@ export default function Carrito() {
                   }}
                   sx={{ width: 60, "& input": { textAlign: "center" } }}
                 />
-
-                <Button
-                  onClick={() => incrementar(it)}
-                  size="small"
-                  variant="outlined"
-                  sx={{
-                    minWidth: 30,
-                    fontWeight: "bold",
-                    backgroundColor: "#f0f0f0",
-                    "&:hover": {
-                      backgroundColor: "#e0e0e0",
-                      transform: "scale(1.1)",
-                    },
-                    transition: "all 0.2s",
-                  }}
-                >
-                  +
-                </Button>
-
-                <Button
-                  onClick={() => eliminarItem(it.id)}
-                  variant="contained"
-                  color="error"
-                  sx={{
-                    minWidth: 40,
-                    fontWeight: "bold",
-                    ml: 1,
-                    "&:hover": {
-                      backgroundColor: "#d32f2f",
-                      transform: "scale(1.1)",
-                    },
-                    transition: "all 0.2s",
-                  }}
-                >
-                  X
-                </Button>
+                <Button onClick={() => incrementar(it)} size="small" variant="outlined" sx={{ minWidth: 30, fontWeight: "bold", backgroundColor: "#f0f0f0", "&:hover": { backgroundColor: "#e0e0e0", transform: "scale(1.1)" }, transition: "all 0.2s" }}>+</Button>
+                <Button onClick={() => eliminarItem(it.id)} variant="contained" color="error" sx={{ minWidth: 40, fontWeight: "bold", ml: 1, "&:hover": { backgroundColor: "#d32f2f", transform: "scale(1.1)" }, transition: "all 0.2s" }}>X</Button>
               </Box>
             </Box>
           </Card>
