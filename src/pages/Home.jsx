@@ -36,7 +36,7 @@ export default function Home() {
         }}
       >
         <Typography variant="body1" fontWeight="bold">
-          ⚠️ Esta es una aplicación demostrativa (proyecto personal mío). Los pedidos no son reales y no se piden datos sensibles.
+          ⚠️ Esta es una aplicación demostrativa (proyecto personal). Los pedidos no son reales y no se piden datos sensibles.
         </Typography>
       </Box>
 
