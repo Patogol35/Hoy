@@ -24,14 +24,22 @@ export default function Home() {
 
   return (
     <Container sx={{ mt: 4 }}>
+      {/* Título */}
       <Typography variant="h4" fontWeight="bold" gutterBottom>
         Productos
       </Typography>
 
+      {/* Aviso de demo */}
+      <Typography variant="body2" color="text.secondary" gutterBottom>
+        ⚠️ Esta es una aplicación demostrativa. Los pedidos no son reales.
+      </Typography>
+
+      {/* Mensaje si no hay productos */}
       {productos.length === 0 && (
         <Typography>No hay productos disponibles.</Typography>
       )}
 
+      {/* Grid de productos */}
       <Grid container spacing={3}>
         {productos.map((prod) => (
           <Grid item xs={12} sm={6} md={4} lg={3} key={prod.id}>
