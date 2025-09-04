@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getProductos } from "../api/api";
 import ProductoCard from "../components/ProductoCard";
 // MUI
-import { Container, Typography, Grid } from "@mui/material";
+import { Container, Typography, Grid, Box } from "@mui/material";
 
 export default function Home() {
   const [productos, setProductos] = useState([]);
@@ -24,14 +24,25 @@ export default function Home() {
 
   return (
     <Container sx={{ mt: 4 }}>
+      {/* Banner de demo */}
+      <Box
+        sx={{
+          bgcolor: "#FFF3CD", // Amarillo claro tipo alerta
+          color: "#856404",
+          p: 2,
+          borderRadius: 2,
+          mb: 3,
+          border: "1px solid #FFEEBA",
+        }}
+      >
+        <Typography variant="body1" fontWeight="bold">
+          ⚠️ Esta es una aplicación demostrativa. Los pedidos no son reales y no se piden datos sensibles.
+        </Typography>
+      </Box>
+
       {/* Título */}
       <Typography variant="h4" fontWeight="bold" gutterBottom>
         Productos
-      </Typography>
-
-      {/* Aviso de demo */}
-      <Typography variant="body2" color="text.secondary" gutterBottom>
-        ⚠️ Esta es una aplicación demostrativa. Los pedidos no son reales.
       </Typography>
 
       {/* Mensaje si no hay productos */}
