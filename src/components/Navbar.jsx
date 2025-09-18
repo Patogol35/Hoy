@@ -105,7 +105,6 @@ export default function Navbar() {
                 },
               }}
             >
-              {/* Icono hamburguesa en texto (sin dependencia extra) */}
               ☰ Menú
             </Button>
           ) : (
@@ -194,9 +193,7 @@ export default function Navbar() {
                 bgcolor: item.highlight ? "primary.main" : "transparent",
                 color: item.highlight ? "white" : "text.primary",
                 "&:hover": {
-                  bgcolor: item.highlight
-                    ? "secondary.main"
-                    : "primary.light",
+                  bgcolor: item.highlight ? "secondary.main" : "primary.light",
                   color: "white",
                 },
                 transition: "0.3s",
