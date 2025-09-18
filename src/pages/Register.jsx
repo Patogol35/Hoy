@@ -12,9 +12,14 @@ import {
   LinearProgress,
   InputAdornment,
   IconButton,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import PersonOutline from "@mui/icons-material/PersonOutline";
+import EmailOutlined from "@mui/icons-material/EmailOutlined";
+import LockOutlined from "@mui/icons-material/LockOutlined";
 
 export default function Register() {
   const [form, setForm] = useState({
@@ -24,8 +29,7 @@ export default function Register() {
     confirm: "",
   });
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
+  const [showPasswords, setShowPasswords] = useState(false);
   const navigate = useNavigate();
 
   const passwordStrength = (pwd) => {
@@ -117,6 +121,7 @@ export default function Register() {
         </Typography>
 
         <form onSubmit={handleSubmit}>
+          {/* Usuario */}
           <TextField
             label="Usuario"
             fullWidth
@@ -124,7 +129,16 @@ export default function Register() {
             value={form.username}
             onChange={(e) => setForm({ ...form, username: e.target.value })}
             required
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <PersonOutline color="action" />
+                </InputAdornment>
+              ),
+            }}
           />
+
+          {/* Email */}
           <TextField
             label="Correo (opcional)"
             type="email"
@@ -132,29 +146,34 @@ export default function Register() {
             margin="normal"
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <EmailOutlined color="action" />
+                </InputAdornment>
+              ),
+            }}
           />
 
           {/* Contraseña */}
           <TextField
             label="Contraseña"
-            type={showPassword ? "text" : "password"}
+            type={showPasswords ? "text" : "password"}
             fullWidth
             margin="normal"
             value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
             required
             InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={() => setShowPassword(!showPassword)}>
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
+              startAdornment: (
+                <InputAdornment position="start">
+                  <LockOutlined color="action" />
                 </InputAdornment>
               ),
             }}
           />
 
-          {/* Barra de fuerza de contraseña */}
+          {/* Barra de fuerza */}
           {form.password && (
             <Box sx={{ my: 1 }}>
               <LinearProgress
@@ -180,21 +199,33 @@ export default function Register() {
           {/* Confirmar contraseña */}
           <TextField
             label="Confirmar contraseña"
-            type={showConfirm ? "text" : "password"}
+            type={showPasswords ? "text" : "password"}
             fullWidth
             margin="normal"
             value={form.confirm}
             onChange={(e) => setForm({ ...form, confirm: e.target.value })}
             required
             InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={() => setShowConfirm(!showConfirm)}>
-                    {showConfirm ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
+              startAdornment: (
+                <InputAdornment position="start">
+                  <LockOutlined color="action" />
                 </InputAdornment>
               ),
             }}
+          />
+
+          {/* Opción única para mostrar/ocultar */}
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={showPasswords}
+                onChange={() => setShowPasswords(!showPasswords)}
+                icon={<VisibilityOff />}
+                checkedIcon={<Visibility />}
+              />
+            }
+            label="Mostrar contraseñas"
+            sx={{ mt: 1 }}
           />
 
           <Box mt={3}>
@@ -221,4 +252,4 @@ export default function Register() {
       </Paper>
     </Container>
   );
-  }
+        }
