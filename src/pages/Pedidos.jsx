@@ -14,16 +14,12 @@ import {
   Box,
   Chip,
   Stack,
-  Button,
 } from "@mui/material";
-
-const ESTADOS = ["Todos", "Entregado", "En preparación", "Cancelado"];
 
 export default function Pedidos() {
   const { access } = useAuth();
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filtro, setFiltro] = useState("Todos");
 
   useEffect(() => {
     getPedidos(access)
@@ -39,12 +35,12 @@ export default function Pedidos() {
       </Container>
     );
 
-  const pedidosFiltrados =
-    filtro === "Todos"
-      ? pedidos
-      : pedidos.filter((p) =>
-          p.items.some((i) => i.estado === filtro)
-        );
+  if (pedidos.length === 0)
+    return (
+      <Container sx={{ mt: 4 }}>
+        <Typography>Aún no tienes pedidos.</Typography>
+      </Container>
+    );
 
   return (
     <Container sx={{ mt: 4, mb: 6 }}>
@@ -52,27 +48,7 @@ export default function Pedidos() {
         Mis pedidos
       </Typography>
 
-      {/* Filtro por estado */}
-      <Stack direction="row" spacing={1} sx={{ mb: 3 }} flexWrap="wrap">
-        {ESTADOS.map((e) => (
-          <Button
-            key={e}
-            variant={filtro === e ? "contained" : "outlined"}
-            color={filtro === e ? "primary" : "inherit"}
-            size="small"
-            onClick={() => setFiltro(e)}
-            sx={{ textTransform: "none" }}
-          >
-            {e}
-          </Button>
-        ))}
-      </Stack>
-
-      {pedidosFiltrados.length === 0 && (
-        <Typography>No hay pedidos para este filtro.</Typography>
-      )}
-
-      {pedidosFiltrados.map((p) => (
+      {pedidos.map((p) => (
         <Card
           key={p.id}
           sx={{
