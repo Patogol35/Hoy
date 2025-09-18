@@ -23,7 +23,13 @@ export default function Pedidos() {
 
   useEffect(() => {
     getPedidos(access)
-      .then(setPedidos)
+      .then((data) => {
+        // ordenar por fecha descendente para que el más nuevo esté primero
+        const ordenados = [...data].sort(
+          (a, b) => new Date(b.fecha) - new Date(a.fecha)
+        );
+        setPedidos(ordenados);
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [access]);
@@ -48,7 +54,7 @@ export default function Pedidos() {
         Mis pedidos
       </Typography>
 
-      {pedidos.map((p) => (
+      {pedidos.map((p, index) => (
         <Card
           key={p.id}
           sx={{
@@ -67,8 +73,9 @@ export default function Pedidos() {
               spacing={1}
               sx={{ mb: 1 }}
             >
+              {/* número relativo por usuario */}
               <Typography variant="h6" fontWeight="bold">
-                Pedido #{p.id}
+                Pedido #{pedidos.length - index}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {new Date(p.fecha).toLocaleString()}
