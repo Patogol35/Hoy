@@ -13,12 +13,17 @@ import {
   Divider,
   Box,
   Chip,
+  Stack,
+  Button,
 } from "@mui/material";
+
+const ESTADOS = ["Todos", "Entregado", "En preparación", "Cancelado"];
 
 export default function Pedidos() {
   const { access } = useAuth();
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filtro, setFiltro] = useState("Todos");
 
   useEffect(() => {
     getPedidos(access)
@@ -34,17 +39,40 @@ export default function Pedidos() {
       </Container>
     );
 
+  const pedidosFiltrados =
+    filtro === "Todos"
+      ? pedidos
+      : pedidos.filter((p) =>
+          p.items.some((i) => i.estado === filtro)
+        );
+
   return (
-    <Container sx={{ mt: 4 }}>
+    <Container sx={{ mt: 4, mb: 6 }}>
       <Typography variant="h4" gutterBottom fontWeight="bold">
         Mis pedidos
       </Typography>
 
-      {pedidos.length === 0 && (
-        <Typography>Aún no tienes pedidos.</Typography>
+      {/* Filtro por estado */}
+      <Stack direction="row" spacing={1} sx={{ mb: 3 }} flexWrap="wrap">
+        {ESTADOS.map((e) => (
+          <Button
+            key={e}
+            variant={filtro === e ? "contained" : "outlined"}
+            color={filtro === e ? "primary" : "inherit"}
+            size="small"
+            onClick={() => setFiltro(e)}
+            sx={{ textTransform: "none" }}
+          >
+            {e}
+          </Button>
+        ))}
+      </Stack>
+
+      {pedidosFiltrados.length === 0 && (
+        <Typography>No hay pedidos para este filtro.</Typography>
       )}
 
-      {pedidos.map((p) => (
+      {pedidosFiltrados.map((p) => (
         <Card
           key={p.id}
           sx={{
@@ -56,15 +84,23 @@ export default function Pedidos() {
           }}
         >
           <CardContent>
-            <Typography variant="h6" fontWeight="bold">
-              Pedido #{p.id}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Fecha: {new Date(p.fecha).toLocaleString()}
-            </Typography>
-            <Typography variant="body1" color="primary" sx={{ mb: 2 }}>
-              Total: ${Number(p.total).toFixed(2)}
-            </Typography>
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              justifyContent="space-between"
+              alignItems={{ xs: "flex-start", sm: "center" }}
+              spacing={1}
+              sx={{ mb: 1 }}
+            >
+              <Typography variant="h6" fontWeight="bold">
+                Pedido #{p.id}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {new Date(p.fecha).toLocaleString()}
+              </Typography>
+              <Typography variant="body1" color="primary" fontWeight="bold">
+                Total: ${Number(p.total).toFixed(2)}
+              </Typography>
+            </Stack>
 
             <List dense>
               {p.items?.map((item, i) => (
@@ -75,13 +111,16 @@ export default function Pedidos() {
                       flexDirection: { xs: "column", sm: "row" },
                       justifyContent: "space-between",
                       alignItems: { xs: "flex-start", sm: "center" },
+                      py: 1,
                     }}
                   >
                     <ListItemText
                       primary={`${item.cantidad} x ${item.producto?.nombre} — $${Number(
                         item.precio_unitario
                       ).toFixed(2)}`}
-                      secondary={`Subtotal: $${Number(item.subtotal).toFixed(2)}`}
+                      secondary={`Subtotal: $${Number(item.subtotal).toFixed(
+                        2
+                      )}`}
                     />
                     {item.estado && (
                       <Chip
@@ -91,7 +130,7 @@ export default function Pedidos() {
                             ? "success"
                             : item.estado === "En preparación"
                             ? "warning"
-                            : "default"
+                            : "error"
                         }
                         size="small"
                         sx={{ mt: { xs: 1, sm: 0 } }}
@@ -107,4 +146,4 @@ export default function Pedidos() {
       ))}
     </Container>
   );
-          }
+}
