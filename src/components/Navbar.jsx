@@ -12,6 +12,12 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
+import HomeIcon from "@mui/icons-material/Home";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import ListAltIcon from "@mui/icons-material/ListAlt";
+import LoginIcon from "@mui/icons-material/Login";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -44,16 +50,17 @@ export default function Navbar() {
     setOpen(false);
   };
 
+  // Menú con iconos
   const menuItems = isAuthenticated
     ? [
-        { label: "🏠 Inicio", path: "/", color: "linear-gradient(135deg, #0288d1, #26c6da)" },
-        { label: "🛒 Carrito", path: "/carrito", color: "linear-gradient(135deg, #2e7d32, #66bb6a)" },
-        { label: "📦 Mis pedidos", path: "/pedidos", color: "linear-gradient(135deg, #f57c00, #ffb74d)" },
-        { label: "Cerrar sesión", action: handleLogout, color: "linear-gradient(135deg, #c62828, #ef5350)" },
+        { label: "Inicio", path: "/", icon: <HomeIcon />, color: "linear-gradient(135deg, #0288d1, #26c6da)" },
+        { label: "Carrito", path: "/carrito", icon: <ShoppingCartIcon />, color: "linear-gradient(135deg, #2e7d32, #66bb6a)" },
+        { label: "Mis pedidos", path: "/pedidos", icon: <ListAltIcon />, color: "linear-gradient(135deg, #f57c00, #ffb74d)" },
+        { label: "Cerrar sesión", action: handleLogout, icon: <LogoutIcon />, color: "linear-gradient(135deg, #c62828, #ef5350)" },
       ]
     : [
-        { label: "Iniciar sesión", path: "/login", color: "linear-gradient(135deg, #0288d1, #26c6da)" },
-        { label: "Registrarse", path: "/register", color: "linear-gradient(135deg, #6a1b9a, #ab47bc)" },
+        { label: "Iniciar sesión", path: "/login", icon: <LoginIcon />, color: "linear-gradient(135deg, #0288d1, #26c6da)" },
+        { label: "Registrarse", path: "/register", icon: <PersonAddIcon />, color: "linear-gradient(135deg, #6a1b9a, #ab47bc)" },
       ];
 
   // 🎯 Navbar cambia con scroll
@@ -92,7 +99,7 @@ export default function Navbar() {
                   color: "#fff",
                   cursor: "pointer",
                   lineHeight: 1.2,
-                  textDecoration: "none", // ❌ Sin subrayado
+                  textDecoration: "none", // ❌ sin subrayado
                 }}
               >
                 🛍️ Tienda Jorge Patricio
@@ -107,6 +114,7 @@ export default function Navbar() {
                     <Button
                       component={Link}
                       to={item.path}
+                      startIcon={item.icon}
                       sx={{
                         color: "#fff",
                         fontWeight: 600,
@@ -128,6 +136,7 @@ export default function Navbar() {
                   ) : (
                     <Button
                       onClick={item.action}
+                      startIcon={item.icon}
                       sx={{
                         color: "#fff",
                         fontWeight: 600,
@@ -197,10 +206,24 @@ export default function Navbar() {
                 flexDirection: "column",
                 maxHeight: "100vh",
                 overflowY: "auto",
+                position: "relative",
               }}
               onClick={(e) => e.stopPropagation()}
             >
-              <Stack spacing={2}>
+              {/* Botón cerrar solo X */}
+              <IconButton
+                onClick={() => setOpen(false)}
+                sx={{
+                  position: "absolute",
+                  top: "1rem",
+                  right: "1rem",
+                  color: "#fff",
+                }}
+              >
+                <CloseIcon fontSize="large" />
+              </IconButton>
+
+              <Stack spacing={2} sx={{ mt: 2 }}>
                 {menuItems.map((item, i) =>
                   item.path ? (
                     <motion.div
@@ -216,6 +239,7 @@ export default function Navbar() {
                         component={Link}
                         to={item.path}
                         onClick={() => setOpen(false)}
+                        startIcon={item.icon}
                         sx={{
                           fontSize: "1.1rem",
                           fontWeight: 600,
@@ -245,6 +269,7 @@ export default function Navbar() {
                     >
                       <Button
                         onClick={item.action}
+                        startIcon={item.icon}
                         sx={{
                           fontSize: "1.1rem",
                           fontWeight: 600,
@@ -265,30 +290,10 @@ export default function Navbar() {
                   )
                 )}
               </Stack>
-
-              {/* Botón cerrar */}
-              <Box sx={{ mt: 4 }}>
-                <Button
-                  onClick={() => setOpen(false)}
-                  startIcon={<CloseIcon />}
-                  sx={{
-                    width: "100%",
-                    color: "#fff",
-                    border: "1px solid #fff",
-                    textTransform: "none",
-                    fontWeight: "bold",
-                    borderRadius: "12px",
-                    minHeight: "48px",
-                    "&:hover": { background: "rgba(255,255,255,0.12)" },
-                  }}
-                >
-                  Cerrar
-                </Button>
-              </Box>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
     </>
   );
-            }
+}
