@@ -16,7 +16,7 @@ import InfoIcon from "@mui/icons-material/Info";
 import StarIcon from "@mui/icons-material/Star";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 
-export default function ProductoCard({ producto }) {
+export default function ProductoCard({ producto, onVerDetalle }) {
   const { isAuthenticated } = useAuth();
   const { agregarAlCarrito } = useCarrito();
   const navigate = useNavigate();
@@ -120,7 +120,7 @@ export default function ProductoCard({ producto }) {
 
         <Divider sx={{ my: 1 }} />
 
-        {/* Precio con icono */}
+        {/* Precio */}
         <Stack
           direction="row"
           alignItems="center"
@@ -173,7 +173,9 @@ export default function ProductoCard({ producto }) {
               },
             }}
             onClick={() =>
-              navigate(`/producto/${producto.id}`, { state: { producto } })
+              onVerDetalle
+                ? onVerDetalle()
+                : navigate(`/producto/${producto.id}`, { state: { producto } })
             }
           >
             Ver detalles
@@ -182,4 +184,4 @@ export default function ProductoCard({ producto }) {
       </Box>
     </Card>
   );
-}
+        }
