@@ -38,6 +38,9 @@ export default function Home() {
   const [selected, setSelected] = useState(null);
   const [open, setOpen] = useState(false);
 
+  // Lightbox
+  const [lightbox, setLightbox] = useState(null);
+
   const { agregarAlCarrito } = useCarrito();
 
   useEffect(() => {
@@ -226,27 +229,28 @@ export default function Home() {
         onClose={() => setOpen(false)}
         maxWidth="lg"
         fullWidth
+        fullScreen={{ xs: true, md: false }}
         sx={{
           "& .MuiBackdrop-root": {
             backgroundColor: "rgba(0,0,0,0.85)",
-            backdropFilter: "blur(3px)",
+            backdropFilter: "blur(5px)",
           },
         }}
         PaperProps={{
           sx: {
-            borderRadius: 3,
+            borderRadius: { xs: 0, md: 3 },
             p: 3,
             bgcolor: "#1e1e1e",
             color: "white",
-            maxWidth: 900,
-            width: "90%",
+            maxWidth: { md: 900 },
+            width: "100%",
             position: "relative",
           },
         }}
       >
         {selected && (
           <Box>
-            {/* Botón cerrar siempre funcional */}
+            {/* Botón cerrar */}
             <IconButton
               onClick={() => setOpen(false)}
               sx={{
@@ -255,14 +259,14 @@ export default function Home() {
                 right: 12,
                 bgcolor: "rgba(0,0,0,0.6)",
                 color: "white",
-                zIndex: 9999,
-                "&:hover": { bgcolor: "rgba(255,255,255,0.15)" },
+                "&:hover": { bgcolor: "rgba(255,255,255,0.2)" },
               }}
             >
               <CloseIcon />
             </IconButton>
 
             <Grid container spacing={4}>
+              {/* Slider imágenes */}
               <Grid item xs={12} md={6}>
                 <Slider {...settings}>
                   {(selected.imagenes || [selected.imagen]).map((img, i) => (
@@ -273,7 +277,9 @@ export default function Home() {
                         justifyContent: "center",
                         alignItems: "center",
                         height: { xs: 300, md: 400 },
+                        cursor: "zoom-in",
                       }}
+                      onClick={() => setLightbox(img)}
                     >
                       <Box
                         component="img"
@@ -284,6 +290,10 @@ export default function Home() {
                           maxHeight: "100%",
                           objectFit: "contain",
                           borderRadius: 2,
+                          border: "2px solid rgba(255,255,255,0.2)",
+                          boxShadow: "0 4px 15px rgba(0,0,0,0.5)",
+                          transition: "transform 0.3s ease",
+                          "&:hover": { transform: "scale(1.02)" },
                         }}
                       />
                     </Box>
@@ -291,6 +301,7 @@ export default function Home() {
                 </Slider>
               </Grid>
 
+              {/* Info producto */}
               <Grid item xs={12} md={6}>
                 <Stack spacing={3}>
                   <Typography variant="h5" fontWeight="bold">
@@ -339,6 +350,44 @@ export default function Home() {
           </Box>
         )}
       </Dialog>
+
+      {/* Lightbox para zoom */}
+      <Dialog
+        open={!!lightbox}
+        onClose={() => setLightbox(null)}
+        fullScreen
+        PaperProps={{
+          sx: {
+            bgcolor: "rgba(0,0,0,0.95)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          },
+        }}
+      >
+        <IconButton
+          onClick={() => setLightbox(null)}
+          sx={{
+            position: "absolute",
+            top: 16,
+            right: 16,
+            bgcolor: "rgba(0,0,0,0.6)",
+            color: "white",
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+        <Box
+          component="img"
+          src={lightbox}
+          alt="Zoom"
+          sx={{
+            maxWidth: "95%",
+            maxHeight: "95%",
+            objectFit: "contain",
+          }}
+        />
+      </Dialog>
     </>
   );
-          }
+}
