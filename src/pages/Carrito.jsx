@@ -16,6 +16,7 @@ import {
   TextField,
   IconButton,
   Divider,
+  Chip,
 } from "@mui/material";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
@@ -114,31 +115,20 @@ export default function Carrito() {
               "&:hover": { boxShadow: "0 6px 16px rgba(0,0,0,0.2)" },
             }}
           >
-            {/* Imagen con mejor diseño */}
-            <Box
+            {/* Imagen */}
+            <CardMedia
+              component="img"
+              image={it.producto?.imagen}
+              alt={it.producto?.nombre}
               sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                width: { xs: "100%", sm: 140 },
-                height: { xs: 180, sm: 140 },
-                bgcolor: "#f9f9f9",
+                width: { xs: "100%", sm: 120 },
+                height: { xs: 180, sm: 120 },
+                objectFit: "contain",
+                bgcolor: "#fafafa",
                 borderRadius: { xs: "12px 12px 0 0", sm: "12px 0 0 12px" },
-                p: 1.5,
+                p: 1,
               }}
-            >
-              <CardMedia
-                component="img"
-                image={it.producto?.imagen}
-                alt={it.producto?.nombre}
-                sx={{
-                  maxWidth: "100%",
-                  maxHeight: "100%",
-                  objectFit: "contain",
-                  borderRadius: 2,
-                }}
-              />
-            </Box>
+            />
 
             {/* Contenido */}
             <CardContent
@@ -168,15 +158,14 @@ export default function Carrito() {
                   {it.producto?.descripcion}
                 </Typography>
               </Box>
-              <Typography
-                variant="h6"
-                color="primary"
-                fontWeight="bold"
-                sx={{ mt: 1, display: "flex", alignItems: "center", gap: 0.5 }}
-              >
-                <MonetizationOnIcon fontSize="small" />
-                {Number(it.subtotal || it.cantidad * it.producto?.precio).toFixed(2)}
-              </Typography>
+              <Chip
+                icon={<MonetizationOnIcon />}
+                label={`$${Number(
+                  it.subtotal || it.cantidad * it.producto?.precio
+                ).toFixed(2)}`}
+                color="success"
+                sx={{ fontWeight: "bold", alignSelf: "flex-start" }}
+              />
             </CardContent>
 
             {/* Controles */}
@@ -212,7 +201,11 @@ export default function Carrito() {
                   }}
                   sx={{
                     width: 60,
-                    "& input": { textAlign: "center", fontWeight: "bold" },
+                    "& input": {
+                      textAlign: "center",
+                      fontWeight: "bold",
+                      fontSize: "1rem",
+                    },
                   }}
                 />
                 <IconButton
@@ -260,11 +253,7 @@ export default function Carrito() {
           <Typography variant="h6" gutterBottom>
             Total:{" "}
             <strong>
-              <MonetizationOnIcon
-                fontSize="small"
-                sx={{ verticalAlign: "middle" }}
-              />
-              {total.toFixed(2)}
+              ${total.toFixed(2)} <MonetizationOnIcon fontSize="small" />
             </strong>
           </Typography>
           <Button
@@ -288,4 +277,4 @@ export default function Carrito() {
       )}
     </Box>
   );
-                        }
+            }
