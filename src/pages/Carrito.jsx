@@ -16,10 +16,13 @@ import {
   TextField,
   IconButton,
   Divider,
+  Chip,
 } from "@mui/material";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 
 // Banner de demo
 function DemoBanner() {
@@ -128,7 +131,14 @@ export default function Carrito() {
             />
 
             {/* Contenido */}
-            <CardContent sx={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+            <CardContent
+              sx={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+              }}
+            >
               <Box>
                 <Typography variant="h6" fontWeight="bold" gutterBottom>
                   {it.producto?.nombre}
@@ -148,14 +158,14 @@ export default function Carrito() {
                   {it.producto?.descripcion}
                 </Typography>
               </Box>
-              <Typography
-                variant="h6"
-                color="primary"
-                fontWeight="bold"
-                sx={{ mt: 1 }}
-              >
-                ${Number(it.subtotal || it.cantidad * it.producto?.precio).toFixed(2)}
-              </Typography>
+              <Chip
+                icon={<MonetizationOnIcon />}
+                label={`$${Number(
+                  it.subtotal || it.cantidad * it.producto?.precio
+                ).toFixed(2)}`}
+                color="success"
+                sx={{ fontWeight: "bold", alignSelf: "flex-start" }}
+              />
             </CardContent>
 
             {/* Controles */}
@@ -191,7 +201,11 @@ export default function Carrito() {
                   }}
                   sx={{
                     width: 60,
-                    "& input": { textAlign: "center", fontWeight: "bold" },
+                    "& input": {
+                      textAlign: "center",
+                      fontWeight: "bold",
+                      fontSize: "1rem",
+                    },
                   }}
                 />
                 <IconButton
@@ -237,12 +251,16 @@ export default function Carrito() {
         >
           <Divider sx={{ mb: 2, display: { xs: "none", sm: "block" } }} />
           <Typography variant="h6" gutterBottom>
-            Total: <strong>${total.toFixed(2)}</strong>
+            Total:{" "}
+            <strong>
+              ${total.toFixed(2)} <MonetizationOnIcon fontSize="small" />
+            </strong>
           </Typography>
           <Button
             variant="contained"
             color="primary"
             size="large"
+            startIcon={<ShoppingCartCheckoutIcon />}
             sx={{
               width: { xs: "100%", sm: "auto" },
               transition: "all 0.3s",
