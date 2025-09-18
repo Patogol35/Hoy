@@ -1,27 +1,24 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Carrito from "./pages/Carrito";
 import Pedidos from "./pages/Pedidos";
-import ProductoDetalle from "./pages/ProductoDetalle"; // 🔥 NUEVO
+import ProductoDetalle from "./pages/ProductoDetalle";
 import { AuthProvider } from "./context/AuthContext";
 import { CarritoProvider } from "./context/CarritoContext";
 import ProtectedRoute from "./components/ProtectedRoute";
-import { Container } from "@mui/material";
+import Layout from "./components/Layout"; // 👈 importamos el Layout
 
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <CarritoProvider>
-          <Navbar />
-          <Container sx={{ mt: 4 }}>
-            <Routes>
+          <Routes>
+            {/* Todas las rutas que usan Navbar entran en Layout */}
+            <Route element={<Layout />}>
               <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
               <Route
                 path="/carrito"
                 element={
@@ -38,9 +35,13 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route path="/producto/:id" element={<ProductoDetalle />} /> {/* 🔥 NUEVO */}
-            </Routes>
-          </Container>
+              <Route path="/producto/:id" element={<ProductoDetalle />} />
+            </Route>
+
+            {/* Estas no muestran Navbar */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </Routes>
         </CarritoProvider>
       </AuthProvider>
     </BrowserRouter>
@@ -48,4 +49,3 @@ function App() {
 }
 
 export default App;
-

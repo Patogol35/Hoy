@@ -2,29 +2,59 @@ import { useEffect, useState } from "react";
 import { getProductos } from "../api/api";
 import ProductoCard from "../components/ProductoCard";
 import {
-  Container,
   Typography,
   Grid,
   Box,
   CircularProgress,
   Divider,
-  useTheme,
+  TextField,
+  Stack,
+  InputAdornment,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import { motion } from "framer-motion";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import SearchIcon from "@mui/icons-material/Search";
+
 export default function Home() {
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const theme = useTheme();
+  const [sort, setSort] = useState("asc"); // ordenamiento
+  const [search, setSearch] = useState(""); // búsqueda
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
   useEffect(() => {
     getProductos()
       .then(setProductos)
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
+
+  // debounce para no filtrar en cada tecla
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search.toLowerCase());
+    }, 400);
+    return () => clearTimeout(handler);
+  }, [search]);
+
+  // Filtrado y ordenamiento
+  const filtered = productos
+    .filter((p) =>
+      debouncedSearch === ""
+        ? true
+        : p.nombre.toLowerCase().includes(debouncedSearch)
+    )
+    .sort((a, b) =>
+      sort === "asc" ? a.precio - b.precio : b.precio - a.precio
+    );
+
   if (loading)
     return (
-      <Container
+      <Box
         sx={{
           mt: 8,
           display: "flex",
@@ -34,17 +64,11 @@ export default function Home() {
         }}
       >
         <CircularProgress size={50} color="primary" />
-      </Container>
+      </Box>
     );
+
   return (
-    <Container
-      sx={{
-        mt: 6,
-        mb: 6,
-        // ⬇️ Esto asegura que el contenido arranque debajo del AppBar
-        ...theme.mixins.toolbar,
-      }}
-    >
+    <>
       {/* Banner demo */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -69,7 +93,8 @@ export default function Home() {
           </Typography>
         </Box>
       </motion.div>
-      {/* Título */}
+
+      {/* Encabezado */}
       <Box sx={{ mb: 4, textAlign: "center" }}>
         <Typography
           variant="h4"
@@ -86,11 +111,49 @@ export default function Home() {
             borderBottomWidth: 3,
             borderColor: "primary.main",
             borderRadius: 2,
+            mb: 3,
           }}
         />
+
+        {/* Buscador y ordenamiento */}
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          spacing={2}
+          justifyContent="center"
+          alignItems="center"
+        >
+          <TextField
+            placeholder="Buscar producto..."
+            variant="outlined"
+            size="small"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon color="action" />
+                </InputAdornment>
+              ),
+            }}
+            sx={{ width: { xs: "100%", sm: 250 } }}
+          />
+
+          <FormControl size="small" sx={{ minWidth: 180 }}>
+            <InputLabel>Ordenar por</InputLabel>
+            <Select
+              value={sort}
+              label="Ordenar por"
+              onChange={(e) => setSort(e.target.value)}
+            >
+              <MenuItem value="asc">Precio: menor a mayor</MenuItem>
+              <MenuItem value="desc">Precio: mayor a menor</MenuItem>
+            </Select>
+          </FormControl>
+        </Stack>
       </Box>
+
       {/* Mensaje si no hay productos */}
-      {productos.length === 0 && (
+      {filtered.length === 0 && (
         <Box
           sx={{
             textAlign: "center",
@@ -99,23 +162,39 @@ export default function Home() {
           }}
         >
           <ShoppingCartIcon sx={{ fontSize: 60, mb: 2, opacity: 0.6 }} />
-          <Typography variant="h6">No hay productos disponibles.</Typography>
+          <Typography variant="h6">No se encontraron productos.</Typography>
         </Box>
       )}
+
       {/* Grid de productos */}
-      <Grid container spacing={3}>
-        {productos.map((prod, i) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={prod.id}>
+      <Grid container spacing={4} justifyContent="center" alignItems="stretch">
+        {filtered.map((prod, i) => (
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={4}
+            lg={3}
+            key={prod.id}
+            sx={{ display: "flex", justifyContent: "center" }}
+          >
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: i * 0.05 }}
+              style={{
+                display: "flex",
+                width: "100%",
+                justifyContent: "center",
+              }}
             >
               <ProductoCard producto={prod} />
             </motion.div>
           </Grid>
         ))}
       </Grid>
-    </Container>
+    </>
   );
 }
+
+

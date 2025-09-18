@@ -9,7 +9,12 @@ import {
   Chip,
   Box,
   Divider,
+  Stack,
 } from "@mui/material";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import InfoIcon from "@mui/icons-material/Info";
+import StarIcon from "@mui/icons-material/Star";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 
 export default function ProductoCard({ producto }) {
   const { isAuthenticated } = useAuth();
@@ -42,7 +47,7 @@ export default function ProductoCard({ producto }) {
         flexDirection: "column",
         transition: "transform 0.3s ease, box-shadow 0.3s ease",
         "&:hover": {
-          transform: "translateY(-8px)",
+          transform: "translateY(-6px)",
           boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
         },
       }}
@@ -68,12 +73,13 @@ export default function ProductoCard({ producto }) {
             maxHeight: "100%",
             objectFit: "contain",
             transition: "transform 0.5s ease",
-            "&:hover": { transform: "scale(1.1)" },
+            "&:hover": { transform: "scale(1.08)" },
           }}
         />
 
         {producto.nuevo && (
           <Chip
+            icon={<StarIcon />}
             label="Nuevo"
             color="secondary"
             size="small"
@@ -84,6 +90,7 @@ export default function ProductoCard({ producto }) {
               fontWeight: "bold",
               bgcolor: "secondary.main",
               color: "white",
+              boxShadow: "0 3px 8px rgba(0,0,0,0.2)",
             }}
           />
         )}
@@ -113,15 +120,26 @@ export default function ProductoCard({ producto }) {
 
         <Divider sx={{ my: 1 }} />
 
-        <Typography variant="h6" color="primary" fontWeight="bold" sx={{ mb: 2 }}>
-          ${producto.precio}
-        </Typography>
+        {/* Precio con icono */}
+        <Stack
+          direction="row"
+          alignItems="center"
+          spacing={0.5}
+          sx={{ mb: 2 }}
+        >
+          <AttachMoneyIcon color="primary" />
+          <Typography variant="h6" color="primary" fontWeight="bold">
+            {producto.precio}
+          </Typography>
+        </Stack>
 
-        <Box sx={{ display: "flex", gap: 1, flexDirection: "column" }}>
+        {/* Botones */}
+        <Stack spacing={1}>
           <Button
             variant="contained"
             color="primary"
             fullWidth
+            startIcon={<ShoppingCartIcon />}
             sx={{
               borderRadius: 2,
               textTransform: "none",
@@ -135,13 +153,14 @@ export default function ProductoCard({ producto }) {
             }}
             onClick={onAdd}
           >
-            Agregar al carrito 🛒
+            Agregar al carrito
           </Button>
 
           <Button
             variant="outlined"
             color="inherit"
             fullWidth
+            startIcon={<InfoIcon />}
             sx={{
               borderRadius: 2,
               textTransform: "none",
@@ -157,9 +176,9 @@ export default function ProductoCard({ producto }) {
               navigate(`/producto/${producto.id}`, { state: { producto } })
             }
           >
-            Ver detalles 🔎
+            Ver detalles
           </Button>
-        </Box>
+        </Stack>
       </Box>
     </Card>
   );

@@ -7,7 +7,6 @@ import { toast } from "react-toastify";
 
 // MUI
 import {
-  Container,
   Typography,
   Card,
   CardMedia,
@@ -31,7 +30,8 @@ function DemoBanner() {
       }}
     >
       <Typography variant="body1" fontWeight="bold">
-        ⚠️ Esta es una aplicación demostrativa (proyecto personal). Los pedidos no son reales y no se piden datos sensibles.
+        ⚠️ Esta es una aplicación demostrativa (proyecto personal). Los pedidos
+        no son reales y no se piden datos sensibles.
       </Typography>
     </Box>
   );
@@ -79,7 +79,7 @@ export default function Carrito() {
     it.cantidad > 1 && setCantidad(it.id, it.cantidad - 1);
 
   return (
-    <Container sx={{ mt: 4, pb: { xs: 12, sm: 6 } }}>
+    <Box sx={{ pb: { xs: 12, sm: 6 } }}>
       {/* Banner de demo */}
       <DemoBanner />
 
@@ -140,8 +140,15 @@ export default function Carrito() {
               >
                 {it.producto?.descripcion}
               </Typography>
-              <Typography variant="subtitle1" color="primary" fontWeight="bold">
-                ${Number(it.subtotal || it.cantidad * it.producto?.precio).toFixed(2)}
+              <Typography
+                variant="subtitle1"
+                color="primary"
+                fontWeight="bold"
+              >
+                $
+                {Number(
+                  it.subtotal || it.cantidad * it.producto?.precio
+                ).toFixed(2)}
               </Typography>
             </CardContent>
 
@@ -156,7 +163,23 @@ export default function Carrito() {
               }}
             >
               <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-                <Button onClick={() => decrementar(it)} size="small" variant="outlined" sx={{ minWidth: 30, fontWeight: "bold", backgroundColor: "#f0f0f0", "&:hover": { backgroundColor: "#e0e0e0", transform: "scale(1.1)" }, transition: "all 0.2s" }}>-</Button>
+                <Button
+                  onClick={() => decrementar(it)}
+                  size="small"
+                  variant="outlined"
+                  sx={{
+                    minWidth: 30,
+                    fontWeight: "bold",
+                    backgroundColor: "#f0f0f0",
+                    "&:hover": {
+                      backgroundColor: "#e0e0e0",
+                      transform: "scale(1.1)",
+                    },
+                    transition: "all 0.2s",
+                  }}
+                >
+                  -
+                </Button>
                 <TextField
                   type="number"
                   size="small"
@@ -168,8 +191,40 @@ export default function Carrito() {
                   }}
                   sx={{ width: 60, "& input": { textAlign: "center" } }}
                 />
-                <Button onClick={() => incrementar(it)} size="small" variant="outlined" sx={{ minWidth: 30, fontWeight: "bold", backgroundColor: "#f0f0f0", "&:hover": { backgroundColor: "#e0e0e0", transform: "scale(1.1)" }, transition: "all 0.2s" }}>+</Button>
-                <Button onClick={() => eliminarItem(it.id)} variant="contained" color="error" sx={{ minWidth: 40, fontWeight: "bold", ml: 1, "&:hover": { backgroundColor: "#d32f2f", transform: "scale(1.1)" }, transition: "all 0.2s" }}>X</Button>
+                <Button
+                  onClick={() => incrementar(it)}
+                  size="small"
+                  variant="outlined"
+                  sx={{
+                    minWidth: 30,
+                    fontWeight: "bold",
+                    backgroundColor: "#f0f0f0",
+                    "&:hover": {
+                      backgroundColor: "#e0e0e0",
+                      transform: "scale(1.1)",
+                    },
+                    transition: "all 0.2s",
+                  }}
+                >
+                  +
+                </Button>
+                <Button
+                  onClick={() => eliminarItem(it.id)}
+                  variant="contained"
+                  color="error"
+                  sx={{
+                    minWidth: 40,
+                    fontWeight: "bold",
+                    ml: 1,
+                    "&:hover": {
+                      backgroundColor: "#d32f2f",
+                      transform: "scale(1.1)",
+                    },
+                    transition: "all 0.2s",
+                  }}
+                >
+                  X
+                </Button>
               </Box>
             </Box>
           </Card>
@@ -210,6 +265,6 @@ export default function Carrito() {
           </Button>
         </Box>
       )}
-    </Container>
+    </Box>
   );
 }
