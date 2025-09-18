@@ -25,7 +25,9 @@ import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
 import Slider from "react-slick";
 import { useCarrito } from "../context/CarritoContext";
-import { toast } from "react-toastify";
+
+// ✅ reemplazo de react-toastify por sonner
+import { toast, Toaster } from "sonner";
 
 export default function Home() {
   const [productos, setProductos] = useState([]);
@@ -63,7 +65,9 @@ export default function Home() {
         ? true
         : p.nombre.toLowerCase().includes(debouncedSearch)
     )
-    .sort((a, b) => (sort === "asc" ? a.precio - b.precio : b.precio - a.precio));
+    .sort((a, b) =>
+      sort === "asc" ? a.precio - b.precio : b.precio - a.precio
+    );
 
   const settings = {
     dots: true,
@@ -94,12 +98,15 @@ export default function Home() {
           minHeight: "50vh",
         }}
       >
-        <CircularProgress size={50} color="primary" />
+        <CircularProgress />
       </Box>
     );
 
   return (
     <>
+      {/* ✅ Toaster de sonner */}
+      <Toaster richColors position="top-center" />
+
       {/* Banner */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -118,9 +125,7 @@ export default function Home() {
             boxShadow: "0 3px 8px rgba(0,0,0,0.1)",
           }}
         >
-          <Typography variant="body1" fontWeight="bold">
-            ⚠️ Esta es una aplicación demostrativa. Los pedidos no son reales.
-          </Typography>
+          ⚠️ Esta es una aplicación demostrativa. Los pedidos no son reales.
         </Box>
       </motion.div>
 
@@ -223,7 +228,7 @@ export default function Home() {
         </Grid>
       )}
 
-      {/* Modal Detalle Mejorado */}
+      {/* Modal Detalle */}
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
@@ -251,7 +256,6 @@ export default function Home() {
       >
         {selected && (
           <Box>
-            {/* Botón cerrar */}
             <IconButton
               onClick={() => setOpen(false)}
               sx={{
@@ -328,7 +332,9 @@ export default function Home() {
 
                   <Divider sx={{ bgcolor: "rgba(255,255,255,0.3)" }} />
 
-                  <Typography sx={{ lineHeight: 1.6, color: "rgba(255,255,255,0.85)" }}>
+                  <Typography
+                    sx={{ lineHeight: 1.6, color: "rgba(255,255,255,0.85)" }}
+                  >
                     {selected.descripcion}
                   </Typography>
 
@@ -352,7 +358,7 @@ export default function Home() {
         )}
       </Dialog>
 
-      {/* Lightbox para zoom */}
+      {/* Lightbox */}
       <Dialog
         open={!!lightbox}
         onClose={() => setLightbox(null)}
