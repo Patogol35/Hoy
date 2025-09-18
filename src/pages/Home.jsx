@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { getProductos } from "../api/api";
 import ProductoCard from "../components/ProductoCard";
@@ -26,7 +25,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
 import Slider from "react-slick";
 import { useCarrito } from "../context/CarritoContext";
-import { toast } from "react-toastify"; // ✅ volvemos a react-toastify
+import { toast } from "react-toastify";
 
 export default function Home() {
   const [productos, setProductos] = useState([]);
@@ -64,9 +63,7 @@ export default function Home() {
         ? true
         : p.nombre.toLowerCase().includes(debouncedSearch)
     )
-    .sort((a, b) =>
-      sort === "asc" ? a.precio - b.precio : b.precio - a.precio
-    );
+    .sort((a, b) => (sort === "asc" ? a.precio - b.precio : b.precio - a.precio));
 
   const settings = {
     dots: true,
@@ -230,7 +227,6 @@ export default function Home() {
         onClose={() => setOpen(false)}
         maxWidth="lg"
         fullWidth
-        fullScreen={{ xs: true, md: false }}
         sx={{
           zIndex: 1600,
           "& .MuiBackdrop-root": {
@@ -328,9 +324,7 @@ export default function Home() {
 
                   <Divider sx={{ bgcolor: "rgba(255,255,255,0.3)" }} />
 
-                  <Typography
-                    sx={{ lineHeight: 1.6, color: "rgba(255,255,255,0.85)" }}
-                  >
+                  <Typography sx={{ lineHeight: 1.6, color: "rgba(255,255,255,0.85)" }}>
                     {selected.descripcion}
                   </Typography>
 
