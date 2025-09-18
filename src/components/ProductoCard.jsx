@@ -102,23 +102,7 @@ export default function ProductoCard({ producto, onVerDetalle }) {
           {producto.nombre}
         </Typography>
 
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          sx={{
-            flexGrow: 1,
-            mb: 2,
-            display: "-webkit-box",
-            WebkitLineClamp: 3,
-            WebkitBoxOrient: "vertical",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
-          {producto.descripcion}
-        </Typography>
-
-        <Divider sx={{ my: 1 }} />
+        {/* Eliminamos la descripción */}
 
         {/* Precio */}
         <Stack
@@ -132,6 +116,8 @@ export default function ProductoCard({ producto, onVerDetalle }) {
             {producto.precio}
           </Typography>
         </Stack>
+
+        <Divider sx={{ my: 1 }} />
 
         {/* Botones */}
         <Stack spacing={1}>
