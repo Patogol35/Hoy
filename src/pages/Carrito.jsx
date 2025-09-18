@@ -169,14 +169,21 @@ export default function Carrito() {
                     {it.producto?.descripcion}
                   </Typography>
                 </Box>
-                <Chip
-                  icon={<MonetizationOnIcon />}
-                  label={`$${Number(
-                    it.subtotal || it.cantidad * it.producto?.precio
-                  ).toFixed(2)}`}
-                  color="success"
-                  sx={{ fontWeight: "bold", alignSelf: "flex-start" }}
-                />
+                <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+                  <Chip
+                    icon={<MonetizationOnIcon />}
+                    label={`$${Number(
+                      it.subtotal || it.cantidad * it.producto?.precio
+                    ).toFixed(2)}`}
+                    color="success"
+                    sx={{ fontWeight: "bold" }}
+                  />
+                  <Chip
+                    label={`Stock: ${stock} unidades`}
+                    color={stock > 0 ? "info" : "default"}
+                    sx={{ fontWeight: "bold" }}
+                  />
+                </Box>
               </CardContent>
 
               {/* Controles */}
