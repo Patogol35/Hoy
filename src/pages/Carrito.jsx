@@ -14,7 +14,12 @@ import {
   Button,
   Box,
   TextField,
+  IconButton,
+  Divider,
 } from "@mui/material";
+import RemoveIcon from "@mui/icons-material/Remove";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 // Banner de demo
 function DemoBanner() {
@@ -79,12 +84,12 @@ export default function Carrito() {
     it.cantidad > 1 && setCantidad(it.id, it.cantidad - 1);
 
   return (
-    <Box sx={{ pb: { xs: 12, sm: 6 } }}>
+    <Box sx={{ pb: { xs: 14, sm: 6 } }}>
       {/* Banner de demo */}
       <DemoBanner />
 
       <Typography variant="h4" gutterBottom fontWeight="bold">
-        Carrito
+        🛒 Tu Carrito
       </Typography>
 
       {loading && <Typography>Cargando carrito...</Typography>}
@@ -92,6 +97,7 @@ export default function Carrito() {
         <Typography>Tu carrito está vacío.</Typography>
       )}
 
+      {/* Lista de productos */}
       {!loading &&
         items.map((it) => (
           <Card
@@ -101,9 +107,9 @@ export default function Carrito() {
               flexDirection: { xs: "column", sm: "row" },
               mb: 2,
               borderRadius: 3,
-              boxShadow: 3,
+              boxShadow: "0 3px 8px rgba(0,0,0,0.12)",
               transition: "all 0.3s",
-              "&:hover": { boxShadow: 8, transform: "scale(1.01)" },
+              "&:hover": { boxShadow: "0 6px 16px rgba(0,0,0,0.2)" },
             }}
           >
             {/* Imagen */}
@@ -112,43 +118,43 @@ export default function Carrito() {
               image={it.producto?.imagen}
               alt={it.producto?.nombre}
               sx={{
-                width: { xs: "100%", sm: 100 },
-                height: { xs: 120, sm: 100 },
+                width: { xs: "100%", sm: 120 },
+                height: { xs: 180, sm: 120 },
                 objectFit: "contain",
-                bgcolor: "#f5f5f5",
-                borderRadius: { xs: "8px 8px 0 0", sm: "8px 0 0 8px" },
+                bgcolor: "#fafafa",
+                borderRadius: { xs: "12px 12px 0 0", sm: "12px 0 0 12px" },
                 p: 1,
               }}
             />
 
             {/* Contenido */}
-            <CardContent sx={{ flex: 1 }}>
-              <Typography variant="h6" fontWeight="bold">
-                {it.producto?.nombre}
-              </Typography>
+            <CardContent sx={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+              <Box>
+                <Typography variant="h6" fontWeight="bold" gutterBottom>
+                  {it.producto?.nombre}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{
+                    display: "-webkit-box",
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    mb: 1,
+                  }}
+                >
+                  {it.producto?.descripcion}
+                </Typography>
+              </Box>
               <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{
-                  display: "-webkit-box",
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: "vertical",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  mb: 1,
-                }}
-              >
-                {it.producto?.descripcion}
-              </Typography>
-              <Typography
-                variant="subtitle1"
+                variant="h6"
                 color="primary"
                 fontWeight="bold"
+                sx={{ mt: 1 }}
               >
-                $
-                {Number(
-                  it.subtotal || it.cantidad * it.producto?.precio
-                ).toFixed(2)}
+                ${Number(it.subtotal || it.cantidad * it.producto?.precio).toFixed(2)}
               </Typography>
             </CardContent>
 
@@ -156,30 +162,24 @@ export default function Carrito() {
             <Box
               sx={{
                 display: "flex",
-                flexDirection: "column",
+                flexDirection: { xs: "row", sm: "column" },
                 justifyContent: "center",
                 alignItems: "center",
                 p: 2,
+                gap: 1,
               }}
             >
-              <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-                <Button
+              {/* Botones cantidad */}
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <IconButton
                   onClick={() => decrementar(it)}
-                  size="small"
-                  variant="outlined"
                   sx={{
-                    minWidth: 30,
-                    fontWeight: "bold",
-                    backgroundColor: "#f0f0f0",
-                    "&:hover": {
-                      backgroundColor: "#e0e0e0",
-                      transform: "scale(1.1)",
-                    },
-                    transition: "all 0.2s",
+                    bgcolor: "#f5f5f5",
+                    "&:hover": { bgcolor: "#e0e0e0" },
                   }}
                 >
-                  -
-                </Button>
+                  <RemoveIcon />
+                </IconButton>
                 <TextField
                   type="number"
                   size="small"
@@ -189,43 +189,32 @@ export default function Carrito() {
                     const nuevaCantidad = Number(e.target.value);
                     if (nuevaCantidad >= 1) setCantidad(it.id, nuevaCantidad);
                   }}
-                  sx={{ width: 60, "& input": { textAlign: "center" } }}
+                  sx={{
+                    width: 60,
+                    "& input": { textAlign: "center", fontWeight: "bold" },
+                  }}
                 />
-                <Button
+                <IconButton
                   onClick={() => incrementar(it)}
-                  size="small"
-                  variant="outlined"
                   sx={{
-                    minWidth: 30,
-                    fontWeight: "bold",
-                    backgroundColor: "#f0f0f0",
-                    "&:hover": {
-                      backgroundColor: "#e0e0e0",
-                      transform: "scale(1.1)",
-                    },
-                    transition: "all 0.2s",
+                    bgcolor: "#f5f5f5",
+                    "&:hover": { bgcolor: "#e0e0e0" },
                   }}
                 >
-                  +
-                </Button>
-                <Button
-                  onClick={() => eliminarItem(it.id)}
-                  variant="contained"
-                  color="error"
-                  sx={{
-                    minWidth: 40,
-                    fontWeight: "bold",
-                    ml: 1,
-                    "&:hover": {
-                      backgroundColor: "#d32f2f",
-                      transform: "scale(1.1)",
-                    },
-                    transition: "all 0.2s",
-                  }}
-                >
-                  X
-                </Button>
+                  <AddIcon />
+                </IconButton>
               </Box>
+
+              {/* Botón eliminar */}
+              <IconButton
+                onClick={() => eliminarItem(it.id)}
+                sx={{
+                  color: "error.main",
+                  "&:hover": { bgcolor: "rgba(211,47,47,0.1)" },
+                }}
+              >
+                <DeleteIcon />
+              </IconButton>
             </Box>
           </Card>
         ))}
@@ -242,12 +231,13 @@ export default function Carrito() {
             right: 0,
             bgcolor: { xs: "white", sm: "transparent" },
             p: { xs: 2, sm: 0 },
-            boxShadow: { xs: "0 -4px 10px rgba(0,0,0,0.1)", sm: "none" },
+            boxShadow: { xs: "0 -4px 12px rgba(0,0,0,0.15)", sm: "none" },
             borderTop: { xs: "1px solid #ddd", sm: "none" },
           }}
         >
+          <Divider sx={{ mb: 2, display: { xs: "none", sm: "block" } }} />
           <Typography variant="h6" gutterBottom>
-            Total: ${total.toFixed(2)}
+            Total: <strong>${total.toFixed(2)}</strong>
           </Typography>
           <Button
             variant="contained"
@@ -257,11 +247,13 @@ export default function Carrito() {
               width: { xs: "100%", sm: "auto" },
               transition: "all 0.3s",
               fontWeight: "bold",
+              borderRadius: 3,
+              py: 1.2,
               "&:hover": { transform: "scale(1.05)", boxShadow: 6 },
             }}
             onClick={comprar}
           >
-            Comprar
+            Finalizar compra
           </Button>
         </Box>
       )}
