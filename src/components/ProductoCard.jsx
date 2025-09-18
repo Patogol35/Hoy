@@ -10,7 +10,6 @@ import {
   Box,
   Divider,
   Stack,
-  Zoom,
 } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import InfoIcon from "@mui/icons-material/Info";
@@ -20,7 +19,7 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 export default function ProductoCard({ producto, onVerDetalle }) {
   const { isAuthenticated } = useAuth();
   const { agregarAlCarrito } = useCarrito();
-  const [hover, setHover] = useState(false); // control hover zoom
+  const [hover, setHover] = useState(false);
 
   const onAdd = async () => {
     if (!isAuthenticated) {
@@ -66,22 +65,21 @@ export default function ProductoCard({ producto, onVerDetalle }) {
         }}
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
-        onClick={onVerDetalle} // clic para abrir modal
+        onClick={onVerDetalle}
       >
-        <Zoom in={hover}>
-          <Box
-            component="img"
-            src={producto.imagen}
-            alt={producto.nombre}
-            sx={{
-              maxWidth: "120%",
-              maxHeight: "120%",
-              objectFit: "contain",
-              transition: "transform 0.5s ease",
-              transform: hover ? "scale(1.2)" : "scale(1)",
-            }}
-          />
-        </Zoom>
+        <Box
+          component="img"
+          src={producto.imagen}
+          alt={producto.nombre}
+          sx={{
+            maxWidth: "100%",
+            maxHeight: "100%",
+            objectFit: "contain",
+            borderRadius: 1,
+            transition: "transform 0.5s ease",
+            transform: hover ? "scale(1.2)" : "scale(1)",
+          }}
+        />
 
         {producto.nuevo && (
           <Chip
@@ -171,7 +169,7 @@ export default function ProductoCard({ producto, onVerDetalle }) {
                 boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
               },
             }}
-            onClick={onVerDetalle} // también abre modal
+            onClick={onVerDetalle}
           >
             Ver detalles
           </Button>
