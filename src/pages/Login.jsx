@@ -16,6 +16,8 @@ import {
 } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import PersonOutline from "@mui/icons-material/PersonOutline";
+import LockOutlined from "@mui/icons-material/LockOutlined";
 
 export default function Login() {
   const [form, setForm] = useState({ username: "", password: "" });
@@ -96,6 +98,13 @@ export default function Login() {
             onChange={(e) => setForm({ ...form, username: e.target.value })}
             required
             variant="outlined"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <PersonOutline color="action" />
+                </InputAdornment>
+              ),
+            }}
           />
           <TextField
             label="Contraseña"
@@ -107,6 +116,11 @@ export default function Login() {
             required
             variant="outlined"
             InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <LockOutlined color="action" />
+                </InputAdornment>
+              ),
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton
