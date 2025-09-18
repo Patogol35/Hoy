@@ -18,6 +18,9 @@ import {
   IconButton,
   Chip,
   Button,
+  Snackbar,
+  Alert,
+  Slide,
 } from "@mui/material";
 import { motion } from "framer-motion";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -25,7 +28,11 @@ import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
 import Slider from "react-slick";
 import { useCarrito } from "../context/CarritoContext";
-import { toast } from "react-toastify";
+
+// 🔹 Animación personalizada (Slide desde derecha)
+function SlideTransition(props) {
+  return <Slide {...props} direction="left" />;
+}
 
 export default function Home() {
   const [productos, setProductos] = useState([]);
@@ -40,6 +47,13 @@ export default function Home() {
 
   // Lightbox
   const [lightbox, setLightbox] = useState(null);
+
+  // Snackbar
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
   const { agregarAlCarrito } = useCarrito();
 
@@ -77,9 +91,17 @@ export default function Home() {
   const handleAdd = async (prod) => {
     try {
       await agregarAlCarrito(prod.id, 1);
-      toast.success(`"${prod.nombre}" agregado al carrito ✅`);
+      setSnackbar({
+        open: true,
+        message: `"${prod.nombre}" agregado al carrito ✅`,
+        severity: "success",
+      });
     } catch (e) {
-      toast.error(e.message);
+      setSnackbar({
+        open: true,
+        message: e.message || "Error al agregar al carrito",
+        severity: "error",
+      });
     }
   };
 
@@ -231,7 +253,7 @@ export default function Home() {
         fullWidth
         fullScreen={{ xs: true, md: false }}
         sx={{
-          zIndex: 1600, // 🔹 fuerza que tape todo
+          zIndex: 1600,
           "& .MuiBackdrop-root": {
             backgroundColor: "rgba(0,0,0,0.85)",
             backdropFilter: "blur(5px)",
@@ -357,7 +379,7 @@ export default function Home() {
         open={!!lightbox}
         onClose={() => setLightbox(null)}
         fullScreen
-        sx={{ zIndex: 1600 }} // 🔹 también encima de todo
+        sx={{ zIndex: 1600 }}
         PaperProps={{
           sx: {
             bgcolor: "rgba(0,0,0,0.95)",
@@ -390,6 +412,29 @@ export default function Home() {
           }}
         />
       </Dialog>
+
+      {/* 🔹 Snackbar con animación y estilo pro */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        TransitionComponent={SlideTransition}
+      >
+        <Alert
+          severity={snackbar.severity}
+          variant="filled"
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          sx={{
+            width: "100%",
+            borderRadius: 2,
+            boxShadow: "0px 4px 12px rgba(0,0,0,0.3)",
+            fontWeight: "bold",
+          }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </>
   );
-                                   }
+    }
