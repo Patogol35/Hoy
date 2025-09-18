@@ -82,7 +82,15 @@ export default function Carrito() {
     }
   };
 
-  const incrementar = (it) => setCantidad(it.id, it.cantidad + 1);
+  const incrementar = (it) => {
+    const stock = it.producto?.stock ?? 0;
+    if (it.cantidad < stock) {
+      setCantidad(it.id, it.cantidad + 1);
+    } else {
+      toast.warning(`Solo hay ${stock} unidades disponibles`);
+    }
+  };
+
   const decrementar = (it) =>
     it.cantidad > 1 && setCantidad(it.id, it.cantidad - 1);
 
@@ -102,136 +110,152 @@ export default function Carrito() {
 
       {/* Lista de productos */}
       {!loading &&
-        items.map((it) => (
-          <Card
-            key={it.id}
-            sx={{
-              display: "flex",
-              flexDirection: { xs: "column", sm: "row" },
-              mb: 2,
-              borderRadius: 3,
-              boxShadow: "0 3px 8px rgba(0,0,0,0.12)",
-              transition: "all 0.3s",
-              "&:hover": { boxShadow: "0 6px 16px rgba(0,0,0,0.2)" },
-            }}
-          >
-            {/* Imagen */}
-            <CardMedia
-              component="img"
-              image={it.producto?.imagen}
-              alt={it.producto?.nombre}
-              sx={{
-                width: { xs: "100%", sm: 120 },
-                height: { xs: 180, sm: 120 },
-                objectFit: "contain",
-                bgcolor: "#fafafa",
-                borderRadius: { xs: "12px 12px 0 0", sm: "12px 0 0 12px" },
-                p: 1,
-              }}
-            />
+        items.map((it) => {
+          const stock = it.producto?.stock ?? 0;
 
-            {/* Contenido */}
-            <CardContent
-              sx={{
-                flex: 1,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-              }}
-            >
-              <Box>
-                <Typography variant="h6" fontWeight="bold" gutterBottom>
-                  {it.producto?.nombre}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{
-                    display: "-webkit-box",
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: "vertical",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    mb: 1,
-                  }}
-                >
-                  {it.producto?.descripcion}
-                </Typography>
-              </Box>
-              <Chip
-                icon={<MonetizationOnIcon />}
-                label={`$${Number(
-                  it.subtotal || it.cantidad * it.producto?.precio
-                ).toFixed(2)}`}
-                color="success"
-                sx={{ fontWeight: "bold", alignSelf: "flex-start" }}
-              />
-            </CardContent>
-
-            {/* Controles */}
-            <Box
+          return (
+            <Card
+              key={it.id}
               sx={{
                 display: "flex",
-                flexDirection: { xs: "row", sm: "column" },
-                justifyContent: "center",
-                alignItems: "center",
-                p: 2,
-                gap: 1,
+                flexDirection: { xs: "column", sm: "row" },
+                mb: 2,
+                borderRadius: 3,
+                boxShadow: "0 3px 8px rgba(0,0,0,0.12)",
+                transition: "all 0.3s",
+                "&:hover": { boxShadow: "0 6px 16px rgba(0,0,0,0.2)" },
               }}
             >
-              {/* Botones cantidad */}
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <IconButton
-                  onClick={() => decrementar(it)}
-                  sx={{
-                    bgcolor: "#f5f5f5",
-                    "&:hover": { bgcolor: "#e0e0e0" },
-                  }}
-                >
-                  <RemoveIcon />
-                </IconButton>
-                <TextField
-                  type="number"
-                  size="small"
-                  value={it.cantidad}
-                  inputProps={{ min: 1 }}
-                  onChange={(e) => {
-                    const nuevaCantidad = Number(e.target.value);
-                    if (nuevaCantidad >= 1) setCantidad(it.id, nuevaCantidad);
-                  }}
-                  sx={{
-                    width: 60,
-                    "& input": {
-                      textAlign: "center",
-                      fontWeight: "bold",
-                      fontSize: "1rem",
-                    },
-                  }}
-                />
-                <IconButton
-                  onClick={() => incrementar(it)}
-                  sx={{
-                    bgcolor: "#f5f5f5",
-                    "&:hover": { bgcolor: "#e0e0e0" },
-                  }}
-                >
-                  <AddIcon />
-                </IconButton>
-              </Box>
-
-              {/* Botón eliminar */}
-              <IconButton
-                onClick={() => eliminarItem(it.id)}
+              {/* Imagen */}
+              <CardMedia
+                component="img"
+                image={it.producto?.imagen}
+                alt={it.producto?.nombre}
                 sx={{
-                  color: "error.main",
-                  "&:hover": { bgcolor: "rgba(211,47,47,0.1)" },
+                  width: { xs: "100%", sm: 120 },
+                  height: { xs: 180, sm: 120 },
+                  objectFit: "contain",
+                  bgcolor: "#fafafa",
+                  borderRadius: { xs: "12px 12px 0 0", sm: "12px 0 0 12px" },
+                  p: 1,
+                }}
+              />
+
+              {/* Contenido */}
+              <CardContent
+                sx={{
+                  flex: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
                 }}
               >
-                <DeleteIcon />
-              </IconButton>
-            </Box>
-          </Card>
-        ))}
+                <Box>
+                  <Typography variant="h6" fontWeight="bold" gutterBottom>
+                    {it.producto?.nombre}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      mb: 1,
+                    }}
+                  >
+                    {it.producto?.descripcion}
+                  </Typography>
+                </Box>
+                <Chip
+                  icon={<MonetizationOnIcon />}
+                  label={`$${Number(
+                    it.subtotal || it.cantidad * it.producto?.precio
+                  ).toFixed(2)}`}
+                  color="success"
+                  sx={{ fontWeight: "bold", alignSelf: "flex-start" }}
+                />
+              </CardContent>
+
+              {/* Controles */}
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: { xs: "row", sm: "column" },
+                  justifyContent: "center",
+                  alignItems: "center",
+                  p: 2,
+                  gap: 1,
+                }}
+              >
+                {/* Botones cantidad */}
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <IconButton
+                    onClick={() => decrementar(it)}
+                    sx={{
+                      bgcolor: "#f5f5f5",
+                      "&:hover": { bgcolor: "#e0e0e0" },
+                    }}
+                  >
+                    <RemoveIcon />
+                  </IconButton>
+                  <TextField
+                    type="number"
+                    size="small"
+                    value={it.cantidad}
+                    inputProps={{ min: 1, max: stock }}
+                    onChange={(e) => {
+                      const nuevaCantidad = Number(e.target.value);
+                      if (nuevaCantidad >= 1 && nuevaCantidad <= stock) {
+                        setCantidad(it.id, nuevaCantidad);
+                      } else if (nuevaCantidad > stock) {
+                        toast.warning(
+                          `No puedes pedir más de ${stock} unidades`
+                        );
+                        setCantidad(it.id, stock);
+                      }
+                    }}
+                    sx={{
+                      width: 60,
+                      "& input": {
+                        textAlign: "center",
+                        fontWeight: "bold",
+                        fontSize: "1rem",
+                      },
+                    }}
+                  />
+                  <IconButton
+                    onClick={() => incrementar(it)}
+                    disabled={it.cantidad >= stock}
+                    sx={{
+                      bgcolor:
+                        it.cantidad >= stock ? "#eee" : "#f5f5f5",
+                      "&:hover": {
+                        bgcolor:
+                          it.cantidad >= stock ? "#eee" : "#e0e0e0",
+                      },
+                    }}
+                  >
+                    <AddIcon />
+                  </IconButton>
+                </Box>
+
+                {/* Botón eliminar */}
+                <IconButton
+                  onClick={() => eliminarItem(it.id)}
+                  sx={{
+                    color: "error.main",
+                    "&:hover": { bgcolor: "rgba(211,47,47,0.1)" },
+                  }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Box>
+            </Card>
+          );
+        })}
 
       {/* Total y comprar */}
       {!loading && items.length > 0 && (
@@ -277,4 +301,4 @@ export default function Carrito() {
       )}
     </Box>
   );
-            }
+}
