@@ -14,17 +14,31 @@ import {
   Select,
   FormControl,
   InputLabel,
+  Dialog,
+  IconButton,
+  Chip,
+  Button,
 } from "@mui/material";
 import { motion } from "framer-motion";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import SearchIcon from "@mui/icons-material/Search";
+import CloseIcon from "@mui/icons-material/Close";
+import Slider from "react-slick";
+import { useCarrito } from "../context/CarritoContext";
+import { toast } from "react-toastify";
 
 export default function Home() {
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [sort, setSort] = useState("asc"); // ordenamiento
-  const [search, setSearch] = useState(""); // búsqueda
+  const [sort, setSort] = useState("asc");
+  const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  // para el modal
+  const [selected, setSelected] = useState(null);
+  const [open, setOpen] = useState(false);
+
+  const { agregarAlCarrito } = useCarrito();
 
   useEffect(() => {
     getProductos()
@@ -33,7 +47,6 @@ export default function Home() {
       .finally(() => setLoading(false));
   }, []);
 
-  // debounce para no filtrar en cada tecla
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(search.toLowerCase());
@@ -41,16 +54,31 @@ export default function Home() {
     return () => clearTimeout(handler);
   }, [search]);
 
-  // Filtrado y ordenamiento
   const filtered = productos
     .filter((p) =>
       debouncedSearch === ""
         ? true
         : p.nombre.toLowerCase().includes(debouncedSearch)
     )
-    .sort((a, b) =>
-      sort === "asc" ? a.precio - b.precio : b.precio - a.precio
-    );
+    .sort((a, b) => (sort === "asc" ? a.precio - b.precio : b.precio - a.precio));
+
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    adaptiveHeight: true,
+  };
+
+  const handleAdd = async (prod) => {
+    try {
+      await agregarAlCarrito(prod.id, 1);
+      toast.success(`"${prod.nombre}" agregado al carrito ✅`);
+    } catch (e) {
+      toast.error(e.message);
+    }
+  };
 
   if (loading)
     return (
@@ -69,7 +97,7 @@ export default function Home() {
 
   return (
     <>
-      {/* Banner demo */}
+      {/* Banner */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -88,8 +116,7 @@ export default function Home() {
           }}
         >
           <Typography variant="body1" fontWeight="bold">
-            ⚠️ Esta es una aplicación demostrativa. Los pedidos no son reales y
-            no se solicitan datos sensibles.
+            ⚠️ Esta es una aplicación demostrativa. Los pedidos no son reales.
           </Typography>
         </Box>
       </motion.div>
@@ -152,49 +179,132 @@ export default function Home() {
         </Stack>
       </Box>
 
-      {/* Mensaje si no hay productos */}
-      {filtered.length === 0 && (
-        <Box
-          sx={{
-            textAlign: "center",
-            mt: 8,
-            color: "text.secondary",
-          }}
-        >
+      {/* Grid */}
+      {filtered.length === 0 ? (
+        <Box sx={{ textAlign: "center", mt: 8, color: "text.secondary" }}>
           <ShoppingCartIcon sx={{ fontSize: 60, mb: 2, opacity: 0.6 }} />
           <Typography variant="h6">No se encontraron productos.</Typography>
         </Box>
+      ) : (
+        <Grid container spacing={4} justifyContent="center" alignItems="stretch">
+          {filtered.map((prod, i) => (
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={4}
+              lg={3}
+              key={prod.id}
+              sx={{ display: "flex", justifyContent: "center" }}
+            >
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: i * 0.05 }}
+                style={{
+                  display: "flex",
+                  width: "100%",
+                  justifyContent: "center",
+                }}
+              >
+                <ProductoCard
+                  producto={prod}
+                  onVerDetalle={() => {
+                    setSelected(prod);
+                    setOpen(true);
+                  }}
+                />
+              </motion.div>
+            </Grid>
+          ))}
+        </Grid>
       )}
 
-      {/* Grid de productos */}
-      <Grid container spacing={4} justifyContent="center" alignItems="stretch">
-        {filtered.map((prod, i) => (
-          <Grid
-            item
-            xs={12}
-            sm={6}
-            md={4}
-            lg={3}
-            key={prod.id}
-            sx={{ display: "flex", justifyContent: "center" }}
-          >
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: i * 0.05 }}
-              style={{
-                display: "flex",
-                width: "100%",
-                justifyContent: "center",
-              }}
+      {/* Modal Detalle */}
+      <Dialog
+        open={open}
+        onClose={() => setOpen(false)}
+        maxWidth="lg"
+        PaperProps={{
+          sx: { borderRadius: 3, p: 3, maxWidth: 900, width: "90%" },
+        }}
+      >
+        {selected && (
+          <Box sx={{ position: "relative" }}>
+            <IconButton
+              onClick={() => setOpen(false)}
+              sx={{ position: "absolute", top: 8, right: 8 }}
             >
-              <ProductoCard producto={prod} />
-            </motion.div>
-          </Grid>
-        ))}
-      </Grid>
+              <CloseIcon />
+            </IconButton>
+
+            <Grid container spacing={4}>
+              <Grid item xs={12} md={6}>
+                <Slider {...settings}>
+                  {(selected.imagenes || [selected.imagen]).map((img, i) => (
+                    <Box
+                      key={i}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: { xs: 300, md: 400 },
+                      }}
+                    >
+                      <Box
+                        component="img"
+                        src={img}
+                        alt={selected.nombre}
+                        sx={{
+                          maxWidth: "100%",
+                          maxHeight: "100%",
+                          objectFit: "contain",
+                          borderRadius: 2,
+                        }}
+                      />
+                    </Box>
+                  ))}
+                </Slider>
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <Stack spacing={3}>
+                  <Typography variant="h5" fontWeight="bold">
+                    {selected.nombre}
+                  </Typography>
+
+                  <Box>
+                    <Typography
+                      variant="h6"
+                      fontWeight="bold"
+                      color="primary"
+                      sx={{ mb: 1 }}
+                    >
+                      ${selected.precio}
+                    </Typography>
+                    <Chip label="En stock" color="success" variant="outlined" />
+                  </Box>
+
+                  <Divider />
+
+                  <Typography sx={{ color: "text.secondary", lineHeight: 1.6 }}>
+                    {selected.descripcion}
+                  </Typography>
+
+                  <Button
+                    variant="contained"
+                    startIcon={<ShoppingCartIcon />}
+                    onClick={() => handleAdd(selected)}
+                    sx={{ borderRadius: 3, py: 1.5 }}
+                  >
+                    Agregar al carrito
+                  </Button>
+                </Stack>
+              </Grid>
+            </Grid>
+          </Box>
+        )}
+      </Dialog>
     </>
   );
-}
-
-
+      }
