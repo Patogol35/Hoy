@@ -8,13 +8,19 @@ import ProductoDetalle from "./pages/ProductoDetalle";
 import { AuthProvider } from "./context/AuthContext";
 import { CarritoProvider } from "./context/CarritoContext";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Layout from "./components/Layout"; // 👈 importamos el Layout
+import Layout from "./components/Layout";
+
+// ✅ Importar Toaster de Sonner
+import { Toaster } from "sonner";
 
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <CarritoProvider>
+          {/* ✅ Toaster global para que los toast funcionen en TODA la app */}
+          <Toaster richColors position="top-center" />
+
           <Routes>
             {/* Todas las rutas que usan Navbar entran en Layout */}
             <Route element={<Layout />}>
