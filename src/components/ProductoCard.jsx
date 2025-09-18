@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useCarrito } from "../context/CarritoContext";
 import { toast } from "react-toastify";
@@ -10,6 +10,7 @@ import {
   Box,
   Divider,
   Stack,
+  Zoom,
 } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import InfoIcon from "@mui/icons-material/Info";
@@ -19,12 +20,11 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 export default function ProductoCard({ producto, onVerDetalle }) {
   const { isAuthenticated } = useAuth();
   const { agregarAlCarrito } = useCarrito();
-  const navigate = useNavigate();
+  const [hover, setHover] = useState(false); // control hover zoom
 
   const onAdd = async () => {
     if (!isAuthenticated) {
       toast.warn("Debes iniciar sesión para agregar productos 🛒");
-      navigate("/login");
       return;
     }
     try {
@@ -52,7 +52,7 @@ export default function ProductoCard({ producto, onVerDetalle }) {
         },
       }}
     >
-      {/* Imagen */}
+      {/* Imagen con efecto zoom */}
       <Box
         sx={{
           position: "relative",
@@ -62,20 +62,26 @@ export default function ProductoCard({ producto, onVerDetalle }) {
           justifyContent: "center",
           bgcolor: "#f5f5f5",
           overflow: "hidden",
+          cursor: "pointer",
         }}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+        onClick={onVerDetalle} // clic para abrir modal
       >
-        <Box
-          component="img"
-          src={producto.imagen}
-          alt={producto.nombre}
-          sx={{
-            maxWidth: "100%",
-            maxHeight: "100%",
-            objectFit: "contain",
-            transition: "transform 0.5s ease",
-            "&:hover": { transform: "scale(1.08)" },
-          }}
-        />
+        <Zoom in={hover}>
+          <Box
+            component="img"
+            src={producto.imagen}
+            alt={producto.nombre}
+            sx={{
+              maxWidth: "120%",
+              maxHeight: "120%",
+              objectFit: "contain",
+              transition: "transform 0.5s ease",
+              transform: hover ? "scale(1.2)" : "scale(1)",
+            }}
+          />
+        </Zoom>
 
         {producto.nuevo && (
           <Chip
@@ -120,20 +126,13 @@ export default function ProductoCard({ producto, onVerDetalle }) {
 
         <Divider sx={{ my: 1 }} />
 
-        {/* Precio */}
-        <Stack
-          direction="row"
-          alignItems="center"
-          spacing={0.5}
-          sx={{ mb: 2 }}
-        >
+        <Stack direction="row" alignItems="center" spacing={0.5} sx={{ mb: 2 }}>
           <AttachMoneyIcon color="primary" />
           <Typography variant="h6" color="primary" fontWeight="bold">
             {producto.precio}
           </Typography>
         </Stack>
 
-        {/* Botones */}
         <Stack spacing={1}>
           <Button
             variant="contained"
@@ -172,11 +171,7 @@ export default function ProductoCard({ producto, onVerDetalle }) {
                 boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
               },
             }}
-            onClick={() =>
-              onVerDetalle
-                ? onVerDetalle()
-                : navigate(`/producto/${producto.id}`, { state: { producto } })
-            }
+            onClick={onVerDetalle} // también abre modal
           >
             Ver detalles
           </Button>
@@ -184,4 +179,4 @@ export default function ProductoCard({ producto, onVerDetalle }) {
       </Box>
     </Card>
   );
-        }
+}
