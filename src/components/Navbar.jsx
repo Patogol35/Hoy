@@ -14,6 +14,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+
 // 🎬 Variantes animaciones
 const menuVariants = {
   hidden: { x: "100%", opacity: 0 },
@@ -28,6 +29,7 @@ const itemVariants = {
     transition: { delay: i * 0.05, duration: 0.25, ease: "easeOut" },
   }),
 };
+
 export default function Navbar() {
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
@@ -35,11 +37,13 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const menuRef = useRef(null);
+
   const handleLogout = () => {
     logout();
     navigate("/login");
     setOpen(false);
   };
+
   const menuItems = isAuthenticated
     ? [
         { label: "🏠 Inicio", path: "/", color: "linear-gradient(135deg, #0288d1, #26c6da)" },
@@ -51,12 +55,14 @@ export default function Navbar() {
         { label: "Iniciar sesión", path: "/login", color: "linear-gradient(135deg, #0288d1, #26c6da)" },
         { label: "Registrarse", path: "/register", color: "linear-gradient(135deg, #6a1b9a, #ab47bc)" },
       ];
+
   // 🎯 Navbar cambia con scroll
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
   return (
     <>
       {/* Topbar */}
@@ -76,23 +82,23 @@ export default function Navbar() {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Typography
                 variant="h6"
+                component={Link}
+                to="/"
                 sx={{
                   display: "flex",
-                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 1,
                   fontWeight: "bold",
                   color: "#fff",
                   cursor: "pointer",
                   lineHeight: 1.2,
+                  textDecoration: "none", // ❌ Sin subrayado
                 }}
-                component={Link}
-                to="/"
               >
-                🛍️ MiTienda
-                <Typography variant="caption" sx={{ fontSize: "0.75rem", fontWeight: 500, color: "#ddd" }}>
-                  Desarrollado por Jorge Patricio Santamaría Cherrez
-                </Typography>
+                🛍️ Tienda Jorge Patricio
               </Typography>
             </motion.div>
+
             {/* Desktop menu */}
             <Box sx={{ display: { xs: "none", lg: "flex" }, gap: 2, alignItems: "center" }}>
               {menuItems.map((item, i) => (
@@ -140,6 +146,7 @@ export default function Navbar() {
                 </motion.div>
               ))}
             </Box>
+
             {/* Botón menú móvil */}
             <IconButton
               sx={{ display: { xs: "block", lg: "none" }, color: "#fff" }}
@@ -151,6 +158,7 @@ export default function Navbar() {
           </Toolbar>
         </AppBar>
       </motion.div>
+
       {/* Drawer móvil */}
       <AnimatePresence>
         {open && (
@@ -257,6 +265,7 @@ export default function Navbar() {
                   )
                 )}
               </Stack>
+
               {/* Botón cerrar */}
               <Box sx={{ mt: 4 }}>
                 <Button
@@ -282,4 +291,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-}
+            }
