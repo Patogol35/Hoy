@@ -1,5 +1,4 @@
-
-          import { useState } from "react";
+import { useState } from "react";
 import { register as apiRegister } from "../api/api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -25,7 +24,8 @@ export default function Register() {
     confirm: "",
   });
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // controla ambos campos
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const navigate = useNavigate();
 
   const passwordStrength = (pwd) => {
@@ -73,21 +73,49 @@ export default function Register() {
   const strength = passwordStrength(form.password);
 
   return (
-    <Container maxWidth="xs" sx={{ mt: 8 }}>
+    <Container
+      maxWidth="xs"
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        background: "linear-gradient(135deg, #42a5f5 0%, #1976d2 100%)",
+        p: 2,
+      }}
+    >
       <Paper
-        elevation={4}
+        elevation={8}
         sx={{
           p: 4,
-          borderRadius: 4,
+          borderRadius: 3,
+          width: "100%",
           display: "flex",
           flexDirection: "column",
-          gap: 2,
-          boxShadow: "0 8px 30px rgba(0,0,0,0.1)",
+          gap: 3,
+          boxShadow: "0 12px 24px rgba(0,0,0,0.15)",
+          backgroundColor: "rgba(255,255,255,0.95)",
+          backdropFilter: "blur(8px)",
         }}
       >
-        <Typography variant="h5" align="center" fontWeight="bold" gutterBottom>
+        <Typography
+          variant="h4"
+          align="center"
+          fontWeight="bold"
+          gutterBottom
+          sx={{ color: "#1976d2" }}
+        >
           Crear cuenta
         </Typography>
+        <Typography
+          variant="body1"
+          align="center"
+          color="text.secondary"
+          sx={{ mb: 2 }}
+        >
+          Completa tus datos para registrarte
+        </Typography>
+
         <form onSubmit={handleSubmit}>
           <TextField
             label="Usuario"
@@ -118,10 +146,7 @@ export default function Register() {
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton
-                    onClick={() => setShowPassword(!showPassword)}
-                    edge="end"
-                  >
+                  <IconButton onClick={() => setShowPassword(!showPassword)}>
                     {showPassword ? <VisibilityOff /> : <Visibility />}
                   </IconButton>
                 </InputAdornment>
@@ -155,7 +180,7 @@ export default function Register() {
           {/* Confirmar contraseña */}
           <TextField
             label="Confirmar contraseña"
-            type={showPassword ? "text" : "password"}
+            type={showConfirm ? "text" : "password"}
             fullWidth
             margin="normal"
             value={form.confirm}
@@ -164,24 +189,30 @@ export default function Register() {
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton
-                    onClick={() => setShowPassword(!showPassword)}
-                    edge="end"
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  <IconButton onClick={() => setShowConfirm(!showConfirm)}>
+                    {showConfirm ? <VisibilityOff /> : <Visibility />}
                   </IconButton>
                 </InputAdornment>
               ),
             }}
           />
 
-          <Box mt={2}>
+          <Box mt={3}>
             <Button
               type="submit"
               variant="contained"
-              color="primary"
               fullWidth
               disabled={loading}
+              sx={{
+                py: 1.5,
+                fontWeight: "bold",
+                background: "linear-gradient(135deg, #1976d2, #42a5f5)",
+                "&:hover": {
+                  transform: "scale(1.03)",
+                  boxShadow: "0 6px 12px rgba(0,0,0,0.15)",
+                },
+                transition: "all 0.3s",
+              }}
             >
               {loading ? "Creando cuenta..." : "Registrarse"}
             </Button>
@@ -190,4 +221,4 @@ export default function Register() {
       </Paper>
     </Container>
   );
-}
+  }
