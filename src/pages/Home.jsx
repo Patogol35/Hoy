@@ -34,7 +34,7 @@ export default function Home() {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  // para el modal
+  // Modal
   const [selected, setSelected] = useState(null);
   const [open, setOpen] = useState(false);
 
@@ -220,20 +220,44 @@ export default function Home() {
         </Grid>
       )}
 
-      {/* Modal Detalle */}
+      {/* Modal Detalle Mejorado */}
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
         maxWidth="lg"
+        fullWidth
+        sx={{
+          "& .MuiBackdrop-root": {
+            backgroundColor: "rgba(0,0,0,0.85)",
+            backdropFilter: "blur(3px)",
+          },
+        }}
         PaperProps={{
-          sx: { borderRadius: 3, p: 3, maxWidth: 900, width: "90%" },
+          sx: {
+            borderRadius: 3,
+            p: 3,
+            bgcolor: "#1e1e1e",
+            color: "white",
+            maxWidth: 900,
+            width: "90%",
+            position: "relative",
+          },
         }}
       >
         {selected && (
-          <Box sx={{ position: "relative" }}>
+          <Box>
+            {/* Botón cerrar siempre funcional */}
             <IconButton
               onClick={() => setOpen(false)}
-              sx={{ position: "absolute", top: 8, right: 8 }}
+              sx={{
+                position: "absolute",
+                top: 12,
+                right: 12,
+                bgcolor: "rgba(0,0,0,0.6)",
+                color: "white",
+                zIndex: 9999,
+                "&:hover": { bgcolor: "rgba(255,255,255,0.15)" },
+              }}
             >
               <CloseIcon />
             </IconButton>
@@ -282,12 +306,17 @@ export default function Home() {
                     >
                       ${selected.precio}
                     </Typography>
-                    <Chip label="En stock" color="success" variant="outlined" />
+                    <Chip
+                      label="En stock"
+                      color="success"
+                      variant="outlined"
+                      sx={{ color: "white", borderColor: "white" }}
+                    />
                   </Box>
 
-                  <Divider />
+                  <Divider sx={{ bgcolor: "rgba(255,255,255,0.3)" }} />
 
-                  <Typography sx={{ color: "text.secondary", lineHeight: 1.6 }}>
+                  <Typography sx={{ lineHeight: 1.6, color: "rgba(255,255,255,0.85)" }}>
                     {selected.descripcion}
                   </Typography>
 
@@ -295,7 +324,12 @@ export default function Home() {
                     variant="contained"
                     startIcon={<ShoppingCartIcon />}
                     onClick={() => handleAdd(selected)}
-                    sx={{ borderRadius: 3, py: 1.5 }}
+                    sx={{
+                      borderRadius: 3,
+                      py: 1.5,
+                      background: "linear-gradient(135deg, #1976d2, #42a5f5)",
+                      "&:hover": { transform: "translateY(-2px)" },
+                    }}
                   >
                     Agregar al carrito
                   </Button>
@@ -307,4 +341,4 @@ export default function Home() {
       </Dialog>
     </>
   );
-}
+          }
