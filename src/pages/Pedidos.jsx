@@ -12,6 +12,7 @@ import {
   ListItemText,
   Divider,
   Box,
+  Chip,
 } from "@mui/material";
 
 export default function Pedidos() {
@@ -28,41 +29,90 @@ export default function Pedidos() {
 
   if (loading)
     return (
-      <Container sx={{ mt: 4 }}>
+      <Container sx={{ mt: 4, textAlign: "center" }}>
         <Typography>Cargando pedidos...</Typography>
       </Container>
     );
 
   return (
-    <Container sx={{ mt: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Mis pedidos
+    <Container sx={{ mt: 4, mb: 6 }}>
+      <Typography variant="h4" gutterBottom fontWeight="bold" sx={{ mb: 3 }}>
+        🛒 Mis pedidos
       </Typography>
 
       {pedidos.length === 0 && (
-        <Typography>Aún no tienes pedidos.</Typography>
+        <Typography textAlign="center" color="text.secondary" sx={{ mt: 4 }}>
+          Aún no tienes pedidos.
+        </Typography>
       )}
 
       {pedidos.map((p) => (
-        <Card key={p.id} sx={{ mb: 3, borderRadius: 2, boxShadow: 3 }}>
+        <Card
+          key={p.id}
+          sx={{
+            mb: 3,
+            borderRadius: 3,
+            boxShadow: 3,
+            transition: "all 0.3s",
+            "&:hover": { boxShadow: 8, transform: "scale(1.01)" },
+          }}
+        >
           <CardContent>
-            <Typography variant="h6">Pedido #{p.id}</Typography>
-            <Typography variant="body2" color="text.secondary">
-              Fecha: {new Date(p.fecha).toLocaleString()}
-            </Typography>
-            <Typography variant="body1" color="primary" sx={{ mb: 1 }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                flexWrap: "wrap",
+                mb: 2,
+              }}
+            >
+              <Typography variant="h6" fontWeight="bold">
+                Pedido #{p.id}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {new Date(p.fecha).toLocaleString()}
+              </Typography>
+            </Box>
+
+            <Typography
+              variant="subtitle1"
+              color="primary"
+              fontWeight="bold"
+              sx={{ mb: 2 }}
+            >
               Total: ${Number(p.total).toFixed(2)}
             </Typography>
 
             <List dense>
               {p.items?.map((item, i) => (
-                <Box key={i}>
-                  <ListItem>
+                <Box
+                  key={i}
+                  sx={{
+                    bgcolor: i % 2 === 0 ? "rgba(25, 118, 210,0.05)" : "transparent",
+                    borderRadius: 1,
+                    mb: 1,
+                    p: 1,
+                  }}
+                >
+                  <ListItem sx={{ px: 0 }}>
                     <ListItemText
-                      primary={`${item.cantidad} x ${item.producto?.nombre} — $${Number(
-                        item.precio_unitario
-                      ).toFixed(2)}`}
-                      secondary={`Subtotal: $${Number(item.subtotal).toFixed(2)}`}
+                      primary={
+                        <Typography fontWeight="bold">
+                          {item.cantidad} x {item.producto?.nombre} — $
+                          {Number(item.precio_unitario).toFixed(2)}
+                        </Typography>
+                      }
+                      secondary={
+                        <Typography variant="body2" color="text.secondary">
+                          Subtotal: ${Number(item.subtotal).toFixed(2)}
+                        </Typography>
+                      }
+                    />
+                    <Chip
+                      label={item.estado || "Pendiente"}
+                      color={item.estado === "Entregado" ? "success" : "warning"}
+                      size="small"
                     />
                   </ListItem>
                   {i < p.items.length - 1 && <Divider component="li" />}
