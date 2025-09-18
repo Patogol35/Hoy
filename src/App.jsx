@@ -10,7 +10,7 @@ import { CarritoProvider } from "./context/CarritoContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
 
-// ✅ Importar Toaster de Sonner
+// ✅ Sonner para notificaciones
 import { Toaster } from "sonner";
 
 function App() {
@@ -18,11 +18,30 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <CarritoProvider>
-          {/* ✅ Toaster global para que los toast funcionen en TODA la app */}
-          <Toaster richColors position="top-center" />
+          {/* 🌟 Toaster elegante y moderno */}
+          <Toaster
+            position="top-center"
+            richColors
+            theme="dark"
+            expand
+            closeButton
+            duration={4000}
+            toastOptions={{
+              style: {
+                borderRadius: "16px",
+                padding: "16px 20px",
+                background:
+                  "linear-gradient(135deg, #1e1e1e 0%, #2b2b2b 100%)",
+                color: "#ffffff",
+                boxShadow: "0 8px 20px rgba(0,0,0,0.35)",
+                fontSize: "16px",
+                fontWeight: 500,
+              },
+            }}
+          />
 
           <Routes>
-            {/* Todas las rutas que usan Navbar entran en Layout */}
+            {/* Rutas con Navbar */}
             <Route element={<Layout />}>
               <Route path="/" element={<Home />} />
               <Route
@@ -44,7 +63,7 @@ function App() {
               <Route path="/producto/:id" element={<ProductoDetalle />} />
             </Route>
 
-            {/* Estas no muestran Navbar */}
+            {/* Rutas sin Navbar */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
           </Routes>
