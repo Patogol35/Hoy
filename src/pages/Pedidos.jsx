@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getPedidos, crearPedido } from "../api/api";
+import { getPedidos } from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import {
   Container,
@@ -20,71 +20,26 @@ export default function Pedidos() {
   const { access } = useAuth();
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [nextPage, setNextPage] = useState(null);
+  const [visibleCount, setVisibleCount] = useState(5); // 🔹 mostrar solo 5 al inicio
 
-  // 🔹 Función para ordenar y numerar pedidos
-  const numerarPedidos = (lista) => {
-    const ordenados = [...lista].sort(
-      (a, b) => new Date(b.fecha) - new Date(a.fecha)
-    );
-    return ordenados.map((p, index) => ({
-      ...p,
-      numeroUsuario: ordenados.length - index,
-    }));
-  };
-
-  // 🔹 Cargar pedidos iniciales (primera página)
   useEffect(() => {
-    const fetchPedidos = async () => {
-      setLoading(true);
-      try {
-        const data = await getPedidos(access);
-        setPedidos(numerarPedidos(data.results ?? []));
-        setNextPage(data.next || null);
-      } catch (err) {
-        console.error("Error cargando pedidos:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPedidos();
+    getPedidos(access)
+      .then((data) => {
+        if (!data) return;
+        // ordenar por fecha descendente
+        const ordenados = [...data].sort(
+          (a, b) => new Date(b.fecha) - new Date(a.fecha)
+        );
+        // agregar número relativo local
+        const pedidosNumerados = ordenados.map((p, index) => ({
+          ...p,
+          numeroLocal: ordenados.length - index,
+        }));
+        setPedidos(pedidosNumerados);
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
   }, [access]);
-
-  // 🔹 Cargar página siguiente (paginación)
-  const cargarMasPedidos = async () => {
-    if (!nextPage) return;
-
-    try {
-      const data = await getPedidos(access, nextPage);
-      const nuevosPedidos = data.results ?? [];
-
-      // 🔹 Evitar duplicados por id
-      const combinados = [
-        ...pedidos,
-        ...nuevosPedidos.filter(np => !pedidos.some(p => p.id === np.id))
-      ];
-
-      setPedidos(numerarPedidos(combinados));
-      setNextPage(data.next || null);
-    } catch (err) {
-      console.error("Error cargando más pedidos:", err);
-    }
-  };
-
-  // 🔹 Agregar un pedido nuevo inmediatamente
-  const agregarNuevoPedido = async () => {
-    try {
-      const nuevoPedido = await crearPedido(access);
-
-      // Evitar duplicados si el mismo pedido existe
-      const combinados = [nuevoPedido, ...pedidos.filter(p => p.id !== nuevoPedido.id)];
-
-      setPedidos(numerarPedidos(combinados));
-    } catch (err) {
-      console.error("Error al crear pedido:", err);
-    }
-  };
 
   if (loading)
     return (
@@ -106,7 +61,7 @@ export default function Pedidos() {
         Mis pedidos
       </Typography>
 
-      {pedidos.map((p) => (
+      {pedidos.slice(0, visibleCount).map((p) => (
         <Card
           key={p.id}
           sx={{
@@ -125,8 +80,9 @@ export default function Pedidos() {
               spacing={1}
               sx={{ mb: 1 }}
             >
+              {/* número relativo por usuario */}
               <Typography variant="h6" fontWeight="bold">
-                Pedido #{p.numeroUsuario}
+                Pedido #{p.numeroLocal}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {new Date(p.fecha).toLocaleString()}
@@ -181,9 +137,13 @@ export default function Pedidos() {
         </Card>
       ))}
 
-      {nextPage && (
+      {/* 🔹 Botón para cargar más pedidos */}
+      {visibleCount < pedidos.length && (
         <Box textAlign="center" mt={2}>
-          <Button variant="outlined" onClick={cargarMasPedidos}>
+          <Button
+            variant="outlined"
+            onClick={() => setVisibleCount((prev) => prev + 5)}
+          >
             Ver más
           </Button>
         </Box>
