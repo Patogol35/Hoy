@@ -22,46 +22,52 @@ export default function Pedidos() {
   const [loading, setLoading] = useState(true);
   const [nextPage, setNextPage] = useState(null);
 
-  // 👉 Función auxiliar para ordenar y numerar pedidos
-  const procesarPedidos = (lista) => {
+  // 🔹 Función para ordenar y numerar pedidos de manera consistente
+  const numerarPedidos = (lista) => {
     const ordenados = [...lista].sort(
       (a, b) => new Date(b.fecha) - new Date(a.fecha)
     );
-
     return ordenados.map((p, index) => ({
       ...p,
-      numeroUsuario: ordenados.length - index, // numeración relativa
+      numeroUsuario: ordenados.length - index,
     }));
   };
 
   // Cargar pedidos iniciales
   useEffect(() => {
-    setLoading(true);
-    getPedidos(access)
-      .then((data) => {
+    const fetchPedidos = async () => {
+      setLoading(true);
+      try {
+        const data = await getPedidos(access);
         if (!data) return;
 
         const pedidosArray = data.results ?? (Array.isArray(data) ? data : []);
         setNextPage(data.next || null);
+        setPedidos(numerarPedidos(pedidosArray));
+      } catch (err) {
+        console.error("Error cargando pedidos:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-        setPedidos(procesarPedidos(pedidosArray));
-      })
-      .catch((err) => console.error("Error cargando pedidos:", err))
-      .finally(() => setLoading(false));
+    fetchPedidos();
   }, [access]);
 
   // Cargar página siguiente
-  const cargarMasPedidos = () => {
+  const cargarMasPedidos = async () => {
     if (!nextPage) return;
 
-    getPedidos(access, nextPage)
-      .then((data) => {
-        const pedidosArray = data.results ?? [];
-        setNextPage(data.next || null);
+    try {
+      const data = await getPedidos(access, nextPage);
+      const pedidosArray = data.results ?? [];
+      setNextPage(data.next || null);
 
-        setPedidos((prev) => procesarPedidos([...prev, ...pedidosArray]));
-      })
-      .catch((err) => console.error("Error cargando más pedidos:", err));
+      const combinados = [...pedidos, ...pedidosArray];
+      setPedidos(numerarPedidos(combinados));
+    } catch (err) {
+      console.error("Error cargando más pedidos:", err);
+    }
   };
 
   if (loading)
@@ -159,7 +165,6 @@ export default function Pedidos() {
         </Card>
       ))}
 
-      {/* Botón para cargar más pedidos */}
       {nextPage && (
         <Box textAlign="center" mt={2}>
           <Button variant="outlined" onClick={cargarMasPedidos}>
