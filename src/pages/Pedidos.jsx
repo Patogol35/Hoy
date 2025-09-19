@@ -22,23 +22,19 @@ export default function Pedidos() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [next, setNext] = useState(null);
-  const [count, setCount] = useState(0);
 
-  // cargar pedidos iniciales
   useEffect(() => {
     if (!access) return;
-    setLoading(true);
 
+    setLoading(true);
     getPedidos(access, page)
       .then((data) => {
         if (!data || !data.results) return;
 
-        // Ordenar por fecha descendente
         const ordenados = [...data.results].sort(
           (a, b) => new Date(b.fecha) - new Date(a.fecha)
         );
 
-        // Numerar pedidos de forma relativa al total
         const pedidosNumerados = ordenados.map((p, index) => ({
           ...p,
           numeroLocal: data.count - (pedidos.length + index),
@@ -46,10 +42,10 @@ export default function Pedidos() {
 
         setPedidos((prev) => [...prev, ...pedidosNumerados]);
         setNext(data.next);
-        setCount(data.count);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [access, page]);
 
   if (loading && pedidos.length === 0)
@@ -69,7 +65,7 @@ export default function Pedidos() {
   return (
     <Container sx={{ mt: 4, mb: 6 }}>
       <Typography variant="h4" gutterBottom fontWeight="bold">
-        Mis pedidos ({count})
+        Mis pedidos
       </Typography>
 
       {pedidos.map((p) => (
@@ -91,7 +87,7 @@ export default function Pedidos() {
               spacing={1}
               sx={{ mb: 1 }}
             >
-              {/* número relativo */}
+              {/* número relativo por usuario */}
               <Typography variant="h6" fontWeight="bold">
                 Pedido #{p.numeroLocal}
               </Typography>
@@ -104,45 +100,46 @@ export default function Pedidos() {
             </Stack>
 
             <List dense>
-              {(p.items ?? p.detalles)?.map((item, i, arr) => (
-                <Box key={i}>
-                  <ListItem
-                    sx={{
-                      display: "flex",
-                      flexDirection: { xs: "column", sm: "row" },
-                      justifyContent: "space-between",
-                      alignItems: { xs: "flex-start", sm: "center" },
-                      py: 1,
-                    }}
-                  >
-                    <ListItemText
-                      primary={`${item.cantidad} x ${
-                        item.producto?.nombre ?? "Producto"
-                      } — $${Number(
-                        item.precio_unitario ?? item.producto?.precio ?? 0
-                      ).toFixed(2)}`}
-                      secondary={`Subtotal: $${Number(
-                        item.subtotal ?? 0
-                      ).toFixed(2)}`}
-                    />
-                    {item.estado && (
-                      <Chip
-                        label={item.estado}
-                        color={
-                          item.estado === "Entregado"
-                            ? "success"
-                            : item.estado === "En preparación"
-                            ? "warning"
-                            : "error"
-                        }
-                        size="small"
-                        sx={{ mt: { xs: 1, sm: 0 } }}
+              {Array.isArray(p.items ?? p.detalles) &&
+                (p.items ?? p.detalles).map((item, i, arr) => (
+                  <Box key={i}>
+                    <ListItem
+                      sx={{
+                        display: "flex",
+                        flexDirection: { xs: "column", sm: "row" },
+                        justifyContent: "space-between",
+                        alignItems: { xs: "flex-start", sm: "center" },
+                        py: 1,
+                      }}
+                    >
+                      <ListItemText
+                        primary={`${item.cantidad} x ${
+                          item.producto?.nombre ?? "Producto"
+                        } — $${Number(
+                          item.precio_unitario ?? item.producto?.precio ?? 0
+                        ).toFixed(2)}`}
+                        secondary={`Subtotal: $${Number(
+                          item.subtotal ?? 0
+                        ).toFixed(2)}`}
                       />
-                    )}
-                  </ListItem>
-                  {i < arr.length - 1 && <Divider component="li" />}
-                </Box>
-              ))}
+                      {item.estado && (
+                        <Chip
+                          label={item.estado}
+                          color={
+                            item.estado === "Entregado"
+                              ? "success"
+                              : item.estado === "En preparación"
+                              ? "warning"
+                              : "error"
+                          }
+                          size="small"
+                          sx={{ mt: { xs: 1, sm: 0 } }}
+                        />
+                      )}
+                    </ListItem>
+                    {i < arr.length - 1 && <Divider component="li" />}
+                  </Box>
+                ))}
             </List>
           </CardContent>
         </Card>
@@ -151,11 +148,11 @@ export default function Pedidos() {
       {/* Botón para cargar más pedidos */}
       {next && (
         <Box textAlign="center" mt={2}>
-          <Button variant="outlined" onClick={() => setPage((p) => p + 1)}>
+          <Button variant="outlined" onClick={() => setPage((prev) => prev + 1)}>
             Ver más
           </Button>
         </Box>
       )}
     </Container>
   );
-}
+                          }
