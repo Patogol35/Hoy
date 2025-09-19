@@ -20,26 +20,31 @@ export default function Pedidos() {
   const { access } = useAuth();
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [visibleCount, setVisibleCount] = useState(5); // 🔹 mostrar solo 5 al inicio
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
-    getPedidos(access)
-      .then((data) => {
-        if (!data) return;
-        // ordenar por fecha descendente
-        const ordenados = [...data].sort(
-          (a, b) => new Date(b.fecha) - new Date(a.fecha)
-        );
-        // agregar número relativo local
-        const pedidosNumerados = ordenados.map((p, index) => ({
-          ...p,
-          numeroLocal: ordenados.length - index,
-        }));
-        setPedidos(pedidosNumerados);
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, [access]);
+    cargarPedidos(page);
+  }, [page]);
+
+  async function cargarPedidos(pagina) {
+    try {
+      const data = await getPedidos(access, pagina);
+      if (!data) return;
+
+      const nuevos = data.results.map((p, index) => ({
+        ...p,
+        numeroLocal: pedidos.length + (index + 1),
+      }));
+
+      setPedidos((prev) => [...prev, ...nuevos]);
+      setHasMore(Boolean(data.next));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   if (loading)
     return (
@@ -61,7 +66,7 @@ export default function Pedidos() {
         Mis pedidos
       </Typography>
 
-      {pedidos.slice(0, visibleCount).map((p) => (
+      {pedidos.map((p) => (
         <Card
           key={p.id}
           sx={{
@@ -80,7 +85,6 @@ export default function Pedidos() {
               spacing={1}
               sx={{ mb: 1 }}
             >
-              {/* número relativo por usuario */}
               <Typography variant="h6" fontWeight="bold">
                 Pedido #{p.numeroLocal}
               </Typography>
@@ -137,17 +141,13 @@ export default function Pedidos() {
         </Card>
       ))}
 
-      {/* 🔹 Botón para cargar más pedidos */}
-      {visibleCount < pedidos.length && (
+      {hasMore && (
         <Box textAlign="center" mt={2}>
-          <Button
-            variant="outlined"
-            onClick={() => setVisibleCount((prev) => prev + 5)}
-          >
+          <Button variant="outlined" onClick={() => setPage((prev) => prev + 1)}>
             Ver más
           </Button>
         </Box>
       )}
     </Container>
   );
-}
+        }
