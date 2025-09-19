@@ -22,26 +22,24 @@ export default function Pedidos() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [next, setNext] = useState(null);
+  const [previous, setPrevious] = useState(null);
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
     if (!access) return;
     setLoading(true);
-
     getPedidos(access, page)
       .then((data) => {
-        const nuevosPedidos = (data.results || []).map((p, index) => ({
-          ...p,
-          numeroLocal: data.count - (pedidos.length + index),
-        }));
-
-        setPedidos((prev) => [...prev, ...nuevosPedidos]);
+        setPedidos(data.results || []);
         setNext(data.next);
+        setPrevious(data.previous);
+        setCount(data.count);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [access, page]);
 
-  if (loading && pedidos.length === 0)
+  if (loading)
     return (
       <Container sx={{ mt: 4 }}>
         <Typography>Cargando pedidos...</Typography>
@@ -58,99 +56,98 @@ export default function Pedidos() {
   return (
     <Container sx={{ mt: 4, mb: 6 }}>
       <Typography variant="h4" gutterBottom fontWeight="bold">
-        Mis pedidos
+        Mis pedidos ({count})
       </Typography>
 
-      {pedidos.map((p) => {
-        const items = Array.isArray(p.items)
-          ? p.items
-          : Array.isArray(p.detalles)
-          ? p.detalles
-          : [];
+      {pedidos.map((p, index) => (
+        <Card
+          key={p.id}
+          sx={{
+            mb: 3,
+            borderRadius: 3,
+            boxShadow: 3,
+            transition: "all 0.3s",
+            "&:hover": { boxShadow: 6, transform: "scale(1.01)" },
+          }}
+        >
+          <CardContent>
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              justifyContent="space-between"
+              alignItems={{ xs: "flex-start", sm: "center" }}
+              spacing={1}
+              sx={{ mb: 1 }}
+            >
+              {/* número relativo basado en la paginación */}
+              <Typography variant="h6" fontWeight="bold">
+                Pedido #{(count - ((page - 1) * 5)) - index}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {new Date(p.fecha).toLocaleString()}
+              </Typography>
+              <Typography variant="body1" color="primary" fontWeight="bold">
+                Total: ${Number(p.total).toFixed(2)}
+              </Typography>
+            </Stack>
 
-        return (
-          <Card
-            key={p.id}
-            sx={{
-              mb: 3,
-              borderRadius: 3,
-              boxShadow: 3,
-              transition: "all 0.3s",
-              "&:hover": { boxShadow: 6, transform: "scale(1.01)" },
-            }}
-          >
-            <CardContent>
-              <Stack
-                direction={{ xs: "column", sm: "row" }}
-                justifyContent="space-between"
-                alignItems={{ xs: "flex-start", sm: "center" }}
-                spacing={1}
-                sx={{ mb: 1 }}
-              >
-                <Typography variant="h6" fontWeight="bold">
-                  Pedido #{p.numeroLocal}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {new Date(p.fecha).toLocaleString()}
-                </Typography>
-                <Typography variant="body1" color="primary" fontWeight="bold">
-                  Total: ${Number(p.total).toFixed(2)}
-                </Typography>
-              </Stack>
-
-              <List dense>
-                {items.map((item, i, arr) => (
-                  <Box key={i}>
-                    <ListItem
-                      sx={{
-                        display: "flex",
-                        flexDirection: { xs: "column", sm: "row" },
-                        justifyContent: "space-between",
-                        alignItems: { xs: "flex-start", sm: "center" },
-                        py: 1,
-                      }}
-                    >
-                      <ListItemText
-                        primary={`${item.cantidad} x ${
-                          item.producto?.nombre ?? "Producto"
-                        } — $${Number(
-                          item.precio_unitario ?? item.producto?.precio ?? 0
-                        ).toFixed(2)}`}
-                        secondary={`Subtotal: $${Number(
-                          item.subtotal ?? 0
-                        ).toFixed(2)}`}
+            <List dense>
+              {(p.items ?? p.detalles)?.map((item, i, arr) => (
+                <Box key={i}>
+                  <ListItem
+                    sx={{
+                      display: "flex",
+                      flexDirection: { xs: "column", sm: "row" },
+                      justifyContent: "space-between",
+                      alignItems: { xs: "flex-start", sm: "center" },
+                      py: 1,
+                    }}
+                  >
+                    <ListItemText
+                      primary={`${item.cantidad} x ${
+                        item.producto?.nombre ?? "Producto"
+                      } — $${Number(
+                        item.precio_unitario ?? item.producto?.precio ?? 0
+                      ).toFixed(2)}`}
+                      secondary={`Subtotal: $${Number(
+                        item.subtotal ?? 0
+                      ).toFixed(2)}`}
+                    />
+                    {item.estado && (
+                      <Chip
+                        label={item.estado}
+                        color={
+                          item.estado === "Entregado"
+                            ? "success"
+                            : item.estado === "En preparación"
+                            ? "warning"
+                            : "error"
+                        }
+                        size="small"
+                        sx={{ mt: { xs: 1, sm: 0 } }}
                       />
-                      {item.estado && (
-                        <Chip
-                          label={item.estado}
-                          color={
-                            item.estado === "Entregado"
-                              ? "success"
-                              : item.estado === "En preparación"
-                              ? "warning"
-                              : "error"
-                          }
-                          size="small"
-                          sx={{ mt: { xs: 1, sm: 0 } }}
-                        />
-                      )}
-                    </ListItem>
-                    {i < arr.length - 1 && <Divider component="li" />}
-                  </Box>
-                ))}
-              </List>
-            </CardContent>
-          </Card>
-        );
-      })}
+                    )}
+                  </ListItem>
+                  {i < arr.length - 1 && <Divider component="li" />}
+                </Box>
+              ))}
+            </List>
+          </CardContent>
+        </Card>
+      ))}
 
-      {next && (
-        <Box textAlign="center" mt={2}>
-          <Button variant="outlined" onClick={() => setPage((prev) => prev + 1)}>
-            Ver más
+      {/* 🔹 Botones de paginación */}
+      <Box textAlign="center" mt={2} display="flex" justifyContent="center" gap={2}>
+        {previous && (
+          <Button variant="outlined" onClick={() => setPage((prev) => prev - 1)}>
+            Anterior
           </Button>
-        </Box>
-      )}
+        )}
+        {next && (
+          <Button variant="outlined" onClick={() => setPage((prev) => prev + 1)}>
+            Siguiente
+          </Button>
+        )}
+      </Box>
     </Container>
   );
-}
+                }
