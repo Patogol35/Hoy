@@ -31,7 +31,6 @@ async function authFetch(url, options = {}, token) {
 
   let res = await fetch(url, { ...options, headers });
 
-  // Si expira el access → intentar refrescar
   if (res.status === 401 && localStorage.getItem("refresh")) {
     try {
       const newTokens = await refreshToken(localStorage.getItem("refresh"));
@@ -39,7 +38,6 @@ async function authFetch(url, options = {}, token) {
         localStorage.setItem("access", newTokens.access);
         token = newTokens.access;
 
-        // reintento con nuevo token
         headers = {
           ...(options.headers || {}),
           ...(options.body && { "Content-Type": "application/json" }),
@@ -127,15 +125,22 @@ export const setCantidadItem = async (itemId, cantidad, token) => {
   );
 };
 
-// PEDIDOS (paginados)
+// PEDIDOS
 export const crearPedido = async (token) => {
   return authFetch(`${BASE_URL}/pedido/crear/`, { method: "POST" }, token);
 };
 
+// 🔹 getPedidos ahora maneja paginación de DRF
 export const getPedidos = async (token, page = 1) => {
-  return authFetch(
+  const data = await authFetch(
     `${BASE_URL}/pedidos/?page=${page}`,
     { method: "GET" },
     token
   );
+  return {
+    results: data.results || [],
+    next: data.next,
+    previous: data.previous,
+    count: data.count || 0,
+  };
 };
