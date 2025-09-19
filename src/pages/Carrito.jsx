@@ -17,6 +17,7 @@ import {
   IconButton,
   Divider,
   Chip,
+  useTheme,
 } from "@mui/material";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
@@ -26,25 +27,22 @@ import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 
 // Banner de demo
 function DemoBanner() {
+  const theme = useTheme();
   return (
-
-
-<Box
-          sx={{
-            bgcolor: "#FFF9E6",
-            color: "#8A6D3B",
-            p: 2,
-            borderRadius: 2,
-            mb: 4,
-            border: "1px solid #FFECB3",
-            textAlign: "center",
-            boxShadow: "0 3px 8px rgba(0,0,0,0.1)",
-          }}
-        >
-          ⚠️ Esta es una aplicación demostrativa. Los pedidos no son reales.
-        </Box>
-
-    
+    <Box
+      sx={{
+        bgcolor: theme.palette.mode === "dark" ? "#5c4b32" : "#FFF9E6",
+        color: theme.palette.mode === "dark" ? "#FFD580" : "#8A6D3B",
+        p: 2,
+        borderRadius: 2,
+        mb: 4,
+        border: `1px solid ${theme.palette.mode === "dark" ? "#8c6a3f" : "#FFECB3"}`,
+        textAlign: "center",
+        boxShadow: theme.shadows[2],
+      }}
+    >
+      ⚠️ Esta es una aplicación demostrativa. Los pedidos no son reales.
+    </Box>
   );
 }
 
@@ -59,6 +57,7 @@ export default function Carrito() {
   } = useCarrito();
   const { access } = useAuth();
   const navigate = useNavigate();
+  const theme = useTheme();
 
   useEffect(() => {
     cargarCarrito();
@@ -124,9 +123,10 @@ export default function Carrito() {
                 flexDirection: { xs: "column", sm: "row" },
                 mb: 2,
                 borderRadius: 3,
-                boxShadow: "0 3px 8px rgba(0,0,0,0.12)",
+                boxShadow: theme.shadows[3],
                 transition: "all 0.3s",
-                "&:hover": { boxShadow: "0 6px 16px rgba(0,0,0,0.2)" },
+                "&:hover": { boxShadow: theme.shadows[6] },
+                bgcolor: theme.palette.background.paper,
               }}
             >
               {/* Imagen */}
@@ -138,7 +138,7 @@ export default function Carrito() {
                   width: { xs: "100%", sm: 120 },
                   height: { xs: 180, sm: 120 },
                   objectFit: "contain",
-                  bgcolor: "#fafafa",
+                  bgcolor: theme.palette.mode === "dark" ? "#2c2c2c" : "#fafafa",
                   borderRadius: { xs: "12px 12px 0 0", sm: "12px 0 0 12px" },
                   p: 1,
                 }}
@@ -205,8 +205,10 @@ export default function Carrito() {
                   <IconButton
                     onClick={() => decrementar(it)}
                     sx={{
-                      bgcolor: "#f5f5f5",
-                      "&:hover": { bgcolor: "#e0e0e0" },
+                      bgcolor: theme.palette.mode === "dark" ? "#444" : "#f5f5f5",
+                      "&:hover": {
+                        bgcolor: theme.palette.mode === "dark" ? "#555" : "#e0e0e0",
+                      },
                     }}
                   >
                     <RemoveIcon />
@@ -233,6 +235,7 @@ export default function Carrito() {
                         textAlign: "center",
                         fontWeight: "bold",
                         fontSize: "1rem",
+                        color: theme.palette.text.primary,
                       },
                     }}
                   />
@@ -241,10 +244,18 @@ export default function Carrito() {
                     disabled={it.cantidad >= stock}
                     sx={{
                       bgcolor:
-                        it.cantidad >= stock ? "#eee" : "#f5f5f5",
+                        it.cantidad >= stock
+                          ? theme.palette.action.disabledBackground
+                          : theme.palette.mode === "dark"
+                          ? "#444"
+                          : "#f5f5f5",
                       "&:hover": {
                         bgcolor:
-                          it.cantidad >= stock ? "#eee" : "#e0e0e0",
+                          it.cantidad >= stock
+                            ? theme.palette.action.disabledBackground
+                            : theme.palette.mode === "dark"
+                            ? "#555"
+                            : "#e0e0e0",
                       },
                     }}
                   >
@@ -256,8 +267,8 @@ export default function Carrito() {
                 <IconButton
                   onClick={() => eliminarItem(it.id)}
                   sx={{
-                    color: "error.main",
-                    "&:hover": { bgcolor: "rgba(211,47,47,0.1)" },
+                    color: theme.palette.error.main,
+                    "&:hover": { bgcolor: theme.palette.error.light },
                   }}
                 >
                   <DeleteIcon />
@@ -277,10 +288,10 @@ export default function Carrito() {
             bottom: { xs: 0, sm: "auto" },
             left: 0,
             right: 0,
-            bgcolor: { xs: "white", sm: "transparent" },
+            bgcolor: { xs: theme.palette.background.default, sm: "transparent" },
             p: { xs: 2, sm: 0 },
-            boxShadow: { xs: "0 -4px 12px rgba(0,0,0,0.15)", sm: "none" },
-            borderTop: { xs: "1px solid #ddd", sm: "none" },
+            boxShadow: { xs: theme.shadows[4], sm: "none" },
+            borderTop: { xs: `1px solid ${theme.palette.divider}`, sm: "none" },
           }}
         >
           <Divider sx={{ mb: 2, display: { xs: "none", sm: "block" } }} />
@@ -292,8 +303,6 @@ export default function Carrito() {
           </Typography>
           <Button
             variant="contained"
-            color="primary"
-            size="large"
             startIcon={<ShoppingCartCheckoutIcon />}
             sx={{
               width: { xs: "100%", sm: "auto" },
@@ -301,7 +310,13 @@ export default function Carrito() {
               fontWeight: "bold",
               borderRadius: 3,
               py: 1.2,
-              "&:hover": { transform: "scale(1.05)", boxShadow: 6 },
+              bgcolor: theme.palette.primary.main,
+              color: theme.palette.primary.contrastText,
+              "&:hover": {
+                transform: "scale(1.05)",
+                boxShadow: theme.shadows[6],
+                bgcolor: theme.palette.primary.dark,
+              },
             }}
             onClick={comprar}
           >
