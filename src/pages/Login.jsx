@@ -14,12 +14,14 @@ import {
   InputAdornment,
   IconButton,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import PersonOutline from "@mui/icons-material/PersonOutline";
 import LockOutlined from "@mui/icons-material/LockOutlined";
 
 export default function Login() {
+  const theme = useTheme();
   const [form, setForm] = useState({ username: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -53,8 +55,10 @@ export default function Login() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        background: "linear-gradient(135deg, #42a5f5 0%, #1976d2 100%)",
         p: 2,
+        background: theme.palette.mode === "dark"
+          ? "linear-gradient(135deg, #121212 0%, #1e1e1e 100%)"
+          : "linear-gradient(135deg, #42a5f5 0%, #1976d2 100%)",
       }}
     >
       <Paper
@@ -66,9 +70,11 @@ export default function Login() {
           display: "flex",
           flexDirection: "column",
           gap: 3,
-          boxShadow: "0 12px 24px rgba(0,0,0,0.15)",
-          backgroundColor: "rgba(255,255,255,0.95)",
-          backdropFilter: "blur(8px)",
+          boxShadow: theme.palette.mode === "dark"
+            ? "0 12px 24px rgba(0,0,0,0.5)"
+            : "0 12px 24px rgba(0,0,0,0.15)",
+          backgroundColor: theme.palette.mode === "dark" ? "#1e1e1e" : "#ffffff",
+          color: theme.palette.mode === "dark" ? "#fff" : "#000",
         }}
       >
         <Typography
@@ -76,7 +82,7 @@ export default function Login() {
           align="center"
           fontWeight="bold"
           gutterBottom
-          sx={{ color: "#1976d2" }}
+          sx={{ color: theme.palette.mode === "dark" ? "#42a5f5" : "#1976d2" }}
         >
           Bienvenido
         </Typography>
@@ -144,7 +150,9 @@ export default function Login() {
               sx={{
                 py: 1.5,
                 fontWeight: "bold",
-                background: "linear-gradient(135deg, #1976d2, #42a5f5)",
+                background: theme.palette.mode === "dark"
+                  ? "linear-gradient(135deg, #42a5f5, #1976d2)"
+                  : "linear-gradient(135deg, #1976d2, #42a5f5)",
                 "&:hover": {
                   transform: "scale(1.03)",
                   boxShadow: "0 6px 12px rgba(0,0,0,0.15)",
@@ -162,12 +170,15 @@ export default function Login() {
               sx={{
                 py: 1.5,
                 fontWeight: "bold",
-                borderColor: "#1976d2",
-                color: "#1976d2",
+                borderColor: theme.palette.mode === "dark" ? "#42a5f5" : "#1976d2",
+                color: theme.palette.mode === "dark" ? "#42a5f5" : "#1976d2",
                 "&:hover": {
-                  backgroundColor: "rgba(25,118,210,0.08)",
+                  backgroundColor:
+                    theme.palette.mode === "dark"
+                      ? "rgba(66,165,245,0.08)"
+                      : "rgba(25,118,210,0.08)",
                   transform: "scale(1.03)",
-                  borderColor: "#1976d2",
+                  borderColor: theme.palette.mode === "dark" ? "#42a5f5" : "#1976d2",
                 },
                 transition: "all 0.3s",
               }}
