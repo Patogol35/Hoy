@@ -22,24 +22,31 @@ export default function Pedidos() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [next, setNext] = useState(null);
+  const [count, setCount] = useState(0);
 
+  // cargar pedidos iniciales
   useEffect(() => {
     if (!access) return;
-
     setLoading(true);
+
     getPedidos(access, page)
       .then((data) => {
-        if (!data) return;
+        if (!data || !data.results) return;
 
-        // acumulamos pedidos ya cargados
-        setPedidos((prev) => [
-          ...prev,
-          ...data.results.map((p, index) => ({
-            ...p,
-            numeroLocal: data.count - (prev.length + index),
-          })),
-        ]);
+        // Ordenar por fecha descendente
+        const ordenados = [...data.results].sort(
+          (a, b) => new Date(b.fecha) - new Date(a.fecha)
+        );
+
+        // Numerar pedidos de forma relativa al total
+        const pedidosNumerados = ordenados.map((p, index) => ({
+          ...p,
+          numeroLocal: data.count - (pedidos.length + index),
+        }));
+
+        setPedidos((prev) => [...prev, ...pedidosNumerados]);
         setNext(data.next);
+        setCount(data.count);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -62,7 +69,7 @@ export default function Pedidos() {
   return (
     <Container sx={{ mt: 4, mb: 6 }}>
       <Typography variant="h4" gutterBottom fontWeight="bold">
-        Mis pedidos
+        Mis pedidos ({count})
       </Typography>
 
       {pedidos.map((p) => (
@@ -84,6 +91,7 @@ export default function Pedidos() {
               spacing={1}
               sx={{ mb: 1 }}
             >
+              {/* número relativo */}
               <Typography variant="h6" fontWeight="bold">
                 Pedido #{p.numeroLocal}
               </Typography>
@@ -140,10 +148,10 @@ export default function Pedidos() {
         </Card>
       ))}
 
-      {/* Botón para cargar más páginas */}
+      {/* Botón para cargar más pedidos */}
       {next && (
         <Box textAlign="center" mt={2}>
-          <Button variant="outlined" onClick={() => setPage((prev) => prev + 1)}>
+          <Button variant="outlined" onClick={() => setPage((p) => p + 1)}>
             Ver más
           </Button>
         </Box>
