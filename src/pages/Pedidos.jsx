@@ -39,13 +39,16 @@ export default function Pedidos() {
           (a, b) => new Date(b.fecha) - new Date(a.fecha)
         );
 
-        // agregar número relativo local (continuando con los previos)
-        const pedidosNumerados = ordenados.map((p, index) => ({
-          ...p,
-          numeroLocal: pedidos.length + (ordenados.length - index),
-        }));
+        // 🔹 combinar con los pedidos previos y renumerar globalmente
+        setPedidos((prev) => {
+          const todos = [...prev, ...ordenados];
+          const total = todos.length;
+          return todos.map((p, i) => ({
+            ...p,
+            numeroLocal: total - i,
+          }));
+        });
 
-        setPedidos((prev) => [...prev, ...pedidosNumerados]);
         setHasMore(!!data.next); // si hay siguiente página
       })
       .catch(console.error)
@@ -148,7 +151,6 @@ export default function Pedidos() {
         </Card>
       ))}
 
-      {/* 🔹 Botón para cargar más desde el backend */}
       {hasMore && (
         <Box textAlign="center" mt={2}>
           <Button variant="outlined" onClick={() => setPage((prev) => prev + 1)}>
