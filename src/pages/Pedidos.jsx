@@ -37,13 +37,7 @@ export default function Pedidos() {
           (a, b) => new Date(b.fecha) - new Date(a.fecha)
         );
 
-        // Agregar número relativo local
-        const pedidosNumerados = ordenados.map((p, index) => ({
-          ...p,
-          numeroLocal: ordenados.length - index,
-        }));
-
-        setPedidos(pedidosNumerados);
+        setPedidos(ordenados);
       })
       .catch((err) => console.error("Error cargando pedidos:", err))
       .finally(() => setLoading(false));
@@ -62,12 +56,12 @@ export default function Pedidos() {
           (a, b) => new Date(b.fecha) - new Date(a.fecha)
         );
 
-        const pedidosNumerados = nuevos.map((p, index) => ({
-          ...p,
-          numeroLocal: pedidos.length + nuevos.length - index,
-        }));
-
-        setPedidos((prev) => [...prev, ...pedidosNumerados]);
+        setPedidos((prev) => {
+          const combinados = [...prev, ...nuevos];
+          return combinados.sort(
+            (a, b) => new Date(b.fecha) - new Date(a.fecha)
+          );
+        });
       })
       .catch((err) => console.error("Error cargando más pedidos:", err));
   };
@@ -112,7 +106,7 @@ export default function Pedidos() {
               sx={{ mb: 1 }}
             >
               <Typography variant="h6" fontWeight="bold">
-                Pedido #{p.numeroLocal}
+                Pedido #{p.id /* 👈 o p.numero_pedido si lo tienes */}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {new Date(p.fecha).toLocaleString()}
