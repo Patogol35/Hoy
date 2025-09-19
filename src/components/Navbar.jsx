@@ -71,16 +71,17 @@ export default function Navbar() {
   return (
     <>
       <motion.div initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
-        <AppBar
-          position="fixed"
-          elevation={scrolled ? 6 : 2}
-          sx={{
-            backgroundColor: scrolled ? theme.palette.primary.dark : theme.palette.primary.main,
-            transition: "all 0.3s ease",
-            boxShadow: scrolled ? "0 4px 16px rgba(0,0,0,0.25)" : "none",
-            zIndex: 1400,
-          }}
-        >
+
+<AppBar
+  position="fixed"
+  elevation={2}
+  sx={{
+    backgroundColor: theme.palette.primary.main, // 🔒 siempre igual
+    boxShadow: "none", // 🔒 sin cambios de sombra
+    zIndex: 1400,
+  }}
+>
+        
           <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
             {/* Logo */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
