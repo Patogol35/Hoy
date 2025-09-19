@@ -50,39 +50,50 @@ export default function Navbar() {
     setOpen(false);
   };
 
+  // Menú con iconos
   const menuItems = isAuthenticated
     ? [
-        { label: "Inicio", path: "/", icon: <HomeIcon /> },
-        { label: "Carrito", path: "/carrito", icon: <ShoppingCartIcon /> },
-        { label: "Mis pedidos", path: "/pedidos", icon: <ListAltIcon /> },
-        { label: "Cerrar sesión", action: handleLogout, icon: <LogoutIcon /> },
+        { label: "Inicio", path: "/", icon: <HomeIcon />, color: "primary" },
+        { label: "Carrito", path: "/carrito", icon: <ShoppingCartIcon />, color: "success" },
+        { label: "Mis pedidos", path: "/pedidos", icon: <ListAltIcon />, color: "warning" },
+        { label: "Cerrar sesión", action: handleLogout, icon: <LogoutIcon />, color: "error" },
       ]
     : [
-        { label: "Iniciar sesión", path: "/login", icon: <LoginIcon /> },
-        { label: "Registrarse", path: "/register", icon: <PersonAddIcon /> },
+        { label: "Iniciar sesión", path: "/login", icon: <LoginIcon />, color: "primary" },
+        { label: "Registrarse", path: "/register", icon: <PersonAddIcon />, color: "secondary" },
       ];
 
-  // Cambia estado con scroll
+  // 🎯 Navbar cambia con scroll
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Colores dinámicos según modo
+  const bgColor = scrolled
+    ? theme.palette.mode === "dark"
+      ? theme.palette.primary.dark
+      : theme.palette.primary.main
+    : theme.palette.mode === "dark"
+    ? theme.palette.primary.main
+    : theme.palette.primary.light;
+
+  const textColor = theme.palette.getContrastText(bgColor);
+
   return (
     <>
       {/* Topbar */}
-      <motion.div initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
+      <motion.div
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6 }}
+      >
         <AppBar
           position="fixed"
           elevation={scrolled ? 6 : 2}
           sx={{
-            backgroundColor:
-              theme.palette.mode === "dark"
-                ? theme.palette.background.paper
-                : scrolled
-                ? theme.palette.primary.dark
-                : theme.palette.primary.main,
+            backgroundColor: bgColor,
             transition: "all 0.3s ease",
             boxShadow: scrolled ? "0 4px 16px rgba(0,0,0,0.25)" : "none",
             zIndex: 1400,
@@ -100,8 +111,9 @@ export default function Navbar() {
                   alignItems: "center",
                   gap: 1,
                   fontWeight: "bold",
-                  color: theme.palette.mode === "dark" ? "#fff" : "#fff",
+                  color: textColor,
                   cursor: "pointer",
+                  lineHeight: 1.2,
                   textDecoration: "none",
                 }}
               >
@@ -119,7 +131,7 @@ export default function Navbar() {
                       to={item.path}
                       startIcon={item.icon}
                       sx={{
-                        color: theme.palette.mode === "dark" ? "#fff" : "#fff",
+                        color: textColor,
                         fontWeight: 600,
                         textTransform: "none",
                         fontSize: "1rem",
@@ -127,9 +139,11 @@ export default function Navbar() {
                         px: 2.5,
                         py: 1,
                         transition: "all 0.3s ease",
-                        background: theme.palette.mode === "dark" ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.08)",
+                        background: theme.palette.mode === "dark"
+                          ? "rgba(255,255,255,0.08)"
+                          : "rgba(0,0,0,0.05)",
                         "&:hover": {
-                          background: theme.palette.mode === "dark" ? "#333" : "#1976d2",
+                          background: theme.palette[item.color].main,
                           boxShadow: "0 0 20px rgba(0,0,0,0.35)",
                         },
                       }}
@@ -141,14 +155,13 @@ export default function Navbar() {
                       onClick={item.action}
                       startIcon={item.icon}
                       sx={{
+                        color: textColor,
                         fontWeight: 600,
                         borderRadius: "12px",
                         px: 2.5,
                         py: 1,
-                        background: theme.palette.mode === "dark" ? "#444" : "#c62828",
-                        color: "#fff",
+                        background: theme.palette[item.color].main,
                         "&:hover": {
-                          background: theme.palette.mode === "dark" ? "#666" : "#ef5350",
                           boxShadow: "0 0 20px rgba(0,0,0,0.45)",
                         },
                       }}
@@ -162,7 +175,7 @@ export default function Navbar() {
 
             {/* Botón menú móvil */}
             <IconButton
-              sx={{ display: { xs: "block", lg: "none" }, color: "#fff" }}
+              sx={{ display: { xs: "block", lg: "none" }, color: textColor }}
               onClick={() => setOpen(true)}
               aria-label="Abrir menú"
             >
@@ -201,7 +214,7 @@ export default function Navbar() {
               tabIndex={-1}
               style={{
                 width: "280px",
-                background: theme.palette.mode === "dark" ? "#222" : theme.palette.primary.main,
+                background: bgColor,
                 borderRadius: "16px 0 0 16px",
                 padding: "2rem",
                 paddingTop: "5rem",
@@ -217,7 +230,7 @@ export default function Navbar() {
               {/* Botón cerrar */}
               <IconButton
                 onClick={() => setOpen(false)}
-                sx={{ position: "absolute", top: "1rem", right: "1rem", color: "#fff" }}
+                sx={{ position: "absolute", top: "1rem", right: "1rem", color: textColor }}
               >
                 <CloseIcon fontSize="large" />
               </IconButton>
@@ -225,7 +238,15 @@ export default function Navbar() {
               <Stack spacing={2} sx={{ mt: 2 }}>
                 {menuItems.map((item, i) =>
                   item.path ? (
-                    <motion.div key={i} custom={i} variants={itemVariants} initial="hidden" animate="visible">
+                    <motion.div
+                      key={i}
+                      custom={i}
+                      variants={itemVariants}
+                      initial="hidden"
+                      animate="visible"
+                      whileHover={{ scale: 1.08 }}
+                      whileTap={{ scale: 0.96 }}
+                    >
                       <Button
                         component={Link}
                         to={item.path}
@@ -234,37 +255,41 @@ export default function Navbar() {
                         sx={{
                           fontSize: "1.1rem",
                           fontWeight: 600,
-                          color: "#fff",
+                          color: textColor,
                           borderRadius: "12px",
                           textTransform: "none",
-                          background: theme.palette.mode === "dark" ? "#333" : "#1976d2",
+                          background: theme.palette[item.color].main,
                           width: "100%",
                           py: 1.2,
-                          "&:hover": {
-                            boxShadow: "0 0 15px rgba(0,0,0,0.35)",
-                          },
+                          "&:hover": { boxShadow: "0 0 15px rgba(0,0,0,0.35)" },
                         }}
                       >
                         {item.label}
                       </Button>
                     </motion.div>
                   ) : (
-                    <motion.div key={i} custom={i} variants={itemVariants} initial="hidden" animate="visible">
+                    <motion.div
+                      key={i}
+                      custom={i}
+                      variants={itemVariants}
+                      initial="hidden"
+                      animate="visible"
+                      whileHover={{ scale: 1.08 }}
+                      whileTap={{ scale: 0.96 }}
+                    >
                       <Button
                         onClick={item.action}
                         startIcon={item.icon}
                         sx={{
                           fontSize: "1.1rem",
                           fontWeight: 600,
-                          color: "#fff",
+                          color: textColor,
                           borderRadius: "12px",
                           textTransform: "none",
-                          background: theme.palette.mode === "dark" ? "#555" : "#c62828",
+                          background: theme.palette[item.color].main,
                           width: "100%",
                           py: 1.2,
-                          "&:hover": {
-                            boxShadow: "0 0 15px rgba(0,0,0,0.35)",
-                          },
+                          "&:hover": { boxShadow: "0 0 15px rgba(0,0,0,0.35)" },
                         }}
                       >
                         {item.label}
@@ -279,4 +304,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-}
+        }
