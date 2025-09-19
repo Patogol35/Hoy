@@ -127,12 +127,15 @@ export const setCantidadItem = async (itemId, cantidad, token) => {
   );
 };
 
-// PEDIDOS
+// PEDIDOS (paginados)
 export const crearPedido = async (token) => {
   return authFetch(`${BASE_URL}/pedido/crear/`, { method: "POST" }, token);
 };
 
-// 🔹 ahora acepta paginación real
 export const getPedidos = async (token, page = 1) => {
-  return authFetch(`${BASE_URL}/pedidos/?page=${page}`, { method: "GET" }, token);
+  return authFetch(
+    `${BASE_URL}/pedidos/?page=${page}`,
+    { method: "GET" },
+    token
+  );
 };
