@@ -15,6 +15,7 @@ import {
   FormControlLabel,
   Checkbox,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import PersonOutline from "@mui/icons-material/PersonOutline";
@@ -22,6 +23,7 @@ import EmailOutlined from "@mui/icons-material/EmailOutlined";
 import LockOutlined from "@mui/icons-material/LockOutlined";
 
 export default function Register() {
+  const theme = useTheme();
   const [form, setForm] = useState({
     username: "",
     email: "",
@@ -84,8 +86,10 @@ export default function Register() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        background: "linear-gradient(135deg, #42a5f5 0%, #1976d2 100%)",
         p: 2,
+        background: theme.palette.mode === "dark"
+          ? "linear-gradient(135deg, #121212 0%, #1e1e1e 100%)"
+          : "linear-gradient(135deg, #42a5f5 0%, #1976d2 100%)",
       }}
     >
       <Paper
@@ -97,8 +101,11 @@ export default function Register() {
           display: "flex",
           flexDirection: "column",
           gap: 3,
-          boxShadow: "0 12px 24px rgba(0,0,0,0.15)",
-          backgroundColor: "rgba(255,255,255,0.95)",
+          boxShadow: theme.palette.mode === "dark"
+            ? "0 12px 24px rgba(0,0,0,0.5)"
+            : "0 12px 24px rgba(0,0,0,0.15)",
+          backgroundColor: theme.palette.mode === "dark" ? "#1e1e1e" : "rgba(255,255,255,0.95)",
+          color: theme.palette.mode === "dark" ? "#fff" : "#000",
           backdropFilter: "blur(8px)",
         }}
       >
@@ -107,7 +114,7 @@ export default function Register() {
           align="center"
           fontWeight="bold"
           gutterBottom
-          sx={{ color: "#1976d2" }}
+          sx={{ color: theme.palette.mode === "dark" ? "#42a5f5" : "#1976d2" }}
         >
           Crear cuenta
         </Typography>
@@ -183,7 +190,7 @@ export default function Register() {
                   height: 8,
                   borderRadius: 4,
                   mb: 0.5,
-                  backgroundColor: "#ddd",
+                  backgroundColor: theme.palette.mode === "dark" ? "#333" : "#ddd",
                   "& .MuiLinearProgress-bar": { backgroundColor: strength.color },
                 }}
               />
@@ -214,7 +221,7 @@ export default function Register() {
             }}
           />
 
-          {/* Opción única para mostrar/ocultar */}
+          {/* Mostrar/Ocultar */}
           <FormControlLabel
             control={
               <Checkbox
@@ -237,7 +244,9 @@ export default function Register() {
               sx={{
                 py: 1.5,
                 fontWeight: "bold",
-                background: "linear-gradient(135deg, #1976d2, #42a5f5)",
+                background: theme.palette.mode === "dark"
+                  ? "linear-gradient(135deg, #42a5f5, #1976d2)"
+                  : "linear-gradient(135deg, #1976d2, #42a5f5)",
                 "&:hover": {
                   transform: "scale(1.03)",
                   boxShadow: "0 6px 12px rgba(0,0,0,0.15)",
