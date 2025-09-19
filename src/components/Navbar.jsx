@@ -24,8 +24,16 @@ import { motion, AnimatePresence } from "framer-motion";
 // Animaciones
 const menuVariants = {
   hidden: { x: "100%", opacity: 0 },
-  visible: { x: 0, opacity: 1, transition: { duration: 0.25, ease: "easeOut" } },
-  exit: { x: "100%", opacity: 0, transition: { duration: 0.2, ease: "easeIn" } },
+  visible: {
+    x: 0,
+    opacity: 1,
+    transition: { duration: 0.25, ease: "easeOut" },
+  },
+  exit: {
+    x: "100%",
+    opacity: 0,
+    transition: { duration: 0.2, ease: "easeIn" },
+  },
 };
 const itemVariants = {
   hidden: { y: 20, opacity: 0 },
@@ -214,14 +222,16 @@ export default function Navbar() {
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
-            animate={{ opacity: 1, backdropFilter: "blur(6px)" }}
-            exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
             style={{
               position: "fixed",
               inset: 0,
-              background: "rgba(0,0,0,0.45)",
+              background: scrolled
+                ? theme.palette.primary.dark
+                : theme.palette.primary.main, // 🔵 igual que AppBar
               zIndex: 1300,
               display: "flex",
               justifyContent: "flex-end",
@@ -237,7 +247,9 @@ export default function Navbar() {
               tabIndex={-1}
               style={{
                 width: "280px",
-                background: theme.palette.primary.main,
+                background: scrolled
+                  ? theme.palette.primary.dark
+                  : theme.palette.primary.main, // 🔵 misma estructura interna
                 borderRadius: "16px 0 0 16px",
                 padding: "2rem",
                 paddingTop: "5rem",
@@ -331,4 +343,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-}
+                }
