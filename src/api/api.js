@@ -133,6 +133,8 @@ export const crearPedido = async (token) => {
   return authFetch(`${BASE_URL}/pedido/crear/`, { method: "POST" }, token);
 };
 
-export const getPedidos = async (token) => {
-  return authFetch(`${BASE_URL}/pedidos/`, { method: "GET" }, token);
+export const getPedidos = async (token, page = 1) => {
+  // 🔹 ahora acepta page y devuelve el objeto de paginación
+  return authFetch(`${BASE_URL}/pedidos/?page=${page}`, { method: "GET" }, token);
 };
+
