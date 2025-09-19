@@ -20,24 +20,26 @@ export default function Pedidos() {
   const { access } = useAuth();
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [next, setNext] = useState(null);
-  const [previous, setPrevious] = useState(null);
-  const [count, setCount] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(5); // 🔹 mostrar solo 5 al inicio
 
   useEffect(() => {
-    if (!access) return;
-    setLoading(true);
-    getPedidos(access, page)
+    getPedidos(access)
       .then((data) => {
-        setPedidos(data.results || []);
-        setNext(data.next);
-        setPrevious(data.previous);
-        setCount(data.count);
+        if (!data) return;
+        // ordenar por fecha descendente
+        const ordenados = [...data].sort(
+          (a, b) => new Date(b.fecha) - new Date(a.fecha)
+        );
+        // agregar número relativo local
+        const pedidosNumerados = ordenados.map((p, index) => ({
+          ...p,
+          numeroLocal: ordenados.length - index,
+        }));
+        setPedidos(pedidosNumerados);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [access, page]);
+  }, [access]);
 
   if (loading)
     return (
@@ -56,10 +58,10 @@ export default function Pedidos() {
   return (
     <Container sx={{ mt: 4, mb: 6 }}>
       <Typography variant="h4" gutterBottom fontWeight="bold">
-        Mis pedidos ({count})
+        Mis pedidos
       </Typography>
 
-      {pedidos.map((p, index) => (
+      {pedidos.slice(0, visibleCount).map((p) => (
         <Card
           key={p.id}
           sx={{
@@ -78,9 +80,9 @@ export default function Pedidos() {
               spacing={1}
               sx={{ mb: 1 }}
             >
-              {/* número relativo basado en la paginación */}
+              {/* número relativo por usuario */}
               <Typography variant="h6" fontWeight="bold">
-                Pedido #{(count - ((page - 1) * 5)) - index}
+                Pedido #{p.numeroLocal}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {new Date(p.fecha).toLocaleString()}
@@ -135,19 +137,17 @@ export default function Pedidos() {
         </Card>
       ))}
 
-      {/* 🔹 Botones de paginación */}
-      <Box textAlign="center" mt={2} display="flex" justifyContent="center" gap={2}>
-        {previous && (
-          <Button variant="outlined" onClick={() => setPage((prev) => prev - 1)}>
-            Anterior
+      {/* 🔹 Botón para cargar más pedidos */}
+      {visibleCount < pedidos.length && (
+        <Box textAlign="center" mt={2}>
+          <Button
+            variant="outlined"
+            onClick={() => setVisibleCount((prev) => prev + 5)}
+          >
+            Ver más
           </Button>
-        )}
-        {next && (
-          <Button variant="outlined" onClick={() => setPage((prev) => prev + 1)}>
-            Siguiente
-          </Button>
-        )}
-      </Box>
+        </Box>
+      )}
     </Container>
   );
-                }
+}
