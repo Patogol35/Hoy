@@ -22,8 +22,9 @@ import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useThemeMode } from "../context/ThemeContext";
 
-// Variantes animaciones
+// Animaciones
 const menuVariants = {
   hidden: { x: "100%", opacity: 0 },
   visible: { x: 0, opacity: 1, transition: { duration: 0.25, ease: "easeOut" } },
@@ -38,10 +39,11 @@ const itemVariants = {
   }),
 };
 
-export default function Navbar({ toggleColorMode }) {
+export default function Navbar() {
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   const theme = useTheme();
+  const { mode, toggleMode } = useThemeMode();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const menuRef = useRef(null);
@@ -64,7 +66,6 @@ export default function Navbar({ toggleColorMode }) {
         { label: "Registrarse", path: "/register", icon: <PersonAddIcon />, color: "linear-gradient(135deg, #6a1b9a, #ab47bc)" },
       ];
 
-  // Navbar cambia con scroll
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", onScroll);
@@ -73,7 +74,6 @@ export default function Navbar({ toggleColorMode }) {
 
   return (
     <>
-      {/* Topbar */}
       <motion.div initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
         <AppBar
           position="fixed"
@@ -108,7 +108,7 @@ export default function Navbar({ toggleColorMode }) {
             </motion.div>
 
             {/* Desktop menu */}
-            <Box sx={{ display: { xs: "none", lg: "flex" }, gap: 1, alignItems: "center" }}>
+            <Box sx={{ display: { xs: "none", lg: "flex" }, gap: 2, alignItems: "center" }}>
               {menuItems.map((item, i) => (
                 <motion.div key={i} whileHover={{ y: -2, scale: 1.08 }} whileTap={{ scale: 0.95 }}>
                   {item.path ? (
@@ -156,9 +156,9 @@ export default function Navbar({ toggleColorMode }) {
                 </motion.div>
               ))}
 
-              {/* Toggle claro/oscuro */}
-              <IconButton onClick={toggleColorMode} sx={{ color: "#fff" }}>
-                {theme.palette.mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
+              {/* Botón Dark/Light */}
+              <IconButton onClick={toggleMode} color="inherit">
+                {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
               </IconButton>
             </Box>
 
@@ -166,7 +166,6 @@ export default function Navbar({ toggleColorMode }) {
             <IconButton
               sx={{ display: { xs: "block", lg: "none" }, color: "#fff" }}
               onClick={() => setOpen(true)}
-              aria-label="Abrir menú"
             >
               <MenuIcon fontSize="large" />
             </IconButton>
@@ -191,8 +190,6 @@ export default function Navbar({ toggleColorMode }) {
               justifyContent: "flex-end",
             }}
             onClick={() => setOpen(false)}
-            role="dialog"
-            aria-modal="true"
           >
             <motion.div
               variants={menuVariants}
@@ -218,12 +215,7 @@ export default function Navbar({ toggleColorMode }) {
             >
               <IconButton
                 onClick={() => setOpen(false)}
-                sx={{
-                  position: "absolute",
-                  top: "1rem",
-                  right: "1rem",
-                  color: "#fff",
-                }}
+                sx={{ position: "absolute", top: "1rem", right: "1rem", color: "#fff" }}
               >
                 <CloseIcon fontSize="large" />
               </IconButton>
@@ -231,15 +223,7 @@ export default function Navbar({ toggleColorMode }) {
               <Stack spacing={2} sx={{ mt: 2 }}>
                 {menuItems.map((item, i) =>
                   item.path ? (
-                    <motion.div
-                      key={i}
-                      custom={i}
-                      variants={itemVariants}
-                      initial="hidden"
-                      animate="visible"
-                      whileHover={{ scale: 1.08 }}
-                      whileTap={{ scale: 0.96 }}
-                    >
+                    <motion.div key={i} custom={i} variants={itemVariants} initial="hidden" animate="visible">
                       <Button
                         component={Link}
                         to={item.path}
@@ -263,15 +247,7 @@ export default function Navbar({ toggleColorMode }) {
                       </Button>
                     </motion.div>
                   ) : (
-                    <motion.div
-                      key={i}
-                      custom={i}
-                      variants={itemVariants}
-                      initial="hidden"
-                      animate="visible"
-                      whileHover={{ scale: 1.08 }}
-                      whileTap={{ scale: 0.96 }}
-                    >
+                    <motion.div key={i} custom={i} variants={itemVariants} initial="hidden" animate="visible">
                       <Button
                         onClick={item.action}
                         startIcon={item.icon}
@@ -295,10 +271,26 @@ export default function Navbar({ toggleColorMode }) {
                   )
                 )}
 
-                {/* Toggle claro/oscuro móvil */}
-                <IconButton onClick={toggleColorMode} sx={{ color: "#fff", mt: 2 }}>
-                  {theme.palette.mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
-                </IconButton>
+                {/* Botón dark/light también en móvil */}
+                <Button
+                  onClick={toggleMode}
+                  startIcon={mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
+                  sx={{
+                    fontSize: "1.1rem",
+                    fontWeight: 600,
+                    color: "#fff",
+                    borderRadius: "12px",
+                    textTransform: "none",
+                    background: "linear-gradient(135deg, #455a64, #90a4ae)",
+                    width: "100%",
+                    py: 1.2,
+                    "&:hover": {
+                      boxShadow: "0 0 15px rgba(0,0,0,0.35)",
+                    },
+                  }}
+                >
+                  {mode === "light" ? "Modo oscuro" : "Modo claro"}
+                </Button>
               </Stack>
             </motion.div>
           </motion.div>
@@ -306,4 +298,4 @@ export default function Navbar({ toggleColorMode }) {
       </AnimatePresence>
     </>
   );
-                               }
+            }
