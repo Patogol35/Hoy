@@ -45,8 +45,20 @@ export default function Home() {
 
   useEffect(() => {
     getProductos()
-      .then(setProductos)
-      .catch(console.error)
+      .then((data) => {
+        // Asegura siempre un array
+        const lista = Array.isArray(data)
+          ? data
+          : Array.isArray(data?.results)
+          ? data.results
+          : [];
+        console.log("Productos cargados:", lista);
+        setProductos(lista);
+      })
+      .catch((err) => {
+        console.error("Error cargando productos:", err);
+        setProductos([]);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -57,11 +69,11 @@ export default function Home() {
     return () => clearTimeout(handler);
   }, [search]);
 
-  const filtered = productos
+  const filtered = (productos || [])
     .filter((p) =>
       debouncedSearch === ""
         ? true
-        : p.nombre.toLowerCase().includes(debouncedSearch)
+        : p.nombre?.toLowerCase().includes(debouncedSearch)
     )
     .sort((a, b) => (sort === "asc" ? a.precio - b.precio : b.precio - a.precio));
 
@@ -388,4 +400,4 @@ export default function Home() {
       </Dialog>
     </>
   );
-}
+          }
