@@ -1,4 +1,3 @@
-
 // =====================
 // BASE URL
 // =====================
@@ -133,6 +132,7 @@ export const crearPedido = async (token) => {
   return authFetch(`${BASE_URL}/pedido/crear/`, { method: "POST" }, token);
 };
 
-export const getPedidos = async (token) => {
-  return authFetch(`${BASE_URL}/pedidos/`, { method: "GET" }, token);
+// 🔹 ahora acepta paginación real
+export const getPedidos = async (token, page = 1) => {
+  return authFetch(`${BASE_URL}/pedidos/?page=${page}`, { method: "GET" }, token);
 };
