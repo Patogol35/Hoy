@@ -18,9 +18,13 @@ const theme = createTheme({
   },
   shape: { borderRadius: 12 },
   components: {
-    MuiCard: { styleOverrides: { root: { borderRadius: 16, transition: "0.3s" } } },
+    MuiCard: {
+      styleOverrides: { root: { borderRadius: 16, transition: "0.3s" } },
+    },
     MuiButton: {
-      styleOverrides: { root: { borderRadius: 12, textTransform: "none", fontWeight: 600 } },
+      styleOverrides: {
+        root: { borderRadius: 12, textTransform: "none", fontWeight: 600 },
+      },
     },
   },
 });
