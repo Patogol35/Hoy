@@ -14,6 +14,7 @@ import {
   Chip,
   Stack,
   Button,
+  CircularProgress,
 } from "@mui/material";
 
 export default function Pedidos() {
@@ -21,44 +22,53 @@ export default function Pedidos() {
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  const [nextPage, setNextPage] = useState(null);
 
   useEffect(() => {
-    cargarPedidos(page);
-  }, [page]);
+    cargarPedidos(1);
+  }, []);
 
-  async function cargarPedidos(pagina) {
+  async function cargarPedidos(numPagina) {
+    setLoading(true);
     try {
-      const data = await getPedidos(access, pagina);
-      if (!data) return;
+      const data = await getPedidos(access, numPagina);
 
-      const nuevos = data.results.map((p, index) => ({
+      // data.results contiene los pedidos
+      const pedidosConNumero = data.results.map((p, index) => ({
         ...p,
-        numeroLocal: pedidos.length + (index + 1),
+        numeroLocal: (numPagina - 1) * 10 + (index + 1), // numeración por página
       }));
 
-      setPedidos((prev) => [...prev, ...nuevos]);
-      setHasMore(Boolean(data.next));
+      if (numPagina === 1) {
+        setPedidos(pedidosConNumero);
+      } else {
+        setPedidos((prev) => [...prev, ...pedidosConNumero]);
+      }
+
+      // guardar si hay más páginas
+      setNextPage(data.next ? numPagina + 1 : null);
     } catch (err) {
-      console.error(err);
+      console.error("Error cargando pedidos", err);
     } finally {
       setLoading(false);
     }
   }
 
-  if (loading)
+  if (loading && pedidos.length === 0) {
     return (
-      <Container sx={{ mt: 4 }}>
-        <Typography>Cargando pedidos...</Typography>
+      <Container sx={{ mt: 4, textAlign: "center" }}>
+        <CircularProgress />
       </Container>
     );
+  }
 
-  if (pedidos.length === 0)
+  if (pedidos.length === 0) {
     return (
       <Container sx={{ mt: 4 }}>
         <Typography>Aún no tienes pedidos.</Typography>
       </Container>
     );
+  }
 
   return (
     <Container sx={{ mt: 4, mb: 6 }}>
@@ -89,7 +99,7 @@ export default function Pedidos() {
                 Pedido #{p.numeroLocal}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                {new Date(p.fecha).toLocaleString()}
+                {new Date(p.fecha_creacion).toLocaleString()}
               </Typography>
               <Typography variant="body1" color="primary" fontWeight="bold">
                 Total: ${Number(p.total).toFixed(2)}
@@ -141,13 +151,21 @@ export default function Pedidos() {
         </Card>
       ))}
 
-      {hasMore && (
+      {/* Botón para cargar más */}
+      {nextPage && (
         <Box textAlign="center" mt={2}>
-          <Button variant="outlined" onClick={() => setPage((prev) => prev + 1)}>
-            Ver más
+          <Button
+            variant="outlined"
+            onClick={() => {
+              setPage(nextPage);
+              cargarPedidos(nextPage);
+            }}
+            disabled={loading}
+          >
+            {loading ? "Cargando..." : "Ver más"}
           </Button>
         </Box>
       )}
     </Container>
   );
-        }
+          }
