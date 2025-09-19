@@ -98,12 +98,9 @@ export default function Navbar() {
         },
       ];
 
-  // Helper: escoger color según modo
-  const getButtonBackground = (itemColor) =>
-    mode === "light" ? itemColor : theme.palette.background.paper;
-
-  const getButtonHover = (itemColor) =>
-    mode === "light" ? itemColor : theme.palette.action.hover;
+  // Helper para adaptar colores según modo
+  const getBackground = (color) => (mode === "light" ? color : theme.palette.background.paper);
+  const getHover = (color) => (mode === "light" ? color : theme.palette.action.hover);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -163,11 +160,8 @@ export default function Navbar() {
                         px: 2.5,
                         py: 1,
                         transition: "all 0.3s ease",
-                        background: getButtonBackground(item.color),
-                        "&:hover": {
-                          background: getButtonHover(item.color),
-                          boxShadow: theme.shadows[4],
-                        },
+                        background: getBackground(item.color),
+                        "&:hover": { background: getHover(item.color), boxShadow: theme.shadows[4] },
                       }}
                     >
                       {item.label}
@@ -182,8 +176,8 @@ export default function Navbar() {
                         borderRadius: "12px",
                         px: 2.5,
                         py: 1,
-                        background: getButtonBackground(item.color),
-                        "&:hover": { boxShadow: theme.shadows[6], background: getButtonHover(item.color) },
+                        background: getBackground(item.color),
+                        "&:hover": { background: getHover(item.color), boxShadow: theme.shadows[6] },
                       }}
                     >
                       {item.label}
@@ -271,61 +265,14 @@ export default function Navbar() {
                           color: theme.palette.text.primary,
                           borderRadius: "12px",
                           textTransform: "none",
-                          background: getButtonBackground(item.color),
+                          background: getBackground(item.color),
                           width: "100%",
                           py: 1.2,
-                          "&:hover": { boxShadow: theme.shadows[4], background: getButtonHover(item.color) },
+                          "&:hover": { background: getHover(item.color), boxShadow: theme.shadows[4] },
                         }}
                       >
                         {item.label}
                       </Button>
                     </motion.div>
                   ) : (
-                    <motion.div key={i} custom={i} variants={itemVariants} initial="hidden" animate="visible">
-                      <Button
-                        onClick={item.action}
-                        startIcon={item.icon}
-                        sx={{
-                          fontSize: "1.1rem",
-                          fontWeight: 600,
-                          color: theme.palette.text.primary,
-                          borderRadius: "12px",
-                          textTransform: "none",
-                          background: getButtonBackground(item.color),
-                          width: "100%",
-                          py: 1.2,
-                          "&:hover": { boxShadow: theme.shadows[4], background: getButtonHover(item.color) },
-                        }}
-                      >
-                        {item.label}
-                      </Button>
-                    </motion.div>
-                  )
-                )}
-
-                {/* Botón dark/light también en móvil */}
-                <Button
-                  onClick={toggleMode}
-                  startIcon={mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
-                  sx={{
-                    fontSize: "1.1rem",
-                    fontWeight: 600,
-                    color: theme.palette.text.primary,
-                    borderRadius: "12px",
-                    textTransform: "none",
-                    background: mode === "light" ? "#90a4ae" : theme.palette.background.paper,
-                    width: "100%",
-                    py: 1.2,
-                    "&:hover": { boxShadow: theme.shadows[4], backgroundColor: theme.palette.action.hover },
-                  }}
-                >
-                  {mode === "light" ? "Modo oscuro" : "Modo claro"}
-                </Button>
-              </Stack>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
-  );
-}
+                    <motion.div key={i} custom={i} variants={itemVariants} initial="hidden" animate="
