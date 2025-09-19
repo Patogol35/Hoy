@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+        import { useEffect, useState } from "react";
 import { getPedidos } from "../api/api";
 import {
   Container,
@@ -32,8 +32,12 @@ export default function Pedidos() {
         return;
       }
 
-      const data = await getPedidos(token);
-      if (!data) return;
+      let data = await getPedidos(token);
+
+      // 🔹 Forzar a array si el backend devuelve objeto o null
+      if (!Array.isArray(data)) {
+        data = data ? [data] : [];
+      }
 
       // ordenar por fecha descendente
       const ordenados = [...data].sort(
@@ -102,7 +106,7 @@ export default function Pedidos() {
 
       {pedidos.slice(0, visibleCount).map((p) => (
         <Card
-          key={p.id}
+          key={p.id || p.numeroLocal}
           sx={{
             mb: 3,
             borderRadius: 3,
@@ -119,7 +123,6 @@ export default function Pedidos() {
               spacing={1}
               sx={{ mb: 1 }}
             >
-              {/* número relativo por usuario */}
               <Typography variant="h6" fontWeight="bold">
                 Pedido #{p.numeroLocal}
               </Typography>
@@ -176,7 +179,6 @@ export default function Pedidos() {
         </Card>
       ))}
 
-      {/* Botón para cargar más pedidos */}
       {visibleCount < pedidos.length && (
         <Box textAlign="center" mt={2}>
           <Button
@@ -189,4 +191,4 @@ export default function Pedidos() {
       )}
     </Container>
   );
-        }
+}
