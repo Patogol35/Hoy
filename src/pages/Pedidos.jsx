@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getPedidos, crearPedido } from "../api/api"; // asegurarte de tener crearPedido
+import { getPedidos, crearPedido } from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import {
   Container,
@@ -22,7 +22,7 @@ export default function Pedidos() {
   const [loading, setLoading] = useState(true);
   const [nextPage, setNextPage] = useState(null);
 
-  // 🔹 Función para ordenar y numerar pedidos de manera consistente
+  // 🔹 Función para ordenar y numerar pedidos
   const numerarPedidos = (lista) => {
     const ordenados = [...lista].sort(
       (a, b) => new Date(b.fecha) - new Date(a.fecha)
@@ -33,17 +33,14 @@ export default function Pedidos() {
     }));
   };
 
-  // Cargar pedidos iniciales
+  // 🔹 Cargar pedidos iniciales (primera página)
   useEffect(() => {
     const fetchPedidos = async () => {
       setLoading(true);
       try {
-        const data = await getPedidos(access);
-        if (!data) return;
-
-        const pedidosArray = data.results ?? (Array.isArray(data) ? data : []);
+        const data = await getPedidos(access); // trae la primera página
+        setPedidos(numerarPedidos(data.results ?? []));
         setNextPage(data.next || null);
-        setPedidos(numerarPedidos(pedidosArray));
       } catch (err) {
         console.error("Error cargando pedidos:", err);
       } finally {
@@ -54,27 +51,25 @@ export default function Pedidos() {
     fetchPedidos();
   }, [access]);
 
-  // Cargar página siguiente
+  // 🔹 Cargar página siguiente (paginación)
   const cargarMasPedidos = async () => {
     if (!nextPage) return;
 
     try {
       const data = await getPedidos(access, nextPage);
-      const pedidosArray = data.results ?? [];
-      setNextPage(data.next || null);
-
-      const combinados = [...pedidos, ...pedidosArray];
+      const combinados = [...pedidos, ...(data.results ?? [])];
       setPedidos(numerarPedidos(combinados));
+      setNextPage(data.next || null);
     } catch (err) {
       console.error("Error cargando más pedidos:", err);
     }
   };
 
-  // 🔹 Agregar un pedido nuevo (ejemplo de uso)
-  const agregarNuevoPedido = async (datosPedido) => {
+  // 🔹 Agregar un pedido nuevo inmediatamente
+  const agregarNuevoPedido = async () => {
     try {
-      const nuevoPedido = await crearPedido(access, datosPedido);
-      // agregamos el pedido al inicio y recalculamos la numeración
+      const nuevoPedido = await crearPedido(access);
+      // Insertamos al inicio y recalculamos la numeración
       setPedidos(prev => numerarPedidos([nuevoPedido, ...prev]));
     } catch (err) {
       console.error("Error al crear pedido:", err);
