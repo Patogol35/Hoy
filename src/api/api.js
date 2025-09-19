@@ -31,12 +31,14 @@ async function authFetch(url, options = {}, token) {
 
   let res = await fetch(url, { ...options, headers });
 
+  // Si expira el access → intentar refrescar
   if (res.status === 401 && localStorage.getItem("refresh")) {
     try {
       const newTokens = await refreshToken(localStorage.getItem("refresh"));
       if (newTokens?.access) {
         localStorage.setItem("access", newTokens.access);
         token = newTokens.access;
+
         headers = {
           ...(options.headers || {}),
           ...(options.body && { "Content-Type": "application/json" }),
@@ -129,6 +131,11 @@ export const crearPedido = async (token) => {
   return authFetch(`${BASE_URL}/pedido/crear/`, { method: "POST" }, token);
 };
 
+// 👇 ahora soporta paginación
 export const getPedidos = async (token, page = 1) => {
-  return authFetch(`${BASE_URL}/pedidos/?page=${page}`, { method: "GET" }, token);
+  return authFetch(
+    `${BASE_URL}/pedidos/?page=${page}`,
+    { method: "GET" },
+    token
+  );
 };
