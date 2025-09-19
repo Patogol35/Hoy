@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { getPedidos } from "../api/api";
 import { useAuth } from "../context/AuthContext";
-// MUI
 import {
   Container,
   Typography,
@@ -15,120 +14,167 @@ import {
   Chip,
   Stack,
   Button,
-  CircularProgress,
 } from "@mui/material";
 
 export default function Pedidos() {
-  const { access } = useAuth(); // token de acceso
+  const { access } = useAuth();
   const [pedidos, setPedidos] = useState([]);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [nextPage, setNextPage] = useState(null);
 
-  const fetchPedidos = async (pagina = 1) => {
-    if (!access) return;
-    setLoading(true);
-    setError("");
-    try {
-      const data = await getPedidos(access, pagina);
-      setPedidos(data.results || []); // DRF paginated
-      const pages = Math.ceil(data.count / 10); // asume 10 por página
-      setTotalPages(pages);
-      setPage(pagina);
-    } catch (err) {
-      console.error("Error al cargar pedidos:", err);
-      setError(err.message || "No se pudieron cargar los pedidos.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // Cargar pedidos iniciales
   useEffect(() => {
-    fetchPedidos(page);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setLoading(true);
+    getPedidos(access)
+      .then((data) => {
+        if (!data) return;
+
+        const pedidosArray = data.results ?? (Array.isArray(data) ? data : []);
+        setNextPage(data.next || null);
+
+        // Ordenar por fecha descendente
+        const ordenados = [...pedidosArray].sort(
+          (a, b) => new Date(b.fecha) - new Date(a.fecha)
+        );
+
+        // Agregar número relativo local
+        const pedidosNumerados = ordenados.map((p, index) => ({
+          ...p,
+          numeroLocal: ordenados.length - index,
+        }));
+
+        setPedidos(pedidosNumerados);
+      })
+      .catch((err) => console.error("Error cargando pedidos:", err))
+      .finally(() => setLoading(false));
   }, [access]);
 
+  // Cargar página siguiente
+  const cargarMasPedidos = () => {
+    if (!nextPage) return;
+
+    getPedidos(access, nextPage)
+      .then((data) => {
+        const pedidosArray = data.results ?? [];
+        setNextPage(data.next || null);
+
+        const nuevos = [...pedidosArray].sort(
+          (a, b) => new Date(b.fecha) - new Date(a.fecha)
+        );
+
+        const pedidosNumerados = nuevos.map((p, index) => ({
+          ...p,
+          numeroLocal: pedidos.length + nuevos.length - index,
+        }));
+
+        setPedidos((prev) => [...prev, ...pedidosNumerados]);
+      })
+      .catch((err) => console.error("Error cargando más pedidos:", err));
+  };
+
+  if (loading)
+    return (
+      <Container sx={{ mt: 4 }}>
+        <Typography>Cargando pedidos...</Typography>
+      </Container>
+    );
+
+  if (pedidos.length === 0)
+    return (
+      <Container sx={{ mt: 4 }}>
+        <Typography>Aún no tienes pedidos.</Typography>
+      </Container>
+    );
+
   return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        📦 Mis Pedidos
+    <Container sx={{ mt: 4, mb: 6 }}>
+      <Typography variant="h4" gutterBottom fontWeight="bold">
+        Mis pedidos
       </Typography>
 
-      {loading && (
-        <Box display="flex" justifyContent="center" py={4}>
-          <CircularProgress />
-        </Box>
-      )}
-
-      {error && (
-        <Typography color="error" sx={{ my: 2 }}>
-          {error}
-        </Typography>
-      )}
-
-      {!loading && pedidos.length === 0 && !error && (
-        <Typography>No tienes pedidos registrados.</Typography>
-      )}
-
-      {!loading && pedidos.length > 0 && (
-        <List>
-          {pedidos.map((pedido) => (
-            <Card key={pedido.id} sx={{ mb: 2 }}>
-              <CardContent>
-                <ListItem disableGutters>
-                  <ListItemText
-                    primary={`Pedido #${pedido.id}`}
-                    secondary={`Fecha: ${new Date(
-                      pedido.fecha
-                    ).toLocaleString()}`}
-                  />
-                  <Chip
-                    label={pedido.estado}
-                    color={
-                      pedido.estado === "ENTREGADO" ? "success" : "primary"
-                    }
-                  />
-                </ListItem>
-                <Divider />
-                <Box mt={1}>
-                  <Typography variant="body2">
-                    Total: ${pedido.total}
-                  </Typography>
-                </Box>
-              </CardContent>
-            </Card>
-          ))}
-        </List>
-      )}
-
-      {/* Controles de paginación */}
-      {totalPages > 1 && (
-        <Stack
-          direction="row"
-          justifyContent="center"
-          spacing={2}
-          sx={{ mt: 2 }}
+      {pedidos.map((p) => (
+        <Card
+          key={p.id}
+          sx={{
+            mb: 3,
+            borderRadius: 3,
+            boxShadow: 3,
+            transition: "all 0.3s",
+            "&:hover": { boxShadow: 6, transform: "scale(1.01)" },
+          }}
         >
-          <Button
-            variant="outlined"
-            disabled={page === 1 || loading}
-            onClick={() => fetchPedidos(page - 1)}
-          >
-            Anterior
+          <CardContent>
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              justifyContent="space-between"
+              alignItems={{ xs: "flex-start", sm: "center" }}
+              spacing={1}
+              sx={{ mb: 1 }}
+            >
+              <Typography variant="h6" fontWeight="bold">
+                Pedido #{p.numeroLocal}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {new Date(p.fecha).toLocaleString()}
+              </Typography>
+              <Typography variant="body1" color="primary" fontWeight="bold">
+                Total: ${Number(p.total).toFixed(2)}
+              </Typography>
+            </Stack>
+
+            <List dense>
+              {(p.items ?? p.detalles)?.map((item, i, arr) => (
+                <Box key={i}>
+                  <ListItem
+                    sx={{
+                      display: "flex",
+                      flexDirection: { xs: "column", sm: "row" },
+                      justifyContent: "space-between",
+                      alignItems: { xs: "flex-start", sm: "center" },
+                      py: 1,
+                    }}
+                  >
+                    <ListItemText
+                      primary={`${item.cantidad} x ${
+                        item.producto?.nombre ?? "Producto"
+                      } — $${Number(
+                        item.precio_unitario ?? item.producto?.precio ?? 0
+                      ).toFixed(2)}`}
+                      secondary={`Subtotal: $${Number(
+                        item.subtotal ?? 0
+                      ).toFixed(2)}`}
+                    />
+                    {item.estado && (
+                      <Chip
+                        label={item.estado}
+                        color={
+                          item.estado === "Entregado"
+                            ? "success"
+                            : item.estado === "En preparación"
+                            ? "warning"
+                            : "error"
+                        }
+                        size="small"
+                        sx={{ mt: { xs: 1, sm: 0 } }}
+                      />
+                    )}
+                  </ListItem>
+                  {i < arr.length - 1 && <Divider component="li" />}
+                </Box>
+              ))}
+            </List>
+          </CardContent>
+        </Card>
+      ))}
+
+      {/* Botón para cargar más pedidos */}
+      {nextPage && (
+        <Box textAlign="center" mt={2}>
+          <Button variant="outlined" onClick={cargarMasPedidos}>
+            Ver más
           </Button>
-          <Typography align="center" sx={{ mt: 1 }}>
-            Página {page} de {totalPages}
-          </Typography>
-          <Button
-            variant="outlined"
-            disabled={page === totalPages || loading}
-            onClick={() => fetchPedidos(page + 1)}
-          >
-            Siguiente
-          </Button>
-        </Stack>
+        </Box>
       )}
     </Container>
   );
-            }
+}
