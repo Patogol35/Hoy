@@ -18,13 +18,10 @@ import ListAltIcon from "@mui/icons-material/ListAlt";
 import LoginIcon from "@mui/icons-material/Login";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import LogoutIcon from "@mui/icons-material/Logout";
-import DarkModeIcon from "@mui/icons-material/DarkMode";
-import LightModeIcon from "@mui/icons-material/LightMode";
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useThemeMode } from "../context/ThemeContext";
 
-// Animaciones
+// 🎬 Variantes animaciones
 const menuVariants = {
   hidden: { x: "100%", opacity: 0 },
   visible: { x: 0, opacity: 1, transition: { duration: 0.25, ease: "easeOut" } },
@@ -43,7 +40,6 @@ export default function Navbar() {
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   const theme = useTheme();
-  const { mode, toggleMode } = useThemeMode();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const menuRef = useRef(null);
@@ -56,16 +52,17 @@ export default function Navbar() {
 
   const menuItems = isAuthenticated
     ? [
-        { label: "Inicio", path: "/", icon: <HomeIcon />, color: "linear-gradient(135deg, #0288d1, #26c6da)" },
-        { label: "Carrito", path: "/carrito", icon: <ShoppingCartIcon />, color: "linear-gradient(135deg, #2e7d32, #66bb6a)" },
-        { label: "Mis pedidos", path: "/pedidos", icon: <ListAltIcon />, color: "linear-gradient(135deg, #f57c00, #ffb74d)" },
-        { label: "Cerrar sesión", action: handleLogout, icon: <LogoutIcon />, color: "linear-gradient(135deg, #c62828, #ef5350)" },
+        { label: "Inicio", path: "/", icon: <HomeIcon /> },
+        { label: "Carrito", path: "/carrito", icon: <ShoppingCartIcon /> },
+        { label: "Mis pedidos", path: "/pedidos", icon: <ListAltIcon /> },
+        { label: "Cerrar sesión", action: handleLogout, icon: <LogoutIcon /> },
       ]
     : [
-        { label: "Iniciar sesión", path: "/login", icon: <LoginIcon />, color: "linear-gradient(135deg, #0288d1, #26c6da)" },
-        { label: "Registrarse", path: "/register", icon: <PersonAddIcon />, color: "linear-gradient(135deg, #6a1b9a, #ab47bc)" },
+        { label: "Iniciar sesión", path: "/login", icon: <LoginIcon /> },
+        { label: "Registrarse", path: "/register", icon: <PersonAddIcon /> },
       ];
 
+  // Cambia estado con scroll
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", onScroll);
@@ -74,12 +71,18 @@ export default function Navbar() {
 
   return (
     <>
+      {/* Topbar */}
       <motion.div initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
         <AppBar
           position="fixed"
           elevation={scrolled ? 6 : 2}
           sx={{
-            backgroundColor: scrolled ? theme.palette.primary.dark : theme.palette.primary.main,
+            backgroundColor:
+              theme.palette.mode === "dark"
+                ? theme.palette.background.paper
+                : scrolled
+                ? theme.palette.primary.dark
+                : theme.palette.primary.main,
             transition: "all 0.3s ease",
             boxShadow: scrolled ? "0 4px 16px rgba(0,0,0,0.25)" : "none",
             zIndex: 1400,
@@ -97,9 +100,8 @@ export default function Navbar() {
                   alignItems: "center",
                   gap: 1,
                   fontWeight: "bold",
-                  color: "#fff",
+                  color: theme.palette.mode === "dark" ? "#fff" : "#fff",
                   cursor: "pointer",
-                  lineHeight: 1.2,
                   textDecoration: "none",
                 }}
               >
@@ -117,7 +119,7 @@ export default function Navbar() {
                       to={item.path}
                       startIcon={item.icon}
                       sx={{
-                        color: "#fff",
+                        color: theme.palette.mode === "dark" ? "#fff" : "#fff",
                         fontWeight: 600,
                         textTransform: "none",
                         fontSize: "1rem",
@@ -125,9 +127,9 @@ export default function Navbar() {
                         px: 2.5,
                         py: 1,
                         transition: "all 0.3s ease",
-                        background: "rgba(255,255,255,0.08)",
+                        background: theme.palette.mode === "dark" ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.08)",
                         "&:hover": {
-                          background: item.color,
+                          background: theme.palette.mode === "dark" ? "#333" : "#1976d2",
                           boxShadow: "0 0 20px rgba(0,0,0,0.35)",
                         },
                       }}
@@ -139,13 +141,14 @@ export default function Navbar() {
                       onClick={item.action}
                       startIcon={item.icon}
                       sx={{
-                        color: "#fff",
                         fontWeight: 600,
                         borderRadius: "12px",
                         px: 2.5,
                         py: 1,
-                        background: item.color,
+                        background: theme.palette.mode === "dark" ? "#444" : "#c62828",
+                        color: "#fff",
                         "&:hover": {
+                          background: theme.palette.mode === "dark" ? "#666" : "#ef5350",
                           boxShadow: "0 0 20px rgba(0,0,0,0.45)",
                         },
                       }}
@@ -155,17 +158,13 @@ export default function Navbar() {
                   )}
                 </motion.div>
               ))}
-
-              {/* Botón Dark/Light */}
-              <IconButton onClick={toggleMode} color="inherit">
-                {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
-              </IconButton>
             </Box>
 
             {/* Botón menú móvil */}
             <IconButton
               sx={{ display: { xs: "block", lg: "none" }, color: "#fff" }}
               onClick={() => setOpen(true)}
+              aria-label="Abrir menú"
             >
               <MenuIcon fontSize="large" />
             </IconButton>
@@ -190,6 +189,8 @@ export default function Navbar() {
               justifyContent: "flex-end",
             }}
             onClick={() => setOpen(false)}
+            role="dialog"
+            aria-modal="true"
           >
             <motion.div
               variants={menuVariants}
@@ -200,7 +201,7 @@ export default function Navbar() {
               tabIndex={-1}
               style={{
                 width: "280px",
-                background: theme.palette.primary.main,
+                background: theme.palette.mode === "dark" ? "#222" : theme.palette.primary.main,
                 borderRadius: "16px 0 0 16px",
                 padding: "2rem",
                 paddingTop: "5rem",
@@ -213,6 +214,7 @@ export default function Navbar() {
               }}
               onClick={(e) => e.stopPropagation()}
             >
+              {/* Botón cerrar */}
               <IconButton
                 onClick={() => setOpen(false)}
                 sx={{ position: "absolute", top: "1rem", right: "1rem", color: "#fff" }}
@@ -235,7 +237,7 @@ export default function Navbar() {
                           color: "#fff",
                           borderRadius: "12px",
                           textTransform: "none",
-                          background: item.color,
+                          background: theme.palette.mode === "dark" ? "#333" : "#1976d2",
                           width: "100%",
                           py: 1.2,
                           "&:hover": {
@@ -257,7 +259,7 @@ export default function Navbar() {
                           color: "#fff",
                           borderRadius: "12px",
                           textTransform: "none",
-                          background: item.color,
+                          background: theme.palette.mode === "dark" ? "#555" : "#c62828",
                           width: "100%",
                           py: 1.2,
                           "&:hover": {
@@ -270,27 +272,6 @@ export default function Navbar() {
                     </motion.div>
                   )
                 )}
-
-                {/* Botón dark/light también en móvil */}
-                <Button
-                  onClick={toggleMode}
-                  startIcon={mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
-                  sx={{
-                    fontSize: "1.1rem",
-                    fontWeight: 600,
-                    color: "#fff",
-                    borderRadius: "12px",
-                    textTransform: "none",
-                    background: "linear-gradient(135deg, #455a64, #90a4ae)",
-                    width: "100%",
-                    py: 1.2,
-                    "&:hover": {
-                      boxShadow: "0 0 15px rgba(0,0,0,0.35)",
-                    },
-                  }}
-                >
-                  {mode === "light" ? "Modo oscuro" : "Modo claro"}
-                </Button>
               </Stack>
             </motion.div>
           </motion.div>
@@ -298,4 +279,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-                   }
+}
