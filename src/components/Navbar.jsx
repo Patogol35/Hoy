@@ -156,10 +156,6 @@ textDecoration: "none",
             </motion.div>  
           ))}  
 
-          {/* Botón Dark/Light */}  
-          <IconButton onClick={toggleMode} color="inherit">  
-            {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}  
-          </IconButton>  
         </Box>  
 
         {/* Botón menú móvil */}  
@@ -271,26 +267,7 @@ textDecoration: "none",
               )  
             )}  
 
-            {/* Botón dark/light también en móvil */}  
-            <Button  
-              onClick={toggleMode}  
-              startIcon={mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}  
-              sx={{  
-                fontSize: "1.1rem",  
-                fontWeight: 600,  
-                color: "#fff",  
-                borderRadius: "12px",  
-                textTransform: "none",  
-                background: "linear-gradient(135deg, #455a64, #90a4ae)",  
-                width: "100%",  
-                py: 1.2,  
-                "&:hover": {  
-                  boxShadow: "0 0 15px rgba(0,0,0,0.35)",  
-                },  
-              }}  
-            >  
-              {mode === "light" ? "Modo oscuro" : "Modo claro"}  
-            </Button>  
+            
           </Stack>  
         </motion.div>  
       </motion.div>  
