@@ -1,20 +1,14 @@
-import { useEffect, useState } from "react";
-import { getPedidos } from "../api/api";
-import { useAuth } from "../context/AuthContext";
+import { useState, useEffect } from "react";
 import {
-  Container,
   Typography,
-  Card,
-  CardContent,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
+  CircularProgress,
   Box,
-  Chip,
   Stack,
   Button,
 } from "@mui/material";
+import PedidoCard from "../components/PedidoCard";
+import { getPedidos } from "../api/api";
+import { useAuth } from "../context/AuthContext";
 
 export default function Pedidos() {
   const { access } = useAuth();
@@ -22,134 +16,49 @@ export default function Pedidos() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [totalCount, setTotalCount] = useState(0); // 👈 total de pedidos
 
   useEffect(() => {
-    if (!access) return;
-
-    setLoading(true);
     getPedidos(access, page)
       .then((data) => {
         if (!data) return;
-
-        // resultados de esta página
-        const nuevosPedidos = data.results ?? [];
-
-        // ordenar por fecha descendente
-        const ordenados = [...nuevosPedidos].sort(
-          (a, b) => new Date(b.fecha) - new Date(a.fecha)
-        );
-
-        // 🔹 combinar con los pedidos previos y renumerar globalmente
-        setPedidos((prev) => {
-          const todos = [...prev, ...ordenados];
-          const total = todos.length;
-          return todos.map((p, i) => ({
-            ...p,
-            numeroLocal: total - i,
-          }));
-        });
-
-        setHasMore(!!data.next); // si hay siguiente página
+        setPedidos((prev) => [...prev, ...data.results]);
+        setHasMore(!!data.next);
+        setTotalCount(data.count); // 👈 guardamos total
       })
-      .catch(console.error)
+      .catch((err) => console.error(err))
       .finally(() => setLoading(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, access]);
+  }, [access, page]);
 
-  if (loading && pedidos.length === 0)
+  if (loading && page === 1) {
     return (
-      <Container sx={{ mt: 4 }}>
-        <Typography>Cargando pedidos...</Typography>
-      </Container>
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="50vh">
+        <CircularProgress />
+      </Box>
     );
+  }
 
-  if (pedidos.length === 0)
+  if (!pedidos.length) {
     return (
-      <Container sx={{ mt: 4 }}>
-        <Typography>Aún no tienes pedidos.</Typography>
-      </Container>
+      <Typography align="center" variant="h6" mt={4}>
+        No tienes pedidos realizados todavía.
+      </Typography>
     );
+  }
 
   return (
-    <Container sx={{ mt: 4, mb: 6 }}>
-      <Typography variant="h4" gutterBottom fontWeight="bold">
-        Mis pedidos
+    <Box mt={4} px={2}>
+      <Typography variant="h4" align="center" gutterBottom>
+        Mis Pedidos
       </Typography>
 
-      {pedidos.map((p) => (
-        <Card
-          key={p.id}
-          sx={{
-            mb: 3,
-            borderRadius: 3,
-            boxShadow: 3,
-            transition: "all 0.3s",
-            "&:hover": { boxShadow: 6, transform: "scale(1.01)" },
-          }}
-        >
-          <CardContent>
-            <Stack
-              direction={{ xs: "column", sm: "row" }}
-              justifyContent="space-between"
-              alignItems={{ xs: "flex-start", sm: "center" }}
-              spacing={1}
-              sx={{ mb: 1 }}
-            >
-              <Typography variant="h6" fontWeight="bold">
-                Pedido #{p.numeroLocal}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {new Date(p.fecha).toLocaleString()}
-              </Typography>
-              <Typography variant="body1" color="primary" fontWeight="bold">
-                Total: ${Number(p.total).toFixed(2)}
-              </Typography>
-            </Stack>
-
-            <List dense>
-              {(p.items ?? p.detalles)?.map((item, i, arr) => (
-                <Box key={i}>
-                  <ListItem
-                    sx={{
-                      display: "flex",
-                      flexDirection: { xs: "column", sm: "row" },
-                      justifyContent: "space-between",
-                      alignItems: { xs: "flex-start", sm: "center" },
-                      py: 1,
-                    }}
-                  >
-                    <ListItemText
-                      primary={`${item.cantidad} x ${
-                        item.producto?.nombre ?? "Producto"
-                      } — $${Number(
-                        item.precio_unitario ?? item.producto?.precio ?? 0
-                      ).toFixed(2)}`}
-                      secondary={`Subtotal: $${Number(
-                        item.subtotal ?? 0
-                      ).toFixed(2)}`}
-                    />
-                    {item.estado && (
-                      <Chip
-                        label={item.estado}
-                        color={
-                          item.estado === "Entregado"
-                            ? "success"
-                            : item.estado === "En preparación"
-                            ? "warning"
-                            : "error"
-                        }
-                        size="small"
-                        sx={{ mt: { xs: 1, sm: 0 } }}
-                      />
-                    )}
-                  </ListItem>
-                  {i < arr.length - 1 && <Divider component="li" />}
-                </Box>
-              ))}
-            </List>
-          </CardContent>
-        </Card>
-      ))}
+      <Stack spacing={2}>
+        {pedidos.map((pedido, index) => {
+          // 👇 número correcto (del más nuevo al más viejo)
+          const numero = totalCount - (index + (page - 1) * 5);
+          return <PedidoCard key={pedido.id} pedido={pedido} numero={numero} />;
+        })}
+      </Stack>
 
       {hasMore && (
         <Box textAlign="center" mt={2}>
@@ -158,6 +67,6 @@ export default function Pedidos() {
           </Button>
         </Box>
       )}
-    </Container>
+    </Box>
   );
 }
