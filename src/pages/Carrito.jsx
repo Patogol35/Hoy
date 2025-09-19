@@ -27,21 +27,24 @@ import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 // Banner de demo
 function DemoBanner() {
   return (
-    <Box
-      sx={{
-        bgcolor: "#FFF3CD",
-        color: "#856404",
-        p: 2,
-        borderRadius: 2,
-        mb: 3,
-        border: "1px solid #FFEEBA",
-      }}
-    >
-      <Typography variant="body1" fontWeight="bold">
-        ⚠️ Esta es una aplicación demostrativa (proyecto personal). Los pedidos
-        no son reales y no se piden datos sensibles.
-      </Typography>
-    </Box>
+
+
+<Box
+          sx={{
+            bgcolor: "#FFF9E6",
+            color: "#8A6D3B",
+            p: 2,
+            borderRadius: 2,
+            mb: 4,
+            border: "1px solid #FFECB3",
+            textAlign: "center",
+            boxShadow: "0 3px 8px rgba(0,0,0,0.1)",
+          }}
+        >
+          ⚠️ Esta es una aplicación demostrativa. Los pedidos no son reales.
+        </Box>
+
+    
   );
 }
 
