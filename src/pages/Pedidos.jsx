@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getPedidos } from "../api/api";
+import { getPedidos, crearPedido } from "../api/api"; // asegurarte de tener crearPedido
 import { useAuth } from "../context/AuthContext";
 import {
   Container,
@@ -67,6 +67,17 @@ export default function Pedidos() {
       setPedidos(numerarPedidos(combinados));
     } catch (err) {
       console.error("Error cargando más pedidos:", err);
+    }
+  };
+
+  // 🔹 Agregar un pedido nuevo (ejemplo de uso)
+  const agregarNuevoPedido = async (datosPedido) => {
+    try {
+      const nuevoPedido = await crearPedido(access, datosPedido);
+      // agregamos el pedido al inicio y recalculamos la numeración
+      setPedidos(prev => numerarPedidos([nuevoPedido, ...prev]));
+    } catch (err) {
+      console.error("Error al crear pedido:", err);
     }
   };
 
