@@ -20,7 +20,7 @@ export const refreshToken = async (refresh) => {
 };
 
 // =====================
-// FETCH CON AUTO REFRESH
+// FETCH CON AUTO REFRESH Y SOPORTE PAGINACIÓN
 // =====================
 async function authFetch(url, options = {}, token) {
   let headers = {
@@ -39,7 +39,7 @@ async function authFetch(url, options = {}, token) {
         localStorage.setItem("access", newTokens.access);
         token = newTokens.access;
 
-        // reintento con nuevo token
+        // Reintento con nuevo token
         headers = {
           ...(options.headers || {}),
           ...(options.body && { "Content-Type": "application/json" }),
@@ -66,6 +66,14 @@ async function authFetch(url, options = {}, token) {
   if (!res.ok) {
     const msg = data?.detail || data?.error || `Error ${res.status}`;
     throw new Error(msg);
+  }
+
+  // 🔹 Si la respuesta es paginada, devuelve solo results pero conserva meta
+  if (data && typeof data === "object" && "results" in data) {
+    return {
+      ...data,
+      results: data.results,
+    };
   }
 
   return data;
@@ -132,7 +140,8 @@ export const crearPedido = async (token) => {
   return authFetch(`${BASE_URL}/pedido/crear/`, { method: "POST" }, token);
 };
 
-// ✅ Pedidos con paginación (nuevo)
-export const getPedidos = async (token, page = 1) => {
-  return authFetch(`${BASE_URL}/pedidos/?page=${page}`, { method: "GET" }, token);
+// 🔹 getPedidos ahora maneja paginación: devuelve objeto completo (count, next, previous, results)
+export const getPedidos = async (token, pageUrl = null) => {
+  const url = pageUrl || `${BASE_URL}/pedidos/`;
+  return authFetch(url, { method: "GET" }, token);
 };
