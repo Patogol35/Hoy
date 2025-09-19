@@ -1,132 +1,83 @@
 import { useEffect, useState } from "react";
 import { getPedidos } from "../api/api";
-import { useAuth } from "../context/AuthContext";
-// MUI
 import {
   Container,
   Typography,
   Card,
   CardContent,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
   Box,
-  Chip,
-  Stack,
+  Divider,
+  Button,
 } from "@mui/material";
 
 export default function Pedidos() {
-  const { access } = useAuth();
   const [pedidos, setPedidos] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [visibleCount, setVisibleCount] = useState(5); // 🔹 mostrar 5 pedidos al inicio
 
   useEffect(() => {
-    getPedidos(access)
-      .then((data) => {
-        // ordenar por fecha descendente para que el más nuevo esté primero
-        const ordenados = [...data].sort(
-          (a, b) => new Date(b.fecha) - new Date(a.fecha)
-        );
-        setPedidos(ordenados);
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, [access]);
-
-  if (loading)
-    return (
-      <Container sx={{ mt: 4 }}>
-        <Typography>Cargando pedidos...</Typography>
-      </Container>
-    );
-
-  if (pedidos.length === 0)
-    return (
-      <Container sx={{ mt: 4 }}>
-        <Typography>Aún no tienes pedidos.</Typography>
-      </Container>
-    );
+    const cargar = async () => {
+      const data = await getPedidos();
+      const pedidosConNumero = data
+        .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
+        .map((pedido, index) => ({
+          ...pedido,
+          numeroLocal: index + 1,
+        }));
+      setPedidos(pedidosConNumero);
+    };
+    cargar();
+  }, []);
 
   return (
-    <Container sx={{ mt: 4, mb: 6 }}>
-      <Typography variant="h4" gutterBottom fontWeight="bold">
-        Mis pedidos
+    <Container maxWidth="md">
+      <Typography variant="h4" gutterBottom>
+        Mis Pedidos
       </Typography>
-
-      {pedidos.map((p, index) => (
-        <Card
-          key={p.id}
-          sx={{
-            mb: 3,
-            borderRadius: 3,
-            boxShadow: 3,
-            transition: "all 0.3s",
-            "&:hover": { boxShadow: 6, transform: "scale(1.01)" },
-          }}
-        >
-          <CardContent>
-            <Stack
-              direction={{ xs: "column", sm: "row" }}
-              justifyContent="space-between"
-              alignItems={{ xs: "flex-start", sm: "center" }}
-              spacing={1}
-              sx={{ mb: 1 }}
-            >
-              {/* número relativo por usuario */}
-              <Typography variant="h6" fontWeight="bold">
-                Pedido #{pedidos.length - index}
+      {pedidos.length === 0 ? (
+        <Typography>Aún no tienes pedidos.</Typography>
+      ) : (
+        pedidos.slice(0, visibleCount).map((pedido) => (
+          <Card key={pedido.id} sx={{ mb: 2 }}>
+            <CardContent>
+              <Typography variant="h6">
+                Pedido #{pedido.numeroLocal}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {new Date(p.fecha).toLocaleString()}
+              <Typography variant="body2" color="textSecondary">
+                Fecha: {new Date(pedido.fecha).toLocaleDateString()}
               </Typography>
-              <Typography variant="body1" color="primary" fontWeight="bold">
-                Total: ${Number(p.total).toFixed(2)}
-              </Typography>
-            </Stack>
-
-            <List dense>
-              {p.items?.map((item, i) => (
-                <Box key={i}>
-                  <ListItem
-                    sx={{
-                      display: "flex",
-                      flexDirection: { xs: "column", sm: "row" },
-                      justifyContent: "space-between",
-                      alignItems: { xs: "flex-start", sm: "center" },
-                      py: 1,
-                    }}
-                  >
-                    <ListItemText
-                      primary={`${item.cantidad} x ${item.producto?.nombre} — $${Number(
-                        item.precio_unitario
-                      ).toFixed(2)}`}
-                      secondary={`Subtotal: $${Number(item.subtotal).toFixed(
-                        2
-                      )}`}
-                    />
-                    {item.estado && (
-                      <Chip
-                        label={item.estado}
-                        color={
-                          item.estado === "Entregado"
-                            ? "success"
-                            : item.estado === "En preparación"
-                            ? "warning"
-                            : "error"
-                        }
-                        size="small"
-                        sx={{ mt: { xs: 1, sm: 0 } }}
-                      />
-                    )}
-                  </ListItem>
-                  {i < p.items.length - 1 && <Divider component="li" />}
+              <Divider sx={{ my: 1 }} />
+              {pedido.detalles.map((detalle) => (
+                <Box
+                  key={detalle.id}
+                  display="flex"
+                  justifyContent="space-between"
+                >
+                  <Typography>
+                    {detalle.producto.nombre} (x{detalle.cantidad})
+                  </Typography>
+                  <Typography>${detalle.subtotal}</Typography>
                 </Box>
               ))}
-            </List>
-          </CardContent>
-        </Card>
-      ))}
+              <Divider sx={{ my: 1 }} />
+              <Typography variant="h6">
+                Total: ${pedido.total}
+              </Typography>
+            </CardContent>
+          </Card>
+        ))
+      )}
+
+      {/* 🔹 Botón para cargar más pedidos */}
+      {visibleCount < pedidos.length && (
+        <Box textAlign="center" mt={2}>
+          <Button
+            variant="outlined"
+            onClick={() => setVisibleCount((prev) => prev + 5)}
+          >
+            Ver más
+          </Button>
+        </Box>
+      )}
     </Container>
   );
 }
