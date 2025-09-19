@@ -1,3 +1,4 @@
+
 // =====================
 // BASE URL
 // =====================
@@ -39,6 +40,7 @@ async function authFetch(url, options = {}, token) {
         localStorage.setItem("access", newTokens.access);
         token = newTokens.access;
 
+        // reintento con nuevo token
         headers = {
           ...(options.headers || {}),
           ...(options.body && { "Content-Type": "application/json" }),
@@ -131,11 +133,6 @@ export const crearPedido = async (token) => {
   return authFetch(`${BASE_URL}/pedido/crear/`, { method: "POST" }, token);
 };
 
-// 👇 ahora soporta paginación
-export const getPedidos = async (token, page = 1) => {
-  return authFetch(
-    `${BASE_URL}/pedidos/?page=${page}`,
-    { method: "GET" },
-    token
-  );
+export const getPedidos = async (token) => {
+  return authFetch(`${BASE_URL}/pedidos/`, { method: "GET" }, token);
 };
