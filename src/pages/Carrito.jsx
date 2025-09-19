@@ -17,6 +17,7 @@ import {
   IconButton,
   Divider,
   Chip,
+  Paper,
 } from "@mui/material";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
@@ -94,7 +95,7 @@ export default function Carrito() {
     it.cantidad > 1 && setCantidad(it.id, it.cantidad - 1);
 
   return (
-    <Box sx={{ pb: { xs: 14, sm: 6 } }}>
+    <Box sx={{ pb: { xs: 16, sm: 6 } }}>
       {/* Banner de demo */}
       <DemoBanner />
 
@@ -263,45 +264,94 @@ export default function Carrito() {
 
       {/* Total y comprar */}
       {!loading && items.length > 0 && (
-        <Box
-          mt={3}
-          sx={{
-            textAlign: "right",
-            position: { xs: "fixed", sm: "static" },
-            bottom: { xs: 0, sm: "auto" },
-            left: 0,
-            right: 0,
-            bgcolor: { xs: "white", sm: "transparent" },
-            p: { xs: 2, sm: 0 },
-            boxShadow: { xs: "0 -4px 12px rgba(0,0,0,0.15)", sm: "none" },
-            borderTop: { xs: "1px solid #ddd", sm: "none" },
-          }}
-        >
-          <Divider sx={{ mb: 2, display: { xs: "none", sm: "block" } }} />
-          <Typography variant="h6" gutterBottom>
-            Total:{" "}
-            <strong>
-              ${total.toFixed(2)} <MonetizationOnIcon fontSize="small" />
-            </strong>
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            size="large"
-            startIcon={<ShoppingCartCheckoutIcon />}
+        <>
+          {/* Vista escritorio */}
+          <Box
+            mt={3}
             sx={{
-              width: { xs: "100%", sm: "auto" },
-              transition: "all 0.3s",
-              fontWeight: "bold",
-              borderRadius: 3,
-              py: 1.2,
-              "&:hover": { transform: "scale(1.05)", boxShadow: 6 },
+              textAlign: "right",
+              display: { xs: "none", sm: "block" },
             }}
-            onClick={comprar}
           >
-            Finalizar compra
-          </Button>
-        </Box>
+            <Divider sx={{ mb: 2 }} />
+            <Typography variant="h6" gutterBottom>
+              Total:{" "}
+              <strong>
+                ${total.toFixed(2)} <MonetizationOnIcon fontSize="small" />
+              </strong>
+            </Typography>
+            <Button
+              variant="contained"
+              size="large"
+              startIcon={<ShoppingCartCheckoutIcon />}
+              sx={{
+                borderRadius: 50,
+                px: 4,
+                py: 1.5,
+                fontWeight: "bold",
+                fontSize: "1.1rem",
+                background: "linear-gradient(135deg, #4CAF50, #2E7D32)",
+                boxShadow: "0 4px 14px rgba(0,0,0,0.25)",
+                transition: "all 0.3s ease",
+                "&:hover": {
+                  background: "linear-gradient(135deg, #43A047, #1B5E20)",
+                  transform: "translateY(-2px) scale(1.03)",
+                  boxShadow: "0 6px 18px rgba(0,0,0,0.35)",
+                },
+              }}
+              onClick={comprar}
+            >
+              <MonetizationOnIcon sx={{ fontSize: "1.5rem" }} />
+              Finalizar compra
+            </Button>
+          </Box>
+
+          {/* Vista móvil fija abajo */}
+          <Paper
+            elevation={12}
+            sx={{
+              display: { xs: "flex", sm: "none" },
+              position: "fixed",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              p: 2,
+              bgcolor: "white",
+              borderTop: "1px solid #ddd",
+              justifyContent: "space-between",
+              alignItems: "center",
+              zIndex: 1000,
+            }}
+          >
+            <Typography variant="h6" fontWeight="bold">
+              ${total.toFixed(2)}
+            </Typography>
+            <Button
+              variant="contained"
+              size="large"
+              startIcon={<ShoppingCartCheckoutIcon />}
+              sx={{
+                flex: 1,
+                ml: 2,
+                borderRadius: 50,
+                py: 1.5,
+                fontWeight: "bold",
+                fontSize: "1rem",
+                background: "linear-gradient(135deg, #4CAF50, #2E7D32)",
+                boxShadow: "0 4px 14px rgba(0,0,0,0.25)",
+                transition: "all 0.3s ease",
+                "&:hover": {
+                  background: "linear-gradient(135deg, #43A047, #1B5E20)",
+                  transform: "scale(1.03)",
+                  boxShadow: "0 6px 18px rgba(0,0,0,0.35)",
+                },
+              }}
+              onClick={comprar}
+            >
+              Finalizar
+            </Button>
+          </Paper>
+        </>
       )}
     </Box>
   );
