@@ -23,31 +23,22 @@ export default function Pedidos() {
   const [page, setPage] = useState(1);
   const [next, setNext] = useState(null);
 
-  // Cargar pedidos
   useEffect(() => {
     if (!access) return;
-
     setLoading(true);
 
     getPedidos(access, page)
       .then((data) => {
-        if (!data || !data.results) return;
-
-        const ordenados = [...data.results].sort(
-          (a, b) => new Date(b.fecha) - new Date(a.fecha)
-        );
-
-        const pedidosNumerados = ordenados.map((p, index) => ({
+        const nuevosPedidos = (data.results || []).map((p, index) => ({
           ...p,
           numeroLocal: data.count - (pedidos.length + index),
         }));
 
-        setPedidos((prev) => [...prev, ...pedidosNumerados]);
+        setPedidos((prev) => [...prev, ...nuevosPedidos]);
         setNext(data.next);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [access, page]);
 
   if (loading && pedidos.length === 0)
@@ -71,7 +62,6 @@ export default function Pedidos() {
       </Typography>
 
       {pedidos.map((p) => {
-        // 🔹 Asegurar que siempre sea array
         const items = Array.isArray(p.items)
           ? p.items
           : Array.isArray(p.detalles)
@@ -154,7 +144,6 @@ export default function Pedidos() {
         );
       })}
 
-      {/* Botón para cargar más */}
       {next && (
         <Box textAlign="center" mt={2}>
           <Button variant="outlined" onClick={() => setPage((prev) => prev + 1)}>
@@ -164,4 +153,4 @@ export default function Pedidos() {
       )}
     </Container>
   );
-                        }
+}
