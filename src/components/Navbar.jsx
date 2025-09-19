@@ -10,16 +10,18 @@ import {
   Stack,
   useTheme,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import CloseIcon from "@mui/icons-material/Close";
-import HomeIcon from "@mui/icons-material/Home";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import ListAltIcon from "@mui/icons-material/ListAlt";
-import LoginIcon from "@mui/icons-material/Login";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import LogoutIcon from "@mui/icons-material/Logout";
-import DarkModeIcon from "@mui/icons-material/DarkMode";
-import LightModeIcon from "@mui/icons-material/LightMode";
+import {
+  Menu as MenuIcon,
+  Close as CloseIcon,
+  Home as HomeIcon,
+  ShoppingCart as ShoppingCartIcon,
+  ListAlt as ListAltIcon,
+  Login as LoginIcon,
+  PersonAdd as PersonAddIcon,
+  Logout as LogoutIcon,
+  DarkMode as DarkModeIcon,
+  LightMode as LightModeIcon,
+} from "@mui/icons-material";
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useThemeMode } from "../context/ThemeContext";
@@ -56,15 +58,52 @@ export default function Navbar() {
 
   const menuItems = isAuthenticated
     ? [
-        { label: "Inicio", path: "/", icon: <HomeIcon />, color: "linear-gradient(135deg, #0288d1, #26c6da)" },
-        { label: "Carrito", path: "/carrito", icon: <ShoppingCartIcon />, color: "linear-gradient(135deg, #2e7d32, #66bb6a)" },
-        { label: "Mis pedidos", path: "/pedidos", icon: <ListAltIcon />, color: "linear-gradient(135deg, #f57c00, #ffb74d)" },
-        { label: "Cerrar sesión", action: handleLogout, icon: <LogoutIcon />, color: "linear-gradient(135deg, #c62828, #ef5350)" },
+        {
+          label: "Inicio",
+          path: "/",
+          icon: <HomeIcon />,
+          color: "linear-gradient(135deg, #0288d1, #26c6da)",
+        },
+        {
+          label: "Carrito",
+          path: "/carrito",
+          icon: <ShoppingCartIcon />,
+          color: "linear-gradient(135deg, #2e7d32, #66bb6a)",
+        },
+        {
+          label: "Mis pedidos",
+          path: "/pedidos",
+          icon: <ListAltIcon />,
+          color: "linear-gradient(135deg, #f57c00, #ffb74d)",
+        },
+        {
+          label: "Cerrar sesión",
+          action: handleLogout,
+          icon: <LogoutIcon />,
+          color: "linear-gradient(135deg, #c62828, #ef5350)",
+        },
       ]
     : [
-        { label: "Iniciar sesión", path: "/login", icon: <LoginIcon />, color: "linear-gradient(135deg, #0288d1, #26c6da)" },
-        { label: "Registrarse", path: "/register", icon: <PersonAddIcon />, color: "linear-gradient(135deg, #6a1b9a, #ab47bc)" },
+        {
+          label: "Iniciar sesión",
+          path: "/login",
+          icon: <LoginIcon />,
+          color: "linear-gradient(135deg, #0288d1, #26c6da)",
+        },
+        {
+          label: "Registrarse",
+          path: "/register",
+          icon: <PersonAddIcon />,
+          color: "linear-gradient(135deg, #6a1b9a, #ab47bc)",
+        },
       ];
+
+  // Helper: escoger color según modo
+  const getButtonBackground = (itemColor) =>
+    mode === "light" ? itemColor : theme.palette.background.paper;
+
+  const getButtonHover = (itemColor) =>
+    mode === "light" ? itemColor : theme.palette.action.hover;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -79,14 +118,13 @@ export default function Navbar() {
           position="fixed"
           elevation={scrolled ? 6 : 2}
           sx={{
-            backgroundColor: scrolled ? theme.palette.primary.dark : theme.palette.primary.main,
+            backgroundColor: theme.palette.primary.main,
             transition: "all 0.3s ease",
             boxShadow: scrolled ? "0 4px 16px rgba(0,0,0,0.25)" : "none",
             zIndex: 1400,
           }}
         >
           <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-            {/* Logo */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Typography
                 variant="h6"
@@ -97,7 +135,7 @@ export default function Navbar() {
                   alignItems: "center",
                   gap: 1,
                   fontWeight: "bold",
-                  color: "#fff",
+                  color: theme.palette.text.primary,
                   cursor: "pointer",
                   lineHeight: 1.2,
                   textDecoration: "none",
@@ -117,7 +155,7 @@ export default function Navbar() {
                       to={item.path}
                       startIcon={item.icon}
                       sx={{
-                        color: "#fff",
+                        color: theme.palette.text.primary,
                         fontWeight: 600,
                         textTransform: "none",
                         fontSize: "1rem",
@@ -125,10 +163,10 @@ export default function Navbar() {
                         px: 2.5,
                         py: 1,
                         transition: "all 0.3s ease",
-                        background: "rgba(255,255,255,0.08)",
+                        background: getButtonBackground(item.color),
                         "&:hover": {
-                          background: item.color,
-                          boxShadow: "0 0 20px rgba(0,0,0,0.35)",
+                          background: getButtonHover(item.color),
+                          boxShadow: theme.shadows[4],
                         },
                       }}
                     >
@@ -139,15 +177,13 @@ export default function Navbar() {
                       onClick={item.action}
                       startIcon={item.icon}
                       sx={{
-                        color: "#fff",
+                        color: theme.palette.text.primary,
                         fontWeight: 600,
                         borderRadius: "12px",
                         px: 2.5,
                         py: 1,
-                        background: item.color,
-                        "&:hover": {
-                          boxShadow: "0 0 20px rgba(0,0,0,0.45)",
-                        },
+                        background: getButtonBackground(item.color),
+                        "&:hover": { boxShadow: theme.shadows[6], background: getButtonHover(item.color) },
                       }}
                     >
                       {item.label}
@@ -164,7 +200,7 @@ export default function Navbar() {
 
             {/* Botón menú móvil */}
             <IconButton
-              sx={{ display: { xs: "block", lg: "none" }, color: "#fff" }}
+              sx={{ display: { xs: "block", lg: "none" }, color: theme.palette.text.primary }}
               onClick={() => setOpen(true)}
             >
               <MenuIcon fontSize="large" />
@@ -200,11 +236,11 @@ export default function Navbar() {
               tabIndex={-1}
               style={{
                 width: "280px",
-                background: theme.palette.primary.main,
+                backgroundColor: mode === "light" ? "#fff" : theme.palette.background.default,
                 borderRadius: "16px 0 0 16px",
                 padding: "2rem",
                 paddingTop: "5rem",
-                boxShadow: "0 6px 20px rgba(0,0,0,0.35)",
+                boxShadow: theme.shadows[6],
                 display: "flex",
                 flexDirection: "column",
                 maxHeight: "100vh",
@@ -215,7 +251,7 @@ export default function Navbar() {
             >
               <IconButton
                 onClick={() => setOpen(false)}
-                sx={{ position: "absolute", top: "1rem", right: "1rem", color: "#fff" }}
+                sx={{ position: "absolute", top: "1rem", right: "1rem", color: theme.palette.text.primary }}
               >
                 <CloseIcon fontSize="large" />
               </IconButton>
@@ -232,15 +268,13 @@ export default function Navbar() {
                         sx={{
                           fontSize: "1.1rem",
                           fontWeight: 600,
-                          color: "#fff",
+                          color: theme.palette.text.primary,
                           borderRadius: "12px",
                           textTransform: "none",
-                          background: item.color,
+                          background: getButtonBackground(item.color),
                           width: "100%",
                           py: 1.2,
-                          "&:hover": {
-                            boxShadow: "0 0 15px rgba(0,0,0,0.35)",
-                          },
+                          "&:hover": { boxShadow: theme.shadows[4], background: getButtonHover(item.color) },
                         }}
                       >
                         {item.label}
@@ -254,15 +288,13 @@ export default function Navbar() {
                         sx={{
                           fontSize: "1.1rem",
                           fontWeight: 600,
-                          color: "#fff",
+                          color: theme.palette.text.primary,
                           borderRadius: "12px",
                           textTransform: "none",
-                          background: item.color,
+                          background: getButtonBackground(item.color),
                           width: "100%",
                           py: 1.2,
-                          "&:hover": {
-                            boxShadow: "0 0 15px rgba(0,0,0,0.35)",
-                          },
+                          "&:hover": { boxShadow: theme.shadows[4], background: getButtonHover(item.color) },
                         }}
                       >
                         {item.label}
@@ -278,15 +310,13 @@ export default function Navbar() {
                   sx={{
                     fontSize: "1.1rem",
                     fontWeight: 600,
-                    color: "#fff",
+                    color: theme.palette.text.primary,
                     borderRadius: "12px",
                     textTransform: "none",
-                    background: "linear-gradient(135deg, #455a64, #90a4ae)",
+                    background: mode === "light" ? "#90a4ae" : theme.palette.background.paper,
                     width: "100%",
                     py: 1.2,
-                    "&:hover": {
-                      boxShadow: "0 0 15px rgba(0,0,0,0.35)",
-                    },
+                    "&:hover": { boxShadow: theme.shadows[4], backgroundColor: theme.palette.action.hover },
                   }}
                 >
                   {mode === "light" ? "Modo oscuro" : "Modo claro"}
@@ -298,4 +328,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-            }
+}
