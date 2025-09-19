@@ -23,10 +23,12 @@ export default function Pedidos() {
   const [page, setPage] = useState(1);
   const [next, setNext] = useState(null);
 
+  // Cargar pedidos
   useEffect(() => {
     if (!access) return;
 
     setLoading(true);
+
     getPedidos(access, page)
       .then((data) => {
         if (!data || !data.results) return;
@@ -68,40 +70,46 @@ export default function Pedidos() {
         Mis pedidos
       </Typography>
 
-      {pedidos.map((p) => (
-        <Card
-          key={p.id}
-          sx={{
-            mb: 3,
-            borderRadius: 3,
-            boxShadow: 3,
-            transition: "all 0.3s",
-            "&:hover": { boxShadow: 6, transform: "scale(1.01)" },
-          }}
-        >
-          <CardContent>
-            <Stack
-              direction={{ xs: "column", sm: "row" }}
-              justifyContent="space-between"
-              alignItems={{ xs: "flex-start", sm: "center" }}
-              spacing={1}
-              sx={{ mb: 1 }}
-            >
-              {/* número relativo por usuario */}
-              <Typography variant="h6" fontWeight="bold">
-                Pedido #{p.numeroLocal}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {new Date(p.fecha).toLocaleString()}
-              </Typography>
-              <Typography variant="body1" color="primary" fontWeight="bold">
-                Total: ${Number(p.total).toFixed(2)}
-              </Typography>
-            </Stack>
+      {pedidos.map((p) => {
+        // 🔹 Asegurar que siempre sea array
+        const items = Array.isArray(p.items)
+          ? p.items
+          : Array.isArray(p.detalles)
+          ? p.detalles
+          : [];
 
-            <List dense>
-              {Array.isArray(p.items ?? p.detalles) &&
-                (p.items ?? p.detalles).map((item, i, arr) => (
+        return (
+          <Card
+            key={p.id}
+            sx={{
+              mb: 3,
+              borderRadius: 3,
+              boxShadow: 3,
+              transition: "all 0.3s",
+              "&:hover": { boxShadow: 6, transform: "scale(1.01)" },
+            }}
+          >
+            <CardContent>
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                justifyContent="space-between"
+                alignItems={{ xs: "flex-start", sm: "center" }}
+                spacing={1}
+                sx={{ mb: 1 }}
+              >
+                <Typography variant="h6" fontWeight="bold">
+                  Pedido #{p.numeroLocal}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {new Date(p.fecha).toLocaleString()}
+                </Typography>
+                <Typography variant="body1" color="primary" fontWeight="bold">
+                  Total: ${Number(p.total).toFixed(2)}
+                </Typography>
+              </Stack>
+
+              <List dense>
+                {items.map((item, i, arr) => (
                   <Box key={i}>
                     <ListItem
                       sx={{
@@ -140,12 +148,13 @@ export default function Pedidos() {
                     {i < arr.length - 1 && <Divider component="li" />}
                   </Box>
                 ))}
-            </List>
-          </CardContent>
-        </Card>
-      ))}
+              </List>
+            </CardContent>
+          </Card>
+        );
+      })}
 
-      {/* Botón para cargar más pedidos */}
+      {/* Botón para cargar más */}
       {next && (
         <Box textAlign="center" mt={2}>
           <Button variant="outlined" onClick={() => setPage((prev) => prev + 1)}>
@@ -155,4 +164,4 @@ export default function Pedidos() {
       )}
     </Container>
   );
-                          }
+                        }
