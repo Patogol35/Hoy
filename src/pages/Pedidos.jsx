@@ -22,6 +22,18 @@ export default function Pedidos() {
   const [loading, setLoading] = useState(true);
   const [nextPage, setNextPage] = useState(null);
 
+  // 👉 Función auxiliar para ordenar y numerar pedidos
+  const procesarPedidos = (lista) => {
+    const ordenados = [...lista].sort(
+      (a, b) => new Date(b.fecha) - new Date(a.fecha)
+    );
+
+    return ordenados.map((p, index) => ({
+      ...p,
+      numeroUsuario: ordenados.length - index, // numeración relativa
+    }));
+  };
+
   // Cargar pedidos iniciales
   useEffect(() => {
     setLoading(true);
@@ -32,12 +44,7 @@ export default function Pedidos() {
         const pedidosArray = data.results ?? (Array.isArray(data) ? data : []);
         setNextPage(data.next || null);
 
-        // Ordenar por fecha descendente
-        const ordenados = [...pedidosArray].sort(
-          (a, b) => new Date(b.fecha) - new Date(a.fecha)
-        );
-
-        setPedidos(ordenados);
+        setPedidos(procesarPedidos(pedidosArray));
       })
       .catch((err) => console.error("Error cargando pedidos:", err))
       .finally(() => setLoading(false));
@@ -52,16 +59,7 @@ export default function Pedidos() {
         const pedidosArray = data.results ?? [];
         setNextPage(data.next || null);
 
-        const nuevos = [...pedidosArray].sort(
-          (a, b) => new Date(b.fecha) - new Date(a.fecha)
-        );
-
-        setPedidos((prev) => {
-          const combinados = [...prev, ...nuevos];
-          return combinados.sort(
-            (a, b) => new Date(b.fecha) - new Date(a.fecha)
-          );
-        });
+        setPedidos((prev) => procesarPedidos([...prev, ...pedidosArray]));
       })
       .catch((err) => console.error("Error cargando más pedidos:", err));
   };
@@ -106,7 +104,7 @@ export default function Pedidos() {
               sx={{ mb: 1 }}
             >
               <Typography variant="h6" fontWeight="bold">
-                Pedido #{p.id /* 👈 o p.numero_pedido si lo tienes */}
+                Pedido #{p.numeroUsuario}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {new Date(p.fecha).toLocaleString()}
