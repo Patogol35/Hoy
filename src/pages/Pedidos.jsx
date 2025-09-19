@@ -22,7 +22,7 @@ export default function Pedidos() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [totalCount, setTotalCount] = useState(0); // 👈 total global de pedidos
+  const [totalCount, setTotalCount] = useState(0); // 👈 total de pedidos global
 
   useEffect(() => {
     if (!access) return;
@@ -32,20 +32,19 @@ export default function Pedidos() {
       .then((data) => {
         if (!data) return;
 
-        const nuevosPedidos = data.results ?? [];
-
-        // guardar el total desde el backend
-        setTotalCount(data.count);
-
-        // ordenar por fecha descendente (más nuevo primero)
-        const ordenados = [...nuevosPedidos].sort(
+        const nuevosPedidos = (data.results ?? []).sort(
           (a, b) => new Date(b.fecha) - new Date(a.fecha)
         );
 
-        // añadir al estado acumulado
-        setPedidos((prev) => [...prev, ...ordenados]);
+        setTotalCount(data.count);
 
-        // ¿hay más páginas?
+        // 🔹 asignar número global correcto aquí
+        const pedidosConNumero = nuevosPedidos.map((p, i) => ({
+          ...p,
+          numeroGlobal: data.count - ((page - 1) * 5 + i),
+        }));
+
+        setPedidos((prev) => [...prev, ...pedidosConNumero]);
         setHasMore(!!data.next);
       })
       .catch(console.error)
@@ -72,85 +71,80 @@ export default function Pedidos() {
         Mis pedidos
       </Typography>
 
-      {pedidos.map((p, index) => {
-        // 👇 numeración global (más reciente = #1)
-        const numero = totalCount - (index + (page - 1) * 5);
+      {pedidos.map((p) => (
+        <Card
+          key={p.id}
+          sx={{
+            mb: 3,
+            borderRadius: 3,
+            boxShadow: 3,
+            transition: "all 0.3s",
+            "&:hover": { boxShadow: 6, transform: "scale(1.01)" },
+          }}
+        >
+          <CardContent>
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              justifyContent="space-between"
+              alignItems={{ xs: "flex-start", sm: "center" }}
+              spacing={1}
+              sx={{ mb: 1 }}
+            >
+              <Typography variant="h6" fontWeight="bold">
+                Pedido #{p.numeroGlobal}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {new Date(p.fecha).toLocaleString()}
+              </Typography>
+              <Typography variant="body1" color="primary" fontWeight="bold">
+                Total: ${Number(p.total).toFixed(2)}
+              </Typography>
+            </Stack>
 
-        return (
-          <Card
-            key={p.id}
-            sx={{
-              mb: 3,
-              borderRadius: 3,
-              boxShadow: 3,
-              transition: "all 0.3s",
-              "&:hover": { boxShadow: 6, transform: "scale(1.01)" },
-            }}
-          >
-            <CardContent>
-              <Stack
-                direction={{ xs: "column", sm: "row" }}
-                justifyContent="space-between"
-                alignItems={{ xs: "flex-start", sm: "center" }}
-                spacing={1}
-                sx={{ mb: 1 }}
-              >
-                <Typography variant="h6" fontWeight="bold">
-                  Pedido #{numero}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {new Date(p.fecha).toLocaleString()}
-                </Typography>
-                <Typography variant="body1" color="primary" fontWeight="bold">
-                  Total: ${Number(p.total).toFixed(2)}
-                </Typography>
-              </Stack>
-
-              <List dense>
-                {(p.items ?? p.detalles)?.map((item, i, arr) => (
-                  <Box key={i}>
-                    <ListItem
-                      sx={{
-                        display: "flex",
-                        flexDirection: { xs: "column", sm: "row" },
-                        justifyContent: "space-between",
-                        alignItems: { xs: "flex-start", sm: "center" },
-                        py: 1,
-                      }}
-                    >
-                      <ListItemText
-                        primary={`${item.cantidad} x ${
-                          item.producto?.nombre ?? "Producto"
-                        } — $${Number(
-                          item.precio_unitario ?? item.producto?.precio ?? 0
-                        ).toFixed(2)}`}
-                        secondary={`Subtotal: $${Number(
-                          item.subtotal ?? 0
-                        ).toFixed(2)}`}
+            <List dense>
+              {(p.items ?? p.detalles)?.map((item, i, arr) => (
+                <Box key={i}>
+                  <ListItem
+                    sx={{
+                      display: "flex",
+                      flexDirection: { xs: "column", sm: "row" },
+                      justifyContent: "space-between",
+                      alignItems: { xs: "flex-start", sm: "center" },
+                      py: 1,
+                    }}
+                  >
+                    <ListItemText
+                      primary={`${item.cantidad} x ${
+                        item.producto?.nombre ?? "Producto"
+                      } — $${Number(
+                        item.precio_unitario ?? item.producto?.precio ?? 0
+                      ).toFixed(2)}`}
+                      secondary={`Subtotal: $${Number(
+                        item.subtotal ?? 0
+                      ).toFixed(2)}`}
+                    />
+                    {item.estado && (
+                      <Chip
+                        label={item.estado}
+                        color={
+                          item.estado === "Entregado"
+                            ? "success"
+                            : item.estado === "En preparación"
+                            ? "warning"
+                            : "error"
+                        }
+                        size="small"
+                        sx={{ mt: { xs: 1, sm: 0 } }}
                       />
-                      {item.estado && (
-                        <Chip
-                          label={item.estado}
-                          color={
-                            item.estado === "Entregado"
-                              ? "success"
-                              : item.estado === "En preparación"
-                              ? "warning"
-                              : "error"
-                          }
-                          size="small"
-                          sx={{ mt: { xs: 1, sm: 0 } }}
-                        />
-                      )}
-                    </ListItem>
-                    {i < arr.length - 1 && <Divider component="li" />}
-                  </Box>
-                ))}
-              </List>
-            </CardContent>
-          </Card>
-        );
-      })}
+                    )}
+                  </ListItem>
+                  {i < arr.length - 1 && <Divider component="li" />}
+                </Box>
+              ))}
+            </List>
+          </CardContent>
+        </Card>
+      ))}
 
       {hasMore && (
         <Box textAlign="center" mt={2}>
@@ -161,4 +155,4 @@ export default function Pedidos() {
       )}
     </Container>
   );
-}
+                                }
