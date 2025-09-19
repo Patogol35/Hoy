@@ -38,7 +38,7 @@ export default function Pedidos() {
     const fetchPedidos = async () => {
       setLoading(true);
       try {
-        const data = await getPedidos(access); // trae la primera página
+        const data = await getPedidos(access);
         setPedidos(numerarPedidos(data.results ?? []));
         setNextPage(data.next || null);
       } catch (err) {
@@ -57,7 +57,14 @@ export default function Pedidos() {
 
     try {
       const data = await getPedidos(access, nextPage);
-      const combinados = [...pedidos, ...(data.results ?? [])];
+      const nuevosPedidos = data.results ?? [];
+
+      // 🔹 Evitar duplicados por id
+      const combinados = [
+        ...pedidos,
+        ...nuevosPedidos.filter(np => !pedidos.some(p => p.id === np.id))
+      ];
+
       setPedidos(numerarPedidos(combinados));
       setNextPage(data.next || null);
     } catch (err) {
@@ -69,8 +76,11 @@ export default function Pedidos() {
   const agregarNuevoPedido = async () => {
     try {
       const nuevoPedido = await crearPedido(access);
-      // Insertamos al inicio y recalculamos la numeración
-      setPedidos(prev => numerarPedidos([nuevoPedido, ...prev]));
+
+      // Evitar duplicados si el mismo pedido existe
+      const combinados = [nuevoPedido, ...pedidos.filter(p => p.id !== nuevoPedido.id)];
+
+      setPedidos(numerarPedidos(combinados));
     } catch (err) {
       console.error("Error al crear pedido:", err);
     }
