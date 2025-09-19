@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { getPedidos } from "../api/api";
 import {
   Container,
   Typography,
@@ -13,70 +13,94 @@ import {
   Chip,
   Stack,
   Button,
+  CircularProgress,
 } from "@mui/material";
-import { BASE_URL } from "../api/api"; // 👈 asegúrate de exportar BASE_URL en api.js
-import { authFetch } from "../api/api"; // 👈 si authFetch no lo exportas, copia su lógica aquí
 
 export default function Pedidos() {
-  const { access } = useAuth();
   const [pedidos, setPedidos] = useState([]);
-  const [nextUrl, setNextUrl] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [visibleCount, setVisibleCount] = useState(5); // mostrar solo 5 al inicio
 
-  // 🔹 función para cargar pedidos (primera vez o siguientes páginas)
-  const cargarPedidos = async (url = `${BASE_URL}/pedidos/`) => {
-    setLoading(true);
+  const fetchPedidos = async () => {
     try {
-      const data = await authFetch(url, { method: "GET" }, access);
-      if (!data || !data.results) return;
+      setLoading(true);
+      const token = localStorage.getItem("access");
+      if (!token) {
+        setError("⚠️ No tienes sesión activa.");
+        setPedidos([]);
+        return;
+      }
 
-      // ⚡ pedidos vienen ordenados del backend con order_by('-fecha')
-      const pedidosNumerados = data.results.map((p, index) => ({
+      const data = await getPedidos(token);
+      if (!data) return;
+
+      // ordenar por fecha descendente
+      const ordenados = [...data].sort(
+        (a, b) => new Date(b.fecha) - new Date(a.fecha)
+      );
+
+      // agregar número relativo local
+      const pedidosNumerados = ordenados.map((p, index) => ({
         ...p,
-        numeroLocal: pedidos.length + data.results.length - index,
+        numeroLocal: ordenados.length - index,
       }));
 
-      // acumulamos pedidos
-      setPedidos((prev) => [...prev, ...pedidosNumerados]);
-      setNextUrl(data.next); // guardamos la URL de la siguiente página
+      setPedidos(pedidosNumerados);
     } catch (err) {
-      console.error("Error cargando pedidos:", err);
+      setError(err.message || "Error al cargar pedidos");
     } finally {
       setLoading(false);
     }
   };
 
-  // 🔹 cargar la primera página al montar
   useEffect(() => {
-    if (access) {
-      setPedidos([]); // reset si cambia usuario
-      cargarPedidos();
-    }
-  }, [access]);
+    fetchPedidos();
+  }, []);
 
-  if (loading && pedidos.length === 0) {
+  if (loading)
     return (
       <Container sx={{ mt: 4 }}>
-        <Typography>Cargando pedidos...</Typography>
+        <Box display="flex" justifyContent="center" mt={4}>
+          <CircularProgress />
+        </Box>
+        <Typography align="center">Cargando pedidos...</Typography>
       </Container>
     );
-  }
 
-  if (!loading && pedidos.length === 0) {
+  if (error)
+    return (
+      <Container sx={{ mt: 4 }}>
+        <Typography color="error" align="center">
+          {error}
+        </Typography>
+      </Container>
+    );
+
+  if (pedidos.length === 0)
     return (
       <Container sx={{ mt: 4 }}>
         <Typography>Aún no tienes pedidos.</Typography>
       </Container>
     );
-  }
 
   return (
     <Container sx={{ mt: 4, mb: 6 }}>
-      <Typography variant="h4" gutterBottom fontWeight="bold">
-        Mis pedidos
-      </Typography>
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={2}
+      >
+        <Typography variant="h4" gutterBottom fontWeight="bold">
+          Mis pedidos
+        </Typography>
+        <Button variant="outlined" onClick={fetchPedidos}>
+          Actualizar
+        </Button>
+      </Stack>
 
-      {pedidos.map((p) => (
+      {pedidos.slice(0, visibleCount).map((p) => (
         <Card
           key={p.id}
           sx={{
@@ -95,6 +119,7 @@ export default function Pedidos() {
               spacing={1}
               sx={{ mb: 1 }}
             >
+              {/* número relativo por usuario */}
               <Typography variant="h6" fontWeight="bold">
                 Pedido #{p.numeroLocal}
               </Typography>
@@ -151,14 +176,17 @@ export default function Pedidos() {
         </Card>
       ))}
 
-      {/* 🔹 Botón para cargar más pedidos si hay siguiente página */}
-      {nextUrl && (
+      {/* Botón para cargar más pedidos */}
+      {visibleCount < pedidos.length && (
         <Box textAlign="center" mt={2}>
-          <Button variant="outlined" onClick={() => cargarPedidos(nextUrl)}>
+          <Button
+            variant="outlined"
+            onClick={() => setVisibleCount((prev) => prev + 5)}
+          >
             Ver más
           </Button>
         </Box>
       )}
     </Container>
   );
-}
+        }
