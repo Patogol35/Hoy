@@ -28,14 +28,6 @@ const menuVariants = {
   visible: { x: 0, opacity: 1, transition: { duration: 0.25, ease: "easeOut" } },
   exit: { x: "100%", opacity: 0, transition: { duration: 0.2, ease: "easeIn" } },
 };
-const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: (i) => ({
-    y: 0,
-    opacity: 1,
-    transition: { delay: i * 0.05, duration: 0.25, ease: "easeOut" },
-  }),
-};
 
 export default function Navbar() {
   const { isAuthenticated, logout, user } = useAuth();
@@ -140,7 +132,6 @@ export default function Navbar() {
                 </motion.div>
               ))}
 
-              {/* Nombre de usuario + botón logout */}
               {isAuthenticated && user && (
                 <>
                   <Typography sx={{ color: "#fff", fontWeight: 600, mx: 2 }}>
@@ -208,7 +199,7 @@ export default function Navbar() {
                 width: "280px",
                 background: theme.palette.primary.main,
                 borderRadius: "16px 0 0 16px",
-                padding: "2rem 1rem 1rem 1rem",
+                padding: "3.5rem 1rem 1rem 1rem", // más espacio arriba
                 boxShadow: "0 6px 20px rgba(0,0,0,0.35)",
                 display: "flex",
                 flexDirection: "column",
@@ -219,25 +210,19 @@ export default function Navbar() {
               onClick={(e) => e.stopPropagation()}
             >
               {/* Botón X arriba absoluto */}
-              <Box
+              <IconButton
+                onClick={() => setOpen(false)}
                 sx={{
                   position: "absolute",
-                  top: 12,
-                  right: 12,
-                  zIndex: 1500,
+                  top: 16,
+                  right: 16,
+                  color: "#fff",
+                  background: "rgba(0,0,0,0.6)",
+                  "&:hover": { background: "rgba(0,0,0,0.9)" },
                 }}
               >
-                <IconButton
-                  onClick={() => setOpen(false)}
-                  sx={{
-                    color: "#fff",
-                    background: "rgba(0,0,0,0.6)",
-                    "&:hover": { background: "rgba(0,0,0,0.9)" },
-                  }}
-                >
-                  <CloseIcon fontSize="large" />
-                </IconButton>
-              </Box>
+                <CloseIcon fontSize="large" />
+              </IconButton>
 
               {/* Contenido con espacio debajo de la X */}
               <Stack spacing={2} sx={{ mt: 6 }}>
@@ -308,4 +293,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-}
+                             }
