@@ -219,29 +219,29 @@ export default function Navbar() {
               }}
               onClick={(e) => e.stopPropagation()}
             >
-              <Stack spacing={2} sx={{ mt: 2 }}>
-                {/* Botón X flotante */}
-                <motion.div
-                  custom={-1}
-                  variants={itemVariants}
-                  initial="hidden"
-                  animate="visible"
-                  style={{ position: "absolute", top: 16, right: 16 }}
+              {/* Botón X flotante */}
+              <motion.div
+                custom={-1}
+                variants={itemVariants}
+                initial="hidden"
+                animate="visible"
+                style={{ position: "absolute", top: 20, right: 20, zIndex: 1500 }}
+              >
+                <IconButton
+                  onClick={() => setOpen(false)}
+                  sx={{
+                    color: "#fff",
+                    background: "rgba(0,0,0,0.5)",
+                    "&:hover": {
+                      background: "rgba(0,0,0,0.8)",
+                    },
+                  }}
                 >
-                  <IconButton
-                    onClick={() => setOpen(false)}
-                    sx={{
-                      color: "#000",
-                      background: "rgba(255,255,255,0.85)",
-                      "&:hover": {
-                        background: "rgba(255,255,255,1)",
-                      },
-                    }}
-                  >
-                    <CloseIcon fontSize="medium" />
-                  </IconButton>
-                </motion.div>
+                  <CloseIcon fontSize="large" />
+                </IconButton>
+              </motion.div>
 
+              <Stack spacing={2} sx={{ mt: 2 }}>
                 {/* Nombre de usuario */}
                 {isAuthenticated && user && (
                   <motion.div custom={0} variants={itemVariants} initial="hidden" animate="visible">
@@ -317,4 +317,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-                      }
+}
