@@ -20,11 +20,12 @@ export default function Pedidos() {
   const { access } = useAuth();
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [visibleCount, setVisibleCount] = useState(5); // mostrar 5 al inicio
+  const [page, setPage] = useState(1);       // página actual
+  const [next, setNext] = useState(null);    // url de la siguiente página
 
   useEffect(() => {
     setLoading(true);
-    getPedidos(access) // trae la primera página del backend
+    getPedidos(access, page)
       .then((data) => {
         if (!data?.results) return;
 
@@ -34,14 +35,15 @@ export default function Pedidos() {
 
         const pedidosNumerados = ordenados.map((p, index) => ({
           ...p,
-          numeroLocal: ordenados.length - index,
+          numeroLocal: pedidos.length + ordenados.length - index,
         }));
 
-        setPedidos(pedidosNumerados);
+        setPedidos((prev) => [...prev, ...pedidosNumerados]);
+        setNext(data.next); // actualizar next
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [access]);
+  }, [access, page]);
 
   if (loading && pedidos.length === 0)
     return <Container sx={{ mt: 4 }}>Cargando pedidos...</Container>;
@@ -55,7 +57,7 @@ export default function Pedidos() {
         Mis pedidos
       </Typography>
 
-      {pedidos.slice(0, visibleCount).map((p) => (
+      {pedidos.map((p) => (
         <Card
           key={p.id}
           sx={{
@@ -130,14 +132,15 @@ export default function Pedidos() {
         </Card>
       ))}
 
-      {/* Botón “Ver más” siempre visible si hay más pedidos */}
-      {visibleCount < pedidos.length && (
+      {/* Botón “Ver más” */}
+      {next && (
         <Box textAlign="center" mt={2}>
           <Button
             variant="outlined"
-            onClick={() => setVisibleCount((prev) => prev + 5)}
+            onClick={() => setPage((p) => p + 1)}
+            disabled={loading}
           >
-            Ver más
+            {loading ? "Cargando..." : "Ver más"}
           </Button>
         </Box>
       )}
