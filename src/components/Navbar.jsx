@@ -139,7 +139,7 @@ export default function Navbar() {
                 </motion.div>
               ))}
 
-              {/* Nombre de usuario como botón de cerrar sesión */}
+              {/* Nombre de usuario + cerrar sesión */}
               {isAuthenticated && user && (
                 <Button
                   onClick={handleLogout}
@@ -157,7 +157,7 @@ export default function Navbar() {
                     },
                   }}
                 >
-                  {user.username} {/* Solo el nombre, al hacer clic cierra sesión */}
+                  {user.username} – Cerrar sesión
                 </Button>
               )}
             </Box>
@@ -248,7 +248,7 @@ export default function Navbar() {
                 ))}
               </Stack>
 
-              {/* Nombre de usuario como botón de cerrar sesión */}
+              {/* Nombre de usuario + cerrar sesión */}
               {isAuthenticated && user && (
                 <Button
                   onClick={handleLogout}
@@ -267,7 +267,7 @@ export default function Navbar() {
                     },
                   }}
                 >
-                  {user.username}
+                  {user.username} – Cerrar sesión
                 </Button>
               )}
             </motion.div>
@@ -276,4 +276,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-          }
+              }
