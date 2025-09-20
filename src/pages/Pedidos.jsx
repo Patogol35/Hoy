@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { getPedidos } from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import {
@@ -19,35 +19,31 @@ import {
 export default function Pedidos() {
   const { access } = useAuth();
   const [pedidos, setPedidos] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(1); // página actual
-  const [next, setNext] = useState(null); // url de la siguiente página
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);       // página actual
+  const [next, setNext] = useState(null);    // url de la siguiente página
 
-  const cargarPedidos = useCallback(() => {
-    if (!access) return;
+  useEffect(() => {
     setLoading(true);
-
     getPedidos(access, page)
       .then((data) => {
         if (!data?.results) return;
 
-        // Asignamos numeroLocal incremental sin reordenar
-        const pedidosConNumero = data.results.map((p, idx) => ({
+        const ordenados = [...data.results].sort(
+          (a, b) => new Date(b.fecha) - new Date(a.fecha)
+        );
+
+        const pedidosNumerados = ordenados.map((p, index) => ({
           ...p,
-          numeroLocal: pedidos.length + idx + 1,
+          numeroLocal: pedidos.length + ordenados.length - index,
         }));
 
-        setPedidos((prev) => [...prev, ...pedidosConNumero]);
-        setNext(data.next);
+        setPedidos((prev) => [...prev, ...pedidosNumerados]);
+        setNext(data.next); // actualizar next
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [access, page, pedidos.length]);
-
-  // Cargar pedidos al montar y al cambiar la página
-  useEffect(() => {
-    cargarPedidos();
-  }, [cargarPedidos]);
+  }, [access, page]);
 
   if (loading && pedidos.length === 0)
     return <Container sx={{ mt: 4 }}>Cargando pedidos...</Container>;
@@ -150,4 +146,4 @@ export default function Pedidos() {
       )}
     </Container>
   );
-}
+      }
