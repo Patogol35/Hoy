@@ -218,35 +218,35 @@ export default function Navbar() {
               }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Botón X flotante */}
-              <IconButton
-                onClick={() => setOpen(false)}
+              {/* Botón X arriba fijo */}
+              <Box
                 sx={{
-                  position: "absolute",
-                  top: 8,
-                  right: 8,
-                  color: "#fff",
-                  background: "rgba(0,0,0,0.6)",
-                  zIndex: 2000,
-                  "&:hover": {
-                    background: "rgba(0,0,0,0.9)",
-                  },
+                  position: "sticky",
+                  top: 0,
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  zIndex: 1500,
                 }}
               >
-                <CloseIcon fontSize="large" />
-              </IconButton>
+                <IconButton
+                  onClick={() => setOpen(false)}
+                  sx={{
+                    color: "#fff",
+                    background: "rgba(0,0,0,0.6)",
+                    m: 1,
+                    "&:hover": { background: "rgba(0,0,0,0.9)" },
+                  }}
+                >
+                  <CloseIcon fontSize="large" />
+                </IconButton>
+              </Box>
 
-              {/* Contenido con espacio debajo de la X */}
-              <Stack spacing={2} sx={{ mt: 6 }}>
+              {/* Contenido */}
+              <Stack spacing={2} sx={{ mt: 2 }}>
                 {isAuthenticated && user && (
                   <Typography
                     variant="h6"
-                    sx={{
-                      color: "#fff",
-                      fontWeight: 700,
-                      textAlign: "center",
-                      mb: 1,
-                    }}
+                    sx={{ color: "#fff", fontWeight: 700, textAlign: "center", mb: 1 }}
                   >
                     👤 {user.username}
                   </Typography>
@@ -305,4 +305,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-      }
+              }
