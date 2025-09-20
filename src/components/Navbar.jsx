@@ -218,7 +218,7 @@ export default function Navbar() {
               }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Botón X arriba fijo */}
+              {/* Botón X arriba con más espacio */}
               <Box
                 sx={{
                   position: "sticky",
@@ -226,6 +226,7 @@ export default function Navbar() {
                   display: "flex",
                   justifyContent: "flex-end",
                   zIndex: 1500,
+                  mt: 1.5, // 👈 se baja un poco para que no quede tapada
                 }}
               >
                 <IconButton
@@ -233,7 +234,6 @@ export default function Navbar() {
                   sx={{
                     color: "#fff",
                     background: "rgba(0,0,0,0.6)",
-                    m: 1,
                     "&:hover": { background: "rgba(0,0,0,0.9)" },
                   }}
                 >
@@ -305,4 +305,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-              }
+}
