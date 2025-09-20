@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { getProductos } from "../api/api";
 import ProductoCard from "../components/ProductoCard";
 import {
   Typography,
@@ -34,34 +33,48 @@ export default function Home() {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  // Modal
+  // Modal detalle producto
   const [selected, setSelected] = useState(null);
   const [open, setOpen] = useState(false);
 
-  // Lightbox
+  // Lightbox (para imágenes)
   const [lightbox, setLightbox] = useState(null);
 
   const { agregarAlCarrito } = useCarrito();
 
+  // 🔹 Función para traer todos los productos (aunque el backend tenga paginación)
+  const fetchAllProductos = async () => {
+    let url = "/api/productos/";
+    let all = [];
+    try {
+      while (url) {
+        const res = await fetch(url);
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          all = [...all, ...data];
+          url = null;
+        } else if (data?.results) {
+          all = [...all, ...data.results];
+          url = data.next;
+        } else {
+          all = [];
+          url = null;
+        }
+      }
+      setProductos(all);
+    } catch (err) {
+      console.error("Error cargando productos:", err);
+      setProductos([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    getProductos()
-      .then((data) => {
-        // Asegura siempre un array
-        const lista = Array.isArray(data)
-          ? data
-          : Array.isArray(data?.results)
-          ? data.results
-          : [];
-        console.log("Productos cargados:", lista);
-        setProductos(lista);
-      })
-      .catch((err) => {
-        console.error("Error cargando productos:", err);
-        setProductos([]);
-      })
-      .finally(() => setLoading(false));
+    fetchAllProductos();
   }, []);
 
+  // 🔹 Delay en buscador
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(search.toLowerCase());
@@ -69,13 +82,16 @@ export default function Home() {
     return () => clearTimeout(handler);
   }, [search]);
 
-  const filtered = (productos || [])
+  // 🔹 Filtro + ordenamiento
+  const filtered = productos
     .filter((p) =>
       debouncedSearch === ""
         ? true
         : p.nombre?.toLowerCase().includes(debouncedSearch)
     )
-    .sort((a, b) => (sort === "asc" ? a.precio - b.precio : b.precio - a.precio));
+    .sort((a, b) =>
+      sort === "asc" ? a.precio - b.precio : b.precio - a.precio
+    );
 
   const settings = {
     dots: true,
@@ -192,7 +208,7 @@ export default function Home() {
         </Stack>
       </Box>
 
-      {/* Grid */}
+      {/* Grid de productos */}
       {filtered.length === 0 ? (
         <Box sx={{ textAlign: "center", mt: 8, color: "text.secondary" }}>
           <ShoppingCartIcon sx={{ fontSize: 60, mb: 2, opacity: 0.6 }} />
@@ -233,171 +249,93 @@ export default function Home() {
         </Grid>
       )}
 
-      {/* Modal Detalle */}
-      <Dialog
-        open={open}
-        onClose={() => setOpen(false)}
-        maxWidth="lg"
-        fullWidth
-        sx={{
-          zIndex: 1600,
-          "& .MuiBackdrop-root": {
-            backgroundColor: "rgba(0,0,0,0.85)",
-            backdropFilter: "blur(5px)",
-          },
-        }}
-        PaperProps={{
-          sx: {
-            borderRadius: { xs: 0, md: 3 },
-            p: 3,
-            bgcolor: "#1e1e1e",
-            color: "white",
-            maxWidth: { md: 900 },
-            width: "100%",
-            position: "relative",
-          },
-        }}
-      >
+      {/* Modal detalle producto */}
+      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="md" fullWidth>
         {selected && (
-          <Box>
-            <IconButton
-              onClick={() => setOpen(false)}
-              sx={{
-                position: "absolute",
-                top: 12,
-                right: 12,
-                bgcolor: "rgba(0,0,0,0.6)",
-                color: "white",
-                "&:hover": { bgcolor: "rgba(255,255,255,0.2)" },
-              }}
-            >
-              <CloseIcon />
-            </IconButton>
+          <Box sx={{ p: 3 }}>
+            <Box display="flex" justifyContent="space-between" alignItems="center">
+              <Typography variant="h5" fontWeight="bold">
+                {selected.nombre}
+              </Typography>
+              <IconButton onClick={() => setOpen(false)}>
+                <CloseIcon />
+              </IconButton>
+            </Box>
 
-            <Grid container spacing={4}>
-              {/* Slider imágenes */}
-              <Grid item xs={12} md={6}>
+            {/* Slider de imágenes */}
+            {selected.imagenes?.length > 0 && (
+              <Box sx={{ mt: 2 }}>
                 <Slider {...settings}>
-                  {(selected.imagenes || [selected.imagen]).map((img, i) => (
+                  {selected.imagenes.map((img, idx) => (
                     <Box
-                      key={i}
+                      key={idx}
                       sx={{
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
-                        height: { xs: 300, md: 400 },
-                        cursor: "zoom-in",
                       }}
-                      onClick={() => setLightbox(img)}
                     >
-                      <Box
-                        component="img"
-                        src={img}
+                      <img
+                        src={img.url}
                         alt={selected.nombre}
-                        sx={{
-                          maxWidth: "100%",
-                          maxHeight: "100%",
+                        style={{
+                          maxHeight: "400px",
+                          width: "100%",
                           objectFit: "contain",
-                          borderRadius: 2,
-                          border: "2px solid rgba(255,255,255,0.2)",
-                          boxShadow: "0 4px 15px rgba(0,0,0,0.5)",
-                          transition: "transform 0.3s ease",
-                          "&:hover": { transform: "scale(1.02)" },
+                          cursor: "pointer",
                         }}
+                        onClick={() => setLightbox(img.url)}
                       />
                     </Box>
                   ))}
                 </Slider>
-              </Grid>
+              </Box>
+            )}
 
-              {/* Info producto */}
-              <Grid item xs={12} md={6}>
-                <Stack spacing={3}>
-                  <Typography variant="h5" fontWeight="bold">
-                    {selected.nombre}
-                  </Typography>
+            <Typography sx={{ mt: 2 }}>{selected.descripcion}</Typography>
 
-                  <Box>
-                    <Typography
-                      variant="h6"
-                      fontWeight="bold"
-                      color="primary"
-                      sx={{ mb: 1 }}
-                    >
-                      ${selected.precio}
-                    </Typography>
-                    <Chip
-                      label="En stock"
-                      color="success"
-                      variant="outlined"
-                      sx={{ color: "white", borderColor: "white" }}
-                    />
-                  </Box>
+            <Stack direction="row" spacing={1} sx={{ mt: 2, flexWrap: "wrap" }}>
+              <Chip label={`Precio: $${selected.precio}`} color="primary" />
+              {selected.categoria && (
+                <Chip label={`Categoría: ${selected.categoria}`} />
+              )}
+            </Stack>
 
-                  <Divider sx={{ bgcolor: "rgba(255,255,255,0.3)" }} />
-
-                  <Typography sx={{ lineHeight: 1.6, color: "rgba(255,255,255,0.85)" }}>
-                    {selected.descripcion}
-                  </Typography>
-
-                  <Button
-                    variant="contained"
-                    startIcon={<ShoppingCartIcon />}
-                    onClick={() => handleAdd(selected)}
-                    sx={{
-                      borderRadius: 3,
-                      py: 1.5,
-                      background: "linear-gradient(135deg, #1976d2, #42a5f5)",
-                      "&:hover": { transform: "translateY(-2px)" },
-                    }}
-                  >
-                    Agregar al carrito
-                  </Button>
-                </Stack>
-              </Grid>
-            </Grid>
+            <Button
+              variant="contained"
+              fullWidth
+              sx={{ mt: 3 }}
+              onClick={() => handleAdd(selected)}
+            >
+              Agregar al carrito
+            </Button>
           </Box>
         )}
       </Dialog>
 
-      {/* Lightbox */}
-      <Dialog
-        open={!!lightbox}
-        onClose={() => setLightbox(null)}
-        fullScreen
-        sx={{ zIndex: 1600 }}
-        PaperProps={{
-          sx: {
-            bgcolor: "rgba(0,0,0,0.95)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          },
-        }}
-      >
-        <IconButton
-          onClick={() => setLightbox(null)}
-          sx={{
-            position: "absolute",
-            top: 16,
-            right: 16,
-            bgcolor: "rgba(0,0,0,0.6)",
-            color: "white",
-          }}
-        >
-          <CloseIcon />
-        </IconButton>
-        <Box
-          component="img"
-          src={lightbox}
-          alt="Zoom"
-          sx={{
-            maxWidth: "95%",
-            maxHeight: "95%",
-            objectFit: "contain",
-          }}
-        />
-      </Dialog>
+      {/* Lightbox simple */}
+      {lightbox && (
+        <Dialog open={!!lightbox} onClose={() => setLightbox(null)} maxWidth="lg">
+          <Box sx={{ position: "relative" }}>
+            <IconButton
+              onClick={() => setLightbox(null)}
+              sx={{ position: "absolute", top: 10, right: 10, color: "#fff" }}
+            >
+              <CloseIcon />
+            </IconButton>
+            <img
+              src={lightbox}
+              alt="Imagen producto"
+              style={{
+                maxHeight: "80vh",
+                width: "100%",
+                objectFit: "contain",
+                background: "#000",
+              }}
+            />
+          </Box>
+        </Dialog>
+      )}
     </>
   );
-          }
+}
