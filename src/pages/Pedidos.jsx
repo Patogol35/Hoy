@@ -26,12 +26,12 @@ export default function Pedidos() {
 
   useEffect(() => {
     setLoading(true);
-    getPedidos(access) // ⚡️ trae todos los pedidos del usuario
+    getPedidos(access) // ⚡️ trae todos los pedidos
       .then((data) => {
-        if (!data) return;
+        if (!data?.results) return;
 
         // ordenar por fecha descendente
-        const ordenados = [...data].sort(
+        const ordenados = [...data.results].sort(
           (a, b) => new Date(b.fecha) - new Date(a.fecha)
         );
 
