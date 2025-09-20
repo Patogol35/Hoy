@@ -106,7 +106,7 @@ export default function Navbar() {
                     WebkitTextFillColor: "transparent",
                   }}
                 />
-                Tienda
+                E-commerce Jorge-Patricio
               </Typography>
             </motion.div>
 
@@ -139,7 +139,7 @@ export default function Navbar() {
                 </motion.div>
               ))}
 
-              {/* Nombre de usuario + cerrar sesión */}
+              {/* Nombre de usuario + cerrar sesión en dos líneas */}
               {isAuthenticated && user && (
                 <Button
                   onClick={handleLogout}
@@ -152,12 +152,20 @@ export default function Navbar() {
                     textTransform: "none",
                     px: 2.5,
                     py: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-start",
                     "&:hover": {
                       boxShadow: "0 0 15px rgba(0,0,0,0.35)",
                     },
                   }}
                 >
-                  {user.username} – Cerrar sesión
+                  <Typography variant="body1" sx={{ fontWeight: 700, lineHeight: 1 }}>
+                    {user.username}
+                  </Typography>
+                  <Typography variant="caption" sx={{ fontWeight: 400, opacity: 0.9, lineHeight: 1 }}>
+                    Cerrar sesión
+                  </Typography>
                 </Button>
               )}
             </Box>
@@ -248,7 +256,7 @@ export default function Navbar() {
                 ))}
               </Stack>
 
-              {/* Nombre de usuario + cerrar sesión */}
+              {/* Nombre de usuario + cerrar sesión en dos líneas */}
               {isAuthenticated && user && (
                 <Button
                   onClick={handleLogout}
@@ -262,12 +270,20 @@ export default function Navbar() {
                     textTransform: "none",
                     py: 1.2,
                     mt: 4,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-start",
                     "&:hover": {
                       boxShadow: "0 0 15px rgba(0,0,0,0.35)",
                     },
                   }}
                 >
-                  {user.username} – Cerrar sesión
+                  <Typography variant="body1" sx={{ fontWeight: 700, lineHeight: 1 }}>
+                    {user.username}
+                  </Typography>
+                  <Typography variant="caption" sx={{ fontWeight: 400, opacity: 0.9, lineHeight: 1 }}>
+                    Cerrar sesión
+                  </Typography>
                 </Button>
               )}
             </motion.div>
@@ -276,4 +292,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-              }
+                        }
