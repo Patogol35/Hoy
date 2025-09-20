@@ -18,7 +18,7 @@ import ListAltIcon from "@mui/icons-material/ListAlt";
 import LoginIcon from "@mui/icons-material/Login";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import LogoutIcon from "@mui/icons-material/Logout";
-import ShoppingBagIcon from "@mui/icons-material/ShoppingBag"; // 🔹 Nuevo icono ecommerce
+import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -43,6 +43,7 @@ export default function Navbar() {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [username, setUsername] = useState(null); // 👈 Guardamos el username
   const menuRef = useRef(null);
 
   const handleLogout = () => {
@@ -62,6 +63,25 @@ export default function Navbar() {
         { label: "Iniciar sesión", path: "/login", icon: <LoginIcon />, color: "linear-gradient(135deg, #0288d1, #26c6da)" },
         { label: "Registrarse", path: "/register", icon: <PersonAddIcon />, color: "linear-gradient(135deg, #6a1b9a, #ab47bc)" },
       ];
+
+  // 🔹 Traer username desde el backend
+  useEffect(() => {
+    if (isAuthenticated) {
+      const token = localStorage.getItem("access");
+      if (token) {
+        fetch("https://tu-backend.com/api/user/profile/", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            setUsername(data.username);
+          })
+          .catch((err) => console.error("Error cargando usuario:", err));
+      }
+    }
+  }, [isAuthenticated]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -110,6 +130,13 @@ export default function Navbar() {
                 Tienda Jorge Patricio
               </Typography>
             </motion.div>
+
+            {/* 👇 Nombre de usuario en desktop */}
+            {isAuthenticated && username && (
+              <Typography sx={{ color: "#fff", fontWeight: 500, mr: 2 }}>
+                Hola, {username} 👋
+              </Typography>
+            )}
 
             {/* Desktop menu */}
             <Box sx={{ display: { xs: "none", lg: "flex" }, gap: 2, alignItems: "center" }}>
@@ -219,6 +246,13 @@ export default function Navbar() {
                 <CloseIcon fontSize="large" />
               </IconButton>
 
+              {/* 👇 Nombre de usuario en el drawer móvil */}
+              {isAuthenticated && username && (
+                <Typography sx={{ color: "#fff", fontWeight: 600, mb: 3, textAlign: "center" }}>
+                  Hola, {username} 👋
+                </Typography>
+              )}
+
               <Stack spacing={2} sx={{ mt: 2 }}>
                 {menuItems.map((item, i) =>
                   item.path ? (
@@ -276,4 +310,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-}
+                }
