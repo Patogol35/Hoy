@@ -20,28 +20,34 @@ export default function Pedidos() {
   const { access } = useAuth();
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [visibleCount, setVisibleCount] = useState(5); // mostrar 5 al inicio
+  const [page, setPage] = useState(1); // página actual
+  const [next, setNext] = useState(null); // link a la siguiente página
 
   useEffect(() => {
-    getPedidos(access)
+    setLoading(true);
+    getPedidos(access, page)
       .then((data) => {
-        if (!data) return;
+        if (!data?.results) return;
+
         // ordenar por fecha descendente
-        const ordenados = [...data].sort(
+        const ordenados = [...data.results].sort(
           (a, b) => new Date(b.fecha) - new Date(a.fecha)
         );
-        // número relativo
+
+        // agregar número relativo local
         const pedidosNumerados = ordenados.map((p, index) => ({
           ...p,
-          numeroLocal: ordenados.length - index,
+          numeroLocal: pedidos.length + ordenados.length - index, // continuar numeración
         }));
-        setPedidos(pedidosNumerados);
+
+        setPedidos((prev) => [...prev, ...pedidosNumerados]);
+        setNext(data.next);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [access]);
+  }, [access, page]);
 
-  if (loading)
+  if (loading && pedidos.length === 0)
     return <Container sx={{ mt: 4 }}>Cargando pedidos...</Container>;
 
   if (pedidos.length === 0)
@@ -53,7 +59,7 @@ export default function Pedidos() {
         Mis pedidos
       </Typography>
 
-      {pedidos.slice(0, visibleCount).map((p) => (
+      {pedidos.map((p) => (
         <Card
           key={p.id}
           sx={{
@@ -128,18 +134,14 @@ export default function Pedidos() {
         </Card>
       ))}
 
-      {/* Botón para cargar más pedidos */}
-      {visibleCount < pedidos.length && (
+      {/* Botón “Ver más” solo si hay siguiente página */}
+      {next && (
         <Box textAlign="center" mt={2}>
-          <Button
-            variant="outlined"
-            onClick={() => setVisibleCount((prev) => prev + 5)} // suma de 5 en 5
-          >
+          <Button variant="outlined" onClick={() => setPage((p) => p + 1)}>
             Ver más
           </Button>
         </Box>
       )}
     </Container>
   );
-                }
-
+}
