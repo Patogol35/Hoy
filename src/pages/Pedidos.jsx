@@ -20,37 +20,36 @@ export default function Pedidos() {
   const { access } = useAuth();
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [next, setNext] = useState(null); // 🔹 inicia en null
+  const [page, setPage] = useState(1);       // página actual
+  const [next, setNext] = useState(null);    // url de la siguiente página
 
-  const cargarPedidos = (url) => {
-    if (!url) return;
+  useEffect(() => {
     setLoading(true);
-
-    getPedidos(access, url)
+    getPedidos(access, page)
       .then((data) => {
         if (!data?.results) return;
 
-        setPedidos((prev) => [...prev, ...data.results]); // acumula
-        setNext(data.next); // guarda link a la siguiente página
+        const ordenados = [...data.results].sort(
+          (a, b) => new Date(b.fecha) - new Date(a.fecha)
+        );
+
+        const pedidosNumerados = ordenados.map((p, index) => ({
+          ...p,
+          numeroLocal: pedidos.length + ordenados.length - index,
+        }));
+
+        setPedidos((prev) => [...prev, ...pedidosNumerados]);
+        setNext(data.next); // actualizar next
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  };
+  }, [access, page]);
 
-  useEffect(() => {
-    if (access) {
-      // 🔹 siempre empieza desde la primera página
-      cargarPedidos("/api/pedidos/");
-    }
-  }, [access]);
-
-  if (loading && pedidos.length === 0) {
+  if (loading && pedidos.length === 0)
     return <Container sx={{ mt: 4 }}>Cargando pedidos...</Container>;
-  }
 
-  if (!loading && pedidos.length === 0) {
+  if (pedidos.length === 0)
     return <Container sx={{ mt: 4 }}>Aún no tienes pedidos.</Container>;
-  }
 
   return (
     <Container sx={{ mt: 4, mb: 6 }}>
@@ -78,7 +77,7 @@ export default function Pedidos() {
               sx={{ mb: 1 }}
             >
               <Typography variant="h6" fontWeight="bold">
-                Pedido #{p.id}
+                Pedido #{p.numeroLocal}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {new Date(p.fecha).toLocaleString()}
@@ -138,7 +137,7 @@ export default function Pedidos() {
         <Box textAlign="center" mt={2}>
           <Button
             variant="outlined"
-            onClick={() => cargarPedidos(next)}
+            onClick={() => setPage((p) => p + 1)}
             disabled={loading}
           >
             {loading ? "Cargando..." : "Ver más"}
