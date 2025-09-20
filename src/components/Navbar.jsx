@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+  import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
   AppBar,
@@ -18,7 +18,7 @@ import ListAltIcon from "@mui/icons-material/ListAlt";
 import LoginIcon from "@mui/icons-material/Login";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import LogoutIcon from "@mui/icons-material/Logout";
-import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
+import ShoppingBagIcon from "@mui/icons-material/ShoppingBag"; 
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -38,12 +38,11 @@ const itemVariants = {
 };
 
 export default function Navbar() {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, user } = useAuth(); // 👈 ahora tenemos user
   const navigate = useNavigate();
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [username, setUsername] = useState(null); // Guardamos el username
   const menuRef = useRef(null);
 
   const handleLogout = () => {
@@ -64,21 +63,6 @@ export default function Navbar() {
         { label: "Registrarse", path: "/register", icon: <PersonAddIcon />, color: "linear-gradient(135deg, #6a1b9a, #ab47bc)" },
       ];
 
-  // Traer username desde el backend
-  useEffect(() => {
-    if (isAuthenticated) {
-      const token = localStorage.getItem("access");
-      if (token) {
-        fetch("https://tu-backend.com/api/user/profile/", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-          .then((res) => res.json())
-          .then((data) => setUsername(data.username))
-          .catch((err) => console.error("Error cargando usuario:", err));
-      }
-    }
-  }, [isAuthenticated]);
-
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", onScroll);
@@ -91,7 +75,11 @@ export default function Navbar() {
         <AppBar
           position="fixed"
           elevation={2}
-          sx={{ backgroundColor: theme.palette.primary.main, boxShadow: "none", zIndex: 1400 }}
+          sx={{
+            backgroundColor: theme.palette.primary.main,
+            boxShadow: "none",
+            zIndex: 1400,
+          }}
         >
           <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
             {/* Logo */}
@@ -125,12 +113,12 @@ export default function Navbar() {
 
             {/* Desktop menu */}
             <Box sx={{ display: { xs: "none", lg: "flex" }, gap: 2, alignItems: "center" }}>
-              {/* Saludo usuario */}
-              {isAuthenticated && username && (
-                <Typography sx={{ color: "#fff", fontWeight: 500, mr: 2 }}>
-                  Hola, {username} 👋
+              {isAuthenticated && user && (
+                <Typography sx={{ color: "#fff", fontWeight: "600", mr: 2 }}>
+                  👋 Hola, {user.username}
                 </Typography>
               )}
+
               {menuItems.map((item, i) => (
                 <motion.div key={i} whileHover={{ y: -2, scale: 1.08 }} whileTap={{ scale: 0.95 }}>
                   {item.path ? (
@@ -148,7 +136,10 @@ export default function Navbar() {
                         py: 1,
                         transition: "all 0.3s ease",
                         background: "rgba(255,255,255,0.08)",
-                        "&:hover": { background: item.color, boxShadow: "0 0 20px rgba(0,0,0,0.35)" },
+                        "&:hover": {
+                          background: item.color,
+                          boxShadow: "0 0 20px rgba(0,0,0,0.35)",
+                        },
                       }}
                     >
                       {item.label}
@@ -164,7 +155,9 @@ export default function Navbar() {
                         px: 2.5,
                         py: 1,
                         background: item.color,
-                        "&:hover": { boxShadow: "0 0 20px rgba(0,0,0,0.45)" },
+                        "&:hover": {
+                          boxShadow: "0 0 20px rgba(0,0,0,0.45)",
+                        },
                       }}
                     >
                       {item.label}
@@ -175,7 +168,10 @@ export default function Navbar() {
             </Box>
 
             {/* Botón menú móvil */}
-            <IconButton sx={{ display: { xs: "block", lg: "none" }, color: "#fff" }} onClick={() => setOpen(true)}>
+            <IconButton
+              sx={{ display: { xs: "block", lg: "none" }, color: "#fff" }}
+              onClick={() => setOpen(true)}
+            >
               <MenuIcon fontSize="large" />
             </IconButton>
           </Toolbar>
@@ -190,7 +186,14 @@ export default function Navbar() {
             animate={{ opacity: 1, backdropFilter: "blur(6px)" }}
             exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
             transition={{ duration: 0.25 }}
-            style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 1300, display: "flex", justifyContent: "flex-end" }}
+            style={{
+              position: "fixed",
+              inset: 0,
+              background: "rgba(0,0,0,0.45)",
+              zIndex: 1300,
+              display: "flex",
+              justifyContent: "flex-end",
+            }}
             onClick={() => setOpen(false)}
           >
             <motion.div
@@ -222,10 +225,9 @@ export default function Navbar() {
                 <CloseIcon fontSize="large" />
               </IconButton>
 
-              {/* Saludo usuario en móvil */}
-              {isAuthenticated && username && (
-                <Typography sx={{ color: "#fff", fontWeight: 600, mb: 3, textAlign: "center" }}>
-                  Hola, {username} 👋
+              {isAuthenticated && user && (
+                <Typography sx={{ color: "#fff", fontWeight: "600", mb: 3 }}>
+                  👋 Hola, {user.username}
                 </Typography>
               )}
 
@@ -247,7 +249,9 @@ export default function Navbar() {
                           background: item.color,
                           width: "100%",
                           py: 1.2,
-                          "&:hover": { boxShadow: "0 0 15px rgba(0,0,0,0.35)" },
+                          "&:hover": {
+                            boxShadow: "0 0 15px rgba(0,0,0,0.35)",
+                          },
                         }}
                       >
                         {item.label}
@@ -267,7 +271,9 @@ export default function Navbar() {
                           background: item.color,
                           width: "100%",
                           py: 1.2,
-                          "&:hover": { boxShadow: "0 0 15px rgba(0,0,0,0.35)" },
+                          "&:hover": {
+                            boxShadow: "0 0 15px rgba(0,0,0,0.35)",
+                          },
                         }}
                       >
                         {item.label}
@@ -282,4 +288,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-                  }
+  }
