@@ -18,7 +18,7 @@ import ListAltIcon from "@mui/icons-material/ListAlt";
 import LoginIcon from "@mui/icons-material/Login";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import LogoutIcon from "@mui/icons-material/Logout";
-import StorefrontIcon from "@mui/icons-material/Storefront"; // 🔹 Nuevo icono
+import ShoppingBagIcon from "@mui/icons-material/ShoppingBag"; // 🔹 Nuevo icono ecommerce
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -99,7 +99,15 @@ export default function Navbar() {
                   textDecoration: "none",
                 }}
               >
-                <StorefrontIcon sx={{ fontSize: 28 }} /> Tienda Jorge Patricio
+                <ShoppingBagIcon
+                  sx={{
+                    fontSize: 28,
+                    background: "linear-gradient(135deg, #FF5722, #FFC107)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                  }}
+                />{" "}
+                Tienda Jorge Patricio
               </Typography>
             </motion.div>
 
