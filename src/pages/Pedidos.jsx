@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { getPedidos } from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import {
@@ -19,31 +19,35 @@ import {
 export default function Pedidos() {
   const { access } = useAuth();
   const [pedidos, setPedidos] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);       // página actual
-  const [next, setNext] = useState(null);    // url de la siguiente página
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1); // página actual
+  const [next, setNext] = useState(null); // url de la siguiente página
 
-  useEffect(() => {
+  const cargarPedidos = useCallback(() => {
+    if (!access) return;
     setLoading(true);
+
     getPedidos(access, page)
       .then((data) => {
         if (!data?.results) return;
 
-        const ordenados = [...data.results].sort(
-          (a, b) => new Date(b.fecha) - new Date(a.fecha)
-        );
-
-        const pedidosNumerados = ordenados.map((p, index) => ({
+        // Asignamos numeroLocal incremental sin reordenar
+        const pedidosConNumero = data.results.map((p, idx) => ({
           ...p,
-          numeroLocal: pedidos.length + ordenados.length - index,
+          numeroLocal: pedidos.length + idx + 1,
         }));
 
-        setPedidos((prev) => [...prev, ...pedidosNumerados]);
-        setNext(data.next); // actualizar next
+        setPedidos((prev) => [...prev, ...pedidosConNumero]);
+        setNext(data.next);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [access, page]);
+  }, [access, page, pedidos.length]);
+
+  // Cargar pedidos al montar y al cambiar la página
+  useEffect(() => {
+    cargarPedidos();
+  }, [cargarPedidos]);
 
   if (loading && pedidos.length === 0)
     return <Container sx={{ mt: 4 }}>Cargando pedidos...</Container>;
