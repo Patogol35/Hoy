@@ -16,57 +16,42 @@ import {
   Button,
 } from "@mui/material";
 
-const PAGE_SIZE = 10; // 👈 cantidad de pedidos por página
+const PAGE_SIZE = 40; // 👈 debe coincidir con el page_size del backend
 
 export default function Pedidos() {
   const { access } = useAuth();
-  const [allPedidos, setAllPedidos] = useState([]); // todos los pedidos
+  const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1); // página actual
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     setLoading(true);
-    getPedidos(access) // ⚡️ trae todos los pedidos
+    getPedidos(access, page)
       .then((data) => {
-        if (!data?.results) return;
-
-        // ordenar por fecha descendente
-        const ordenados = [...data.results].sort(
-          (a, b) => new Date(b.fecha) - new Date(a.fecha)
-        );
-
-        // numerarlos
-        const pedidosNumerados = ordenados.map((p, index) => ({
-          ...p,
-          numeroLocal: ordenados.length - index,
-        }));
-
-        setAllPedidos(pedidosNumerados);
+        // 🔹 El backend ya ordena por fecha, solo usamos los resultados
+        setPedidos(data.results);
+        setTotalPages(Math.ceil(data.count / PAGE_SIZE));
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [access]);
+  }, [access, page]);
 
-  // calcular pedidos visibles según la página
-  const startIndex = (page - 1) * PAGE_SIZE;
-  const endIndex = startIndex + PAGE_SIZE;
-  const pedidosVisibles = allPedidos.slice(startIndex, endIndex);
-
-  const totalPages = Math.ceil(allPedidos.length / PAGE_SIZE);
-
-  if (loading && allPedidos.length === 0)
+  if (loading) {
     return <Container sx={{ mt: 4 }}>Cargando pedidos...</Container>;
+  }
 
-  if (allPedidos.length === 0)
+  if (pedidos.length === 0) {
     return <Container sx={{ mt: 4 }}>Aún no tienes pedidos.</Container>;
+  }
 
   return (
     <Container sx={{ mt: 4, mb: 6 }}>
-      <Typography variant="h5" gutterBottom>
+      <Typography variant="h5" mb={2}>
         Mis pedidos
       </Typography>
 
-      {pedidosVisibles.map((p) => (
+      {pedidos.map((p) => (
         <Card
           key={p.id}
           sx={{
@@ -86,7 +71,7 @@ export default function Pedidos() {
               sx={{ mb: 1 }}
             >
               <Typography variant="h6" fontWeight="bold">
-                Pedido #{p.numeroLocal}
+                Pedido #{p.id}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {new Date(p.fecha).toLocaleString()}
