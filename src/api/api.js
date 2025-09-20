@@ -92,25 +92,7 @@ export const register = async (data) => {
 
 // PRODUCTOS
 export const getProductos = async () => {
-  let url = `${BASE_URL}/productos/`;
-  let all = [];
-
-  try {
-    while (url) {
-      const data = await authFetch(url, { method: "GET" });
-
-      // acumular los productos de la página
-      all = [...all, ...(data.results || [])];
-
-      // si hay siguiente página, seguir
-      url = data.next || null;
-    }
-
-    return all; // devuelve todos los productos
-  } catch (err) {
-    console.error("Error al cargar productos:", err);
-    return [];
-  }
+  return authFetch(`${BASE_URL}/productos/`, { method: "GET" });
 };
 
 // CARRITO
