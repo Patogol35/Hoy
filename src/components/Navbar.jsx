@@ -199,7 +199,7 @@ export default function Navbar() {
                 width: "280px",
                 background: theme.palette.primary.main,
                 borderRadius: "16px 0 0 16px",
-                padding: "3.5rem 1rem 1rem 1rem", // más espacio arriba
+                padding: "2rem 1rem 1rem 1rem", // 🔹 menos espacio arriba
                 boxShadow: "0 6px 20px rgba(0,0,0,0.35)",
                 display: "flex",
                 flexDirection: "column",
@@ -219,13 +219,14 @@ export default function Navbar() {
                   color: "#fff",
                   background: "rgba(0,0,0,0.6)",
                   "&:hover": { background: "rgba(0,0,0,0.9)" },
+                  zIndex: 2,
                 }}
               >
                 <CloseIcon fontSize="large" />
               </IconButton>
 
               {/* Contenido con espacio debajo de la X */}
-              <Stack spacing={2} sx={{ mt: 6 }}>
+              <Stack spacing={2} sx={{ mt: 8 }}>
                 {isAuthenticated && user && (
                   <Typography
                     variant="h6"
@@ -293,4 +294,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-                             }
+      }
