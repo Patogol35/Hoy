@@ -1,133 +1,184 @@
-import React, { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import {
   AppBar,
   Toolbar,
-  IconButton,
-  Typography,
   Button,
+  Typography,
+  Box,
+  IconButton,
   Stack,
   useTheme,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
+import HomeIcon from "@mui/icons-material/Home";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import ListAltIcon from "@mui/icons-material/ListAlt";
+import LoginIcon from "@mui/icons-material/Login";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { AnimatePresence, motion } from "framer-motion";
-import { useAuth } from "../context/AuthContext";
+import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
+import { useEffect, useState, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
-// Variantes de animación
+// Animaciones
 const menuVariants = {
-  hidden: { x: "100%" },
-  visible: { x: 0, transition: { type: "spring", stiffness: 80 } },
-  exit: { x: "100%", transition: { duration: 0.3 } },
+  hidden: { x: "100%", opacity: 0 },
+  visible: { x: 0, opacity: 1, transition: { duration: 0.25, ease: "easeOut" } },
+  exit: { x: "100%", opacity: 0, transition: { duration: 0.2, ease: "easeIn" } },
 };
-
 const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (i = 0) => ({
-    opacity: 1,
+  hidden: { y: 20, opacity: 0 },
+  visible: (i) => ({
     y: 0,
-    transition: { delay: i * 0.1 },
+    opacity: 1,
+    transition: { delay: i * 0.05, duration: 0.25, ease: "easeOut" },
   }),
 };
 
 export default function Navbar() {
-  const { isAuthenticated, user, logout } = useAuth();
-  const theme = useTheme();
+  const { isAuthenticated, logout, user } = useAuth();
   const navigate = useNavigate();
+  const theme = useTheme();
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const menuRef = useRef(null);
 
   const handleLogout = () => {
     logout();
-    navigate("/");
+    navigate("/login");
     setOpen(false);
   };
 
-  const menuItems = [
-    { label: "Inicio", path: "/", icon: "🏠", color: "linear-gradient(135deg,#4cafef,#2196f3)" },
-    { label: "Carrito", path: "/carrito", icon: "🛒", color: "linear-gradient(135deg,#81c784,#388e3c)" },
-    { label: "Mis pedidos", path: "/pedidos", icon: "📦", color: "linear-gradient(135deg,#ffb74d,#f57c00)" },
-  ];
+  const menuItems = isAuthenticated
+    ? [
+        { label: "Inicio", path: "/", icon: <HomeIcon />, color: "linear-gradient(135deg, #0288d1, #26c6da)" },
+        { label: "Carrito", path: "/carrito", icon: <ShoppingCartIcon />, color: "linear-gradient(135deg, #2e7d32, #66bb6a)" },
+        { label: "Mis pedidos", path: "/pedidos", icon: <ListAltIcon />, color: "linear-gradient(135deg, #f57c00, #ffb74d)" },
+      ]
+    : [
+        { label: "Iniciar sesión", path: "/login", icon: <LoginIcon />, color: "linear-gradient(135deg, #0288d1, #26c6da)" },
+        { label: "Registrarse", path: "/register", icon: <PersonAddIcon />, color: "linear-gradient(135deg, #6a1b9a, #ab47bc)" },
+      ];
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
     <>
-      {/* ===== NAVBAR ESCRITORIO ===== */}
-      <AppBar
-        position="static"
-        sx={{
-          background: theme.palette.primary.main,
-          px: 2,
-        }}
-      >
-        <Toolbar sx={{ justifyContent: "space-between" }}>
-          {/* Logo / título */}
-          <Typography variant="h6" sx={{ fontWeight: 700 }}>
-            🛍️ MiTienda
-          </Typography>
-
-          {/* Menú en escritorio */}
-          <Stack direction="row" spacing={2} alignItems="center">
-            {menuItems.map((item, i) => (
-              <Button
-                key={i}
-                component={Link}
-                to={item.path}
-                sx={{
-                  fontWeight: 600,
-                  color: "#fff",
-                  textTransform: "none",
-                }}
-              >
-                {item.icon} {item.label}
-              </Button>
-            ))}
-
-            {/* Nombre de usuario */}
-            {isAuthenticated && user && (
+      <motion.div initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
+        <AppBar
+          position="fixed"
+          elevation={2}
+          sx={{
+            backgroundColor: theme.palette.primary.main,
+            boxShadow: scrolled ? "0 4px 20px rgba(0,0,0,0.3)" : "none",
+            zIndex: 1400,
+          }}
+        >
+          <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+            {/* Logo */}
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Typography
-                variant="body1"
+                variant="h6"
+                component={Link}
+                to="/"
                 sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                  fontWeight: "bold",
                   color: "#fff",
-                  fontWeight: 600,
-                  ml: 2,
+                  cursor: "pointer",
+                  lineHeight: 1.2,
+                  textDecoration: "none",
                 }}
               >
-                👤 {user.username}
+                <ShoppingBagIcon
+                  sx={{
+                    fontSize: 28,
+                    background: "linear-gradient(135deg, #FF5722, #FFC107)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                  }}
+                />
+                Tienda Patricio
               </Typography>
-            )}
+            </motion.div>
 
-            {/* Botón logout */}
-            {isAuthenticated && (
-              <Button
-                onClick={handleLogout}
-                startIcon={<LogoutIcon />}
-                sx={{
-                  fontWeight: 600,
-                  color: "#fff",
-                  textTransform: "none",
-                  background: "linear-gradient(135deg, #d32f2f, #f44336)",
-                  px: 2,
-                  "&:hover": { boxShadow: "0 0 10px rgba(0,0,0,0.3)" },
-                }}
-              >
-                Cerrar sesión
-              </Button>
-            )}
+            {/* Desktop menu */}
+            <Box sx={{ display: { xs: "none", lg: "flex" }, gap: 2, alignItems: "center" }}>
+              {menuItems.map((item, i) => (
+                <motion.div key={i} whileHover={{ y: -2, scale: 1.08 }} whileTap={{ scale: 0.95 }}>
+                  <Button
+                    component={Link}
+                    to={item.path}
+                    startIcon={item.icon}
+                    sx={{
+                      color: "#fff",
+                      fontWeight: 600,
+                      textTransform: "none",
+                      fontSize: "1rem",
+                      borderRadius: "12px",
+                      px: 2.5,
+                      py: 1,
+                      transition: "all 0.3s ease",
+                      background: "rgba(255,255,255,0.08)",
+                      "&:hover": {
+                        background: item.color,
+                        boxShadow: "0 0 20px rgba(0,0,0,0.35)",
+                      },
+                    }}
+                  >
+                    {item.label}
+                  </Button>
+                </motion.div>
+              ))}
 
-            {/* Botón abrir menú en móvil */}
+              {/* Nombre de usuario + botón logout */}
+              {isAuthenticated && user && (
+                <>
+                  <Typography sx={{ color: "#fff", fontWeight: 600, mx: 2 }}>
+                    👤 {user.username}
+                  </Typography>
+                  <Button
+                    onClick={handleLogout}
+                    startIcon={<LogoutIcon />}
+                    sx={{
+                      background: "linear-gradient(135deg, #d32f2f, #f44336)",
+                      color: "#fff",
+                      fontWeight: 600,
+                      borderRadius: "12px",
+                      textTransform: "none",
+                      px: 2.5,
+                      py: 1,
+                      "&:hover": {
+                        boxShadow: "0 0 15px rgba(0,0,0,0.35)",
+                      },
+                    }}
+                  >
+                    Cerrar sesión
+                  </Button>
+                </>
+              )}
+            </Box>
+
+            {/* Botón menú móvil */}
             <IconButton
-              edge="end"
-              sx={{ color: "#fff", display: { md: "none" } }}
+              sx={{ display: { xs: "block", lg: "none" }, color: "#fff" }}
               onClick={() => setOpen(true)}
             >
-              <MenuIcon />
+              <MenuIcon fontSize="large" />
             </IconButton>
-          </Stack>
-        </Toolbar>
-      </AppBar>
+          </Toolbar>
+        </AppBar>
+      </motion.div>
 
-      {/* ===== DRAWER MÓVIL ===== */}
+      {/* Drawer móvil */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -167,28 +218,16 @@ export default function Navbar() {
               }}
               onClick={(e) => e.stopPropagation()}
             >
-              <Stack spacing={2} sx={{ mt: 2 }}>
-                {/* Botón X arriba */}
-                <motion.div
-                  custom={-1}
-                  variants={itemVariants}
-                  initial="hidden"
-                  animate="visible"
-                  style={{ position: "absolute", top: 16, right: 16 }}
-                >
-                  <IconButton
-                    onClick={() => setOpen(false)}
-                    sx={{
-                      color: "#fff",
-                      background: "rgba(0,0,0,0.25)",
-                      "&:hover": { background: "rgba(0,0,0,0.4)" },
-                    }}
-                  >
-                    <CloseIcon />
-                  </IconButton>
-                </motion.div>
+              {/* Botón X arriba a la derecha */}
+              <IconButton
+                onClick={() => setOpen(false)}
+                sx={{ position: "absolute", top: "1rem", right: "1rem", color: "#fff" }}
+              >
+                <CloseIcon fontSize="large" />
+              </IconButton>
 
-                {/* Nombre de usuario */}
+              <Stack spacing={2} sx={{ mt: 2 }}>
+                {/* Nombre de usuario como encabezado */}
                 {isAuthenticated && user && (
                   <motion.div custom={0} variants={itemVariants} initial="hidden" animate="visible">
                     <Typography
@@ -207,13 +246,7 @@ export default function Navbar() {
 
                 {/* Opciones del menú */}
                 {menuItems.map((item, i) => (
-                  <motion.div
-                    key={i}
-                    custom={i + 1}
-                    variants={itemVariants}
-                    initial="hidden"
-                    animate="visible"
-                  >
+                  <motion.div key={i} custom={i + 1} variants={itemVariants} initial="hidden" animate="visible">
                     <Button
                       component={Link}
                       to={item.path}
@@ -238,14 +271,9 @@ export default function Navbar() {
                   </motion.div>
                 ))}
 
-                {/* Botón logout */}
+                {/* Botón cerrar sesión */}
                 {isAuthenticated && (
-                  <motion.div
-                    custom={menuItems.length + 1}
-                    variants={itemVariants}
-                    initial="hidden"
-                    animate="visible"
-                  >
+                  <motion.div custom={menuItems.length + 1} variants={itemVariants} initial="hidden" animate="visible">
                     <Button
                       onClick={handleLogout}
                       startIcon={<LogoutIcon />}
@@ -274,4 +302,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-}
+                }
