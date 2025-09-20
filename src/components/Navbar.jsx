@@ -218,15 +218,13 @@ export default function Navbar() {
               }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Botón X arriba con más espacio */}
+              {/* Botón X arriba absoluto */}
               <Box
                 sx={{
-                  position: "sticky",
-                  top: 0,
-                  display: "flex",
-                  justifyContent: "flex-end",
+                  position: "absolute",
+                  top: 12,
+                  right: 12,
                   zIndex: 1500,
-                  mt: 1.5, // 👈 se baja un poco para que no quede tapada
                 }}
               >
                 <IconButton
@@ -241,12 +239,17 @@ export default function Navbar() {
                 </IconButton>
               </Box>
 
-              {/* Contenido */}
-              <Stack spacing={2} sx={{ mt: 2 }}>
+              {/* Contenido con espacio debajo de la X */}
+              <Stack spacing={2} sx={{ mt: 6 }}>
                 {isAuthenticated && user && (
                   <Typography
                     variant="h6"
-                    sx={{ color: "#fff", fontWeight: 700, textAlign: "center", mb: 1 }}
+                    sx={{
+                      color: "#fff",
+                      fontWeight: 700,
+                      textAlign: "center",
+                      mb: 1,
+                    }}
                   >
                     👤 {user.username}
                   </Typography>
