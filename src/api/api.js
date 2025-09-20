@@ -131,8 +131,22 @@ export const setCantidadItem = async (itemId, cantidad, token) => {
 export const crearPedido = async (token) => {
   return authFetch(`${BASE_URL}/pedido/crear/`, { method: "POST" }, token);
 };
-
-export const getPedidos = async (token, page = 1) => {
-  // 🔹 ahora acepta page y devuelve el objeto de paginación
-  return authFetch(`${BASE_URL}/pedidos/?page=${page}`, { method: "GET" }, token);
+// =====================
+// GET PEDIDOS (con paginación del back)
+// =====================
+export const getPedidos = async (access, page = 1, pageSize = 10) => {
+  const res = await fetch(
+    `${BASE_URL}/pedidos/?page=${page}&page_size=${pageSize}`,
+    {
+      headers: {
+        Authorization: `Bearer ${access}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  if (!res.ok) throw new Error("Error al obtener pedidos");
+  return await res.json();
 };
+
+                                 
+
