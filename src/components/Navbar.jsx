@@ -106,7 +106,7 @@ export default function Navbar() {
                     WebkitTextFillColor: "transparent",
                   }}
                 />
-                E-commerce Jorge-Patricio
+                Tienda Patricio
               </Typography>
             </motion.div>
 
