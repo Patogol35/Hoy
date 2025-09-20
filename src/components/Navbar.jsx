@@ -209,7 +209,6 @@ export default function Navbar() {
                 background: theme.palette.primary.main,
                 borderRadius: "16px 0 0 16px",
                 padding: "2rem",
-                paddingTop: "5rem",
                 boxShadow: "0 6px 20px rgba(0,0,0,0.35)",
                 display: "flex",
                 flexDirection: "column",
@@ -225,7 +224,7 @@ export default function Navbar() {
                 variants={itemVariants}
                 initial="hidden"
                 animate="visible"
-                style={{ position: "absolute", top: 20, right: 20, zIndex: 1500 }}
+                style={{ position: "absolute", top: 16, right: 16, zIndex: 1500 }}
               >
                 <IconButton
                   onClick={() => setOpen(false)}
@@ -241,7 +240,8 @@ export default function Navbar() {
                 </IconButton>
               </motion.div>
 
-              <Stack spacing={2} sx={{ mt: 2 }}>
+              {/* Contenido con espacio extra para que no tape la X */}
+              <Stack spacing={2} sx={{ mt: 8 }}>
                 {/* Nombre de usuario */}
                 {isAuthenticated && user && (
                   <motion.div custom={0} variants={itemVariants} initial="hidden" animate="visible">
@@ -317,4 +317,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-}
+                    }
