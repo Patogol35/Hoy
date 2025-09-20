@@ -20,37 +20,28 @@ export default function Pedidos() {
   const { access } = useAuth();
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1); // página actual
-  const [next, setNext] = useState(null); // link a la siguiente página
+  const [visibleCount, setVisibleCount] = useState(5); // mostrar 5 al inicio
 
-  const fetchPedidos = (pageNum) => {
+  useEffect(() => {
     setLoading(true);
-    getPedidos(access, pageNum)
+    getPedidos(access) // trae la primera página del backend
       .then((data) => {
         if (!data?.results) return;
 
-        // ordenar por fecha descendente
         const ordenados = [...data.results].sort(
           (a, b) => new Date(b.fecha) - new Date(a.fecha)
         );
 
-        // agregar número relativo local
         const pedidosNumerados = ordenados.map((p, index) => ({
           ...p,
-          numeroLocal: pedidos.length + ordenados.length - index, // continuar numeración
+          numeroLocal: ordenados.length - index,
         }));
 
-        setPedidos((prev) => [...prev, ...pedidosNumerados]);
-        setNext(data.next);
+        setPedidos(pedidosNumerados);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  };
-
-  useEffect(() => {
-    fetchPedidos(page);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [access, page]);
+  }, [access]);
 
   if (loading && pedidos.length === 0)
     return <Container sx={{ mt: 4 }}>Cargando pedidos...</Container>;
@@ -64,7 +55,7 @@ export default function Pedidos() {
         Mis pedidos
       </Typography>
 
-      {pedidos.map((p) => (
+      {pedidos.slice(0, visibleCount).map((p) => (
         <Card
           key={p.id}
           sx={{
@@ -139,19 +130,15 @@ export default function Pedidos() {
         </Card>
       ))}
 
-      {/* Botón “Ver más” solo si hay siguiente página */}
-      {next && (
+      {/* Botón “Ver más” siempre visible si hay más pedidos */}
+      {visibleCount < pedidos.length && (
         <Box textAlign="center" mt={2}>
-          <Button variant="outlined" onClick={() => setPage((p) => p + 1)}>
+          <Button
+            variant="outlined"
+            onClick={() => setVisibleCount((prev) => prev + 5)}
+          >
             Ver más
           </Button>
-        </Box>
-      )}
-
-      {/* Indicador de carga al traer más */}
-      {loading && pedidos.length > 0 && (
-        <Box textAlign="center" mt={2}>
-          Cargando más pedidos...
         </Box>
       )}
     </Container>
