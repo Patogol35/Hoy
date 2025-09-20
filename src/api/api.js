@@ -132,14 +132,7 @@ export const crearPedido = async (token) => {
   return authFetch(`${BASE_URL}/pedido/crear/`, { method: "POST" }, token);
 };
 
-export async function getPedidos(token, page = 1) {
-  const res = await fetch(
-    `${import.meta.env.VITE_API_URL}/pedidos/?page=${page}`,
-    {
-      headers: { Authorization: `Bearer ${token}` },
-    }
-  );
-  if (!res.ok) throw new Error("Error al obtener pedidos");
-  return res.json();
-}
-
+export const getPedidos = async (token, page = 1) => {
+  // 🔹 ahora acepta page y devuelve el objeto de paginación
+  return authFetch(`${BASE_URL}/pedidos/?page=${page}`, { method: "GET" }, token);
+};
