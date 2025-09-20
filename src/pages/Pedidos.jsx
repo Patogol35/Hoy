@@ -20,62 +20,40 @@ export default function Pedidos() {
   const { access } = useAuth();
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [nextUrl, setNextUrl] = useState(null); // 🔹 para paginación
+  const [visibleCount, setVisibleCount] = useState(5); // mostrar 5 al inicio
 
-  // cargar primera página
   useEffect(() => {
-    cargarPedidos();
+    getPedidos(access)
+      .then((data) => {
+        if (!data) return;
+        // ordenar por fecha descendente
+        const ordenados = [...data].sort(
+          (a, b) => new Date(b.fecha) - new Date(a.fecha)
+        );
+        // número relativo
+        const pedidosNumerados = ordenados.map((p, index) => ({
+          ...p,
+          numeroLocal: ordenados.length - index,
+        }));
+        setPedidos(pedidosNumerados);
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
   }, [access]);
 
-  const cargarPedidos = async (url = null) => {
-    try {
-      const data = await getPedidos(access, url);
-      if (!data) return;
-
-      // 🔹 DRF manda pedidos en data.results
-      const ordenados = [...data.results].sort(
-        (a, b) => new Date(b.fecha) - new Date(a.fecha)
-      );
-
-      // numerar pedidos (continuando con los ya cargados)
-      const pedidosNumerados = ordenados.map((p, index) => ({
-        ...p,
-        numeroLocal: pedidos.length + (ordenados.length - index),
-      }));
-
-      // acumular pedidos
-      setPedidos((prev) => [...prev, ...pedidosNumerados]);
-
-      // guardar "next" para botón Ver más
-      setNextUrl(data.next);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   if (loading)
-    return (
-      <Container sx={{ mt: 4 }}>
-        <Typography>Cargando pedidos...</Typography>
-      </Container>
-    );
+    return <Container sx={{ mt: 4 }}>Cargando pedidos...</Container>;
 
   if (pedidos.length === 0)
-    return (
-      <Container sx={{ mt: 4 }}>
-        <Typography>Aún no tienes pedidos.</Typography>
-      </Container>
-    );
+    return <Container sx={{ mt: 4 }}>Aún no tienes pedidos.</Container>;
 
   return (
     <Container sx={{ mt: 4, mb: 6 }}>
-      <Typography variant="h4" gutterBottom fontWeight="bold">
+      <Typography variant="h5" gutterBottom>
         Mis pedidos
       </Typography>
 
-      {pedidos.map((p) => (
+      {pedidos.slice(0, visibleCount).map((p) => (
         <Card
           key={p.id}
           sx={{
@@ -94,7 +72,6 @@ export default function Pedidos() {
               spacing={1}
               sx={{ mb: 1 }}
             >
-              {/* número relativo */}
               <Typography variant="h6" fontWeight="bold">
                 Pedido #{p.numeroLocal}
               </Typography>
@@ -151,14 +128,18 @@ export default function Pedidos() {
         </Card>
       ))}
 
-      {/* 🔹 Botón cargar más si hay más páginas */}
-      {nextUrl && (
+      {/* Botón para cargar más pedidos */}
+      {visibleCount < pedidos.length && (
         <Box textAlign="center" mt={2}>
-          <Button variant="outlined" onClick={() => cargarPedidos(nextUrl)}>
+          <Button
+            variant="outlined"
+            onClick={() => setVisibleCount((prev) => prev + 5)} // suma de 5 en 5
+          >
             Ver más
           </Button>
         </Box>
       )}
     </Container>
   );
-                        }
+                }
+
