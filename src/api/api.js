@@ -1,4 +1,3 @@
-
 // =====================
 // BASE URL
 // =====================
@@ -93,7 +92,25 @@ export const register = async (data) => {
 
 // PRODUCTOS
 export const getProductos = async () => {
-  return authFetch(`${BASE_URL}/productos/`, { method: "GET" });
+  let url = `${BASE_URL}/productos/`;
+  let all = [];
+
+  try {
+    while (url) {
+      const data = await authFetch(url, { method: "GET" });
+
+      // acumular los productos de la página
+      all = [...all, ...(data.results || [])];
+
+      // si hay siguiente página, seguir
+      url = data.next || null;
+    }
+
+    return all; // devuelve todos los productos
+  } catch (err) {
+    console.error("Error al cargar productos:", err);
+    return [];
+  }
 };
 
 // CARRITO
@@ -137,4 +154,3 @@ export const getPedidos = async (token, page = 1) => {
   // 🔹 ahora acepta page y devuelve el objeto de paginación
   return authFetch(`${BASE_URL}/pedidos/?page=${page}`, { method: "GET" }, token);
 };
-
