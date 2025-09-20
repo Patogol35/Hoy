@@ -20,44 +20,36 @@ const PAGE_SIZE = 10; // 👈 cantidad de pedidos por página
 
 export default function Pedidos() {
   const { access } = useAuth();
-  const [allPedidos, setAllPedidos] = useState([]); // todos los pedidos
+  const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1); // página actual
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     setLoading(true);
-    getPedidos(access) // ⚡️ trae todos los pedidos
+    getPedidos(access, page, PAGE_SIZE)
       .then((data) => {
-        if (!data?.results) return;
-
-        // ordenar por fecha descendente
+        // ⚡️ ya viene paginado desde el back
         const ordenados = [...data.results].sort(
           (a, b) => new Date(b.fecha) - new Date(a.fecha)
         );
 
-        // numerarlos
         const pedidosNumerados = ordenados.map((p, index) => ({
           ...p,
-          numeroLocal: ordenados.length - index,
+          numeroLocal: data.count - ((page - 1) * PAGE_SIZE + index),
         }));
 
-        setAllPedidos(pedidosNumerados);
+        setPedidos(pedidosNumerados);
+        setTotalPages(Math.ceil(data.count / PAGE_SIZE));
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [access]);
+  }, [access, page]);
 
-  // calcular pedidos visibles según la página
-  const startIndex = (page - 1) * PAGE_SIZE;
-  const endIndex = startIndex + PAGE_SIZE;
-  const pedidosVisibles = allPedidos.slice(startIndex, endIndex);
-
-  const totalPages = Math.ceil(allPedidos.length / PAGE_SIZE);
-
-  if (loading && allPedidos.length === 0)
+  if (loading && pedidos.length === 0)
     return <Container sx={{ mt: 4 }}>Cargando pedidos...</Container>;
 
-  if (allPedidos.length === 0)
+  if (pedidos.length === 0)
     return <Container sx={{ mt: 4 }}>Aún no tienes pedidos.</Container>;
 
   return (
@@ -66,7 +58,7 @@ export default function Pedidos() {
         Mis pedidos
       </Typography>
 
-      {pedidosVisibles.map((p) => (
+      {pedidos.map((p) => (
         <Card
           key={p.id}
           sx={{
