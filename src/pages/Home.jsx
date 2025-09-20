@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import ProductoCard from "../components/ProductoCard";
 import {
@@ -26,7 +25,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import Slider from "react-slick";
 import { useCarrito } from "../context/CarritoContext";
 import { toast } from "react-toastify";
-import { BASE_URL } from "../api/api"; // asegúrate de exportar BASE_URL en api.js
 
 export default function Home() {
   const [productos, setProductos] = useState([]);
@@ -41,9 +39,9 @@ export default function Home() {
 
   const { agregarAlCarrito } = useCarrito();
 
-  // 🔹 Cargar todos los productos (paginación)
+  // 🔹 Función para traer todos los productos
   const fetchAllProductos = async () => {
-    let url = `${BASE_URL}/productos/`;
+    let url = "/api/productos/"; // ruta relativa para Vercel
     let all = [];
     try {
       while (url) {
@@ -54,7 +52,7 @@ export default function Home() {
           url = null;
         } else if (data?.results) {
           all = [...all, ...data.results];
-          url = data.next ? `${BASE_URL}${data.next}` : null;
+          url = data.next;
         } else {
           all = [];
           url = null;
@@ -73,7 +71,6 @@ export default function Home() {
     fetchAllProductos();
   }, []);
 
-  // 🔹 Delay en búsqueda
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(search.toLowerCase());
@@ -81,7 +78,6 @@ export default function Home() {
     return () => clearTimeout(handler);
   }, [search]);
 
-  // 🔹 Filtrado y ordenamiento
   const filtered = productos
     .filter((p) =>
       debouncedSearch === ""
@@ -262,10 +258,10 @@ export default function Home() {
             </Box>
 
             {/* Slider de imágenes */}
-            {(selected.imagenes || [selected.imagen]).length > 0 && (
+            {selected.imagenes?.length > 0 && (
               <Box sx={{ mt: 2 }}>
                 <Slider {...settings}>
-                  {(selected.imagenes || [selected.imagen]).map((img, idx) => (
+                  {selected.imagenes.map((img, idx) => (
                     <Box
                       key={idx}
                       sx={{
@@ -275,7 +271,7 @@ export default function Home() {
                       }}
                     >
                       <img
-                        src={img?.url || img}
+                        src={img} // asegúrate que img sea la URL correcta
                         alt={selected.nombre}
                         style={{
                           maxHeight: "400px",
@@ -283,7 +279,7 @@ export default function Home() {
                           objectFit: "contain",
                           cursor: "pointer",
                         }}
-                        onClick={() => setLightbox(img?.url || img)}
+                        onClick={() => setLightbox(img)}
                       />
                     </Box>
                   ))}
@@ -310,7 +306,7 @@ export default function Home() {
         )}
       </Dialog>
 
-      {/* Lightbox */}
+      {/* Lightbox simple */}
       {lightbox && (
         <Dialog open={!!lightbox} onClose={() => setLightbox(null)} maxWidth="lg">
           <Box sx={{ position: "relative" }}>
@@ -335,4 +331,4 @@ export default function Home() {
       )}
     </>
   );
-}
+}  
