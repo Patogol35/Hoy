@@ -18,6 +18,7 @@ import ListAltIcon from "@mui/icons-material/ListAlt";
 import LoginIcon from "@mui/icons-material/Login";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import LogoutIcon from "@mui/icons-material/Logout";
+import StorefrontIcon from "@mui/icons-material/Storefront"; // 🔹 Nuevo icono
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -71,17 +72,15 @@ export default function Navbar() {
   return (
     <>
       <motion.div initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
-
-<AppBar
-  position="fixed"
-  elevation={2}
-  sx={{
-    backgroundColor: theme.palette.primary.main, // 🔒 siempre igual
-    boxShadow: "none", // 🔒 sin cambios de sombra
-    zIndex: 1400,
-  }}
->
-        
+        <AppBar
+          position="fixed"
+          elevation={2}
+          sx={{
+            backgroundColor: theme.palette.primary.main,
+            boxShadow: "none",
+            zIndex: 1400,
+          }}
+        >
           <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
             {/* Logo */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -100,7 +99,7 @@ export default function Navbar() {
                   textDecoration: "none",
                 }}
               >
-                🛍️ Tienda Jorge Patricio
+                <StorefrontIcon sx={{ fontSize: 28 }} /> Tienda Jorge Patricio
               </Typography>
             </motion.div>
 
@@ -269,4 +268,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-                        }
+}
