@@ -1,3 +1,4 @@
+// src/pages/Pedidos.jsx
 import { useEffect, useState } from "react";
 import { getPedidos } from "../api/api";
 import { useAuth } from "../context/AuthContext";
@@ -16,8 +17,6 @@ import {
   Button,
 } from "@mui/material";
 
-const PAGE_SIZE = 40; // 👈 debe coincidir con el page_size del backend
-
 export default function Pedidos() {
   const { access } = useAuth();
   const [pedidos, setPedidos] = useState([]);
@@ -29,29 +28,24 @@ export default function Pedidos() {
     setLoading(true);
     getPedidos(access, page)
       .then((data) => {
-        // 🔹 El backend ya ordena por fecha, solo usamos los resultados
-        setPedidos(data.results);
-        setTotalPages(Math.ceil(data.count / PAGE_SIZE));
+        setPedidos(data.results ?? []);
+        setTotalPages(Math.ceil(data.count / 40)); // 40 = page_size en backend
       })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [access, page]);
 
-  if (loading) {
-    return <Container sx={{ mt: 4 }}>Cargando pedidos...</Container>;
-  }
-
-  if (pedidos.length === 0) {
+  if (loading) return <Container sx={{ mt: 4 }}>Cargando pedidos...</Container>;
+  if (pedidos.length === 0)
     return <Container sx={{ mt: 4 }}>Aún no tienes pedidos.</Container>;
-  }
 
   return (
     <Container sx={{ mt: 4, mb: 6 }}>
-      <Typography variant="h5" mb={2}>
+      <Typography variant="h5" gutterBottom>
         Mis pedidos
       </Typography>
 
-      {pedidos.map((p) => (
+      {pedidos.map((p, index) => (
         <Card
           key={p.id}
           sx={{
@@ -71,7 +65,7 @@ export default function Pedidos() {
               sx={{ mb: 1 }}
             >
               <Typography variant="h6" fontWeight="bold">
-                Pedido #{p.id}
+                Pedido #{(page - 1) * 40 + (index + 1)}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {new Date(p.fecha).toLocaleString()}
