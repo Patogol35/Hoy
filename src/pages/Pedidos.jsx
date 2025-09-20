@@ -20,38 +20,42 @@ export default function Pedidos() {
   const { access } = useAuth();
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const [totalCount, setTotalCount] = useState(0); // 👈 total de pedidos global
+  const [nextUrl, setNextUrl] = useState(null); // 🔹 para paginación
 
+  // cargar primera página
   useEffect(() => {
-    if (!access) return;
+    cargarPedidos();
+  }, [access]);
 
-    setLoading(true);
-    getPedidos(access, page)
-      .then((data) => {
-        if (!data) return;
+  const cargarPedidos = async (url = null) => {
+    try {
+      const data = await getPedidos(access, url);
+      if (!data) return;
 
-        const nuevosPedidos = (data.results ?? []).sort(
-          (a, b) => new Date(b.fecha) - new Date(a.fecha)
-        );
+      // 🔹 DRF manda pedidos en data.results
+      const ordenados = [...data.results].sort(
+        (a, b) => new Date(b.fecha) - new Date(a.fecha)
+      );
 
-        setTotalCount(data.count);
+      // numerar pedidos (continuando con los ya cargados)
+      const pedidosNumerados = ordenados.map((p, index) => ({
+        ...p,
+        numeroLocal: pedidos.length + (ordenados.length - index),
+      }));
 
-        // 🔹 asignar número global correcto aquí
-        const pedidosConNumero = nuevosPedidos.map((p, i) => ({
-          ...p,
-          numeroGlobal: data.count - ((page - 1) * 5 + i),
-        }));
+      // acumular pedidos
+      setPedidos((prev) => [...prev, ...pedidosNumerados]);
 
-        setPedidos((prev) => [...prev, ...pedidosConNumero]);
-        setHasMore(!!data.next);
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, [page, access]);
+      // guardar "next" para botón Ver más
+      setNextUrl(data.next);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  if (loading && pedidos.length === 0)
+  if (loading)
     return (
       <Container sx={{ mt: 4 }}>
         <Typography>Cargando pedidos...</Typography>
@@ -90,8 +94,9 @@ export default function Pedidos() {
               spacing={1}
               sx={{ mb: 1 }}
             >
+              {/* número relativo */}
               <Typography variant="h6" fontWeight="bold">
-                Pedido #{p.numeroGlobal}
+                Pedido #{p.numeroLocal}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {new Date(p.fecha).toLocaleString()}
@@ -146,13 +151,14 @@ export default function Pedidos() {
         </Card>
       ))}
 
-      {hasMore && (
+      {/* 🔹 Botón cargar más si hay más páginas */}
+      {nextUrl && (
         <Box textAlign="center" mt={2}>
-          <Button variant="outlined" onClick={() => setPage((prev) => prev + 1)}>
+          <Button variant="outlined" onClick={() => cargarPedidos(nextUrl)}>
             Ver más
           </Button>
         </Box>
       )}
     </Container>
   );
-                                }
+                        }
