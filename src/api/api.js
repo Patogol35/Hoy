@@ -133,20 +133,16 @@ export const crearPedido = async (token) => {
 };
 
 
-export async function getPedidos(token, page = 1) {
+// src/api/api.js
+export async function getPedidos(access, page = 1) {
   const res = await fetch(
     `${import.meta.env.VITE_API_URL}/pedidos/?page=${page}`,
     {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${access}`,
       },
     }
   );
-
-  if (!res.ok) {
-    throw new Error("Error al obtener pedidos");
-  }
-
-  return await res.json(); // { count, next, previous, results }
+  if (!res.ok) throw new Error("Error cargando pedidos");
+  return res.json();
 }
-
