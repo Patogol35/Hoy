@@ -1,4 +1,4 @@
-  import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
   AppBar,
@@ -18,7 +18,8 @@ import ListAltIcon from "@mui/icons-material/ListAlt";
 import LoginIcon from "@mui/icons-material/Login";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import LogoutIcon from "@mui/icons-material/Logout";
-import ShoppingBagIcon from "@mui/icons-material/ShoppingBag"; 
+import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle"; // 👈 NUEVO
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -38,7 +39,7 @@ const itemVariants = {
 };
 
 export default function Navbar() {
-  const { isAuthenticated, logout, user } = useAuth(); // 👈 ahora tenemos user
+  const { isAuthenticated, logout, user } = useAuth();
   const navigate = useNavigate();
   const theme = useTheme();
   const [open, setOpen] = useState(false);
@@ -71,7 +72,11 @@ export default function Navbar() {
 
   return (
     <>
-      <motion.div initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
+      <motion.div
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6 }}
+      >
         <AppBar
           position="fixed"
           elevation={2}
@@ -112,15 +117,19 @@ export default function Navbar() {
             </motion.div>
 
             {/* Desktop menu */}
-            <Box sx={{ display: { xs: "none", lg: "flex" }, gap: 2, alignItems: "center" }}>
-              {isAuthenticated && user && (
-                <Typography sx={{ color: "#fff", fontWeight: "600", mr: 2 }}>
-                  👋 Hola, {user.username}
-                </Typography>
-              )}
-
+            <Box
+              sx={{
+                display: { xs: "none", lg: "flex" },
+                gap: 2,
+                alignItems: "center",
+              }}
+            >
               {menuItems.map((item, i) => (
-                <motion.div key={i} whileHover={{ y: -2, scale: 1.08 }} whileTap={{ scale: 0.95 }}>
+                <motion.div
+                  key={i}
+                  whileHover={{ y: -2, scale: 1.08 }}
+                  whileTap={{ scale: 0.95 }}
+                >
                   {item.path ? (
                     <Button
                       component={Link}
@@ -165,6 +174,26 @@ export default function Navbar() {
                   )}
                 </motion.div>
               ))}
+
+              {/* 👤 Usuario con ícono elegante */}
+              {isAuthenticated && user && (
+                <Button
+                  startIcon={<AccountCircleIcon sx={{ color: "#fff" }} />}
+                  sx={{
+                    color: "#fff",
+                    textTransform: "none",
+                    fontWeight: 600,
+                    fontSize: "1rem",
+                    ml: 2,
+                    borderRadius: "20px",
+                    px: 2,
+                    background: "rgba(255,255,255,0.08)",
+                    "&:hover": { background: "rgba(255,255,255,0.18)" },
+                  }}
+                >
+                  {user.username}
+                </Button>
+              )}
             </Box>
 
             {/* Botón menú móvil */}
@@ -288,4 +317,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-  }
+                        }
