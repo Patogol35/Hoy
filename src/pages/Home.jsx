@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import ProductoCard from "../components/ProductoCard";
 import {
@@ -25,6 +26,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import Slider from "react-slick";
 import { useCarrito } from "../context/CarritoContext";
 import { toast } from "react-toastify";
+import { BASE_URL } from "../api/api"; // asegúrate de exportar BASE_URL en api.js
 
 export default function Home() {
   const [productos, setProductos] = useState([]);
@@ -39,9 +41,9 @@ export default function Home() {
 
   const { agregarAlCarrito } = useCarrito();
 
-  // 🔹 Traer todos los productos (paginar automáticamente)
+  // 🔹 Cargar todos los productos (paginación)
   const fetchAllProductos = async () => {
-    let url = "/api/productos/";
+    let url = `${BASE_URL}/productos/`;
     let all = [];
     try {
       while (url) {
@@ -52,7 +54,7 @@ export default function Home() {
           url = null;
         } else if (data?.results) {
           all = [...all, ...data.results];
-          url = data.next;
+          url = data.next ? `${BASE_URL}${data.next}` : null;
         } else {
           all = [];
           url = null;
@@ -71,6 +73,7 @@ export default function Home() {
     fetchAllProductos();
   }, []);
 
+  // 🔹 Delay en búsqueda
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(search.toLowerCase());
@@ -78,11 +81,16 @@ export default function Home() {
     return () => clearTimeout(handler);
   }, [search]);
 
+  // 🔹 Filtrado y ordenamiento
   const filtered = productos
     .filter((p) =>
-      debouncedSearch === "" ? true : p.nombre?.toLowerCase().includes(debouncedSearch)
+      debouncedSearch === ""
+        ? true
+        : p.nombre?.toLowerCase().includes(debouncedSearch)
     )
-    .sort((a, b) => (sort === "asc" ? a.precio - b.precio : b.precio - a.precio));
+    .sort((a, b) =>
+      sort === "asc" ? a.precio - b.precio : b.precio - a.precio
+    );
 
   const settings = {
     dots: true,
@@ -221,7 +229,11 @@ export default function Home() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: i * 0.05 }}
-                style={{ display: "flex", width: "100%", justifyContent: "center" }}
+                style={{
+                  display: "flex",
+                  width: "100%",
+                  justifyContent: "center",
+                }}
               >
                 <ProductoCard
                   producto={prod}
@@ -250,30 +262,31 @@ export default function Home() {
             </Box>
 
             {/* Slider de imágenes */}
-            {selected.imagenes?.length > 0 && (
+            {(selected.imagenes || [selected.imagen]).length > 0 && (
               <Box sx={{ mt: 2 }}>
                 <Slider {...settings}>
-                  {selected.imagenes.map((img, idx) => {
-                    const src = typeof img === "string" ? img : img.url;
-                    return (
-                      <Box
-                        key={idx}
-                        sx={{ display: "flex", justifyContent: "center" }}
-                      >
-                        <img
-                          src={src}
-                          alt={selected.nombre}
-                          style={{
-                            maxHeight: "400px",
-                            width: "100%",
-                            objectFit: "contain",
-                            cursor: "pointer",
-                          }}
-                          onClick={() => setLightbox(src)}
-                        />
-                      </Box>
-                    );
-                  })}
+                  {(selected.imagenes || [selected.imagen]).map((img, idx) => (
+                    <Box
+                      key={idx}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <img
+                        src={img?.url || img}
+                        alt={selected.nombre}
+                        style={{
+                          maxHeight: "400px",
+                          width: "100%",
+                          objectFit: "contain",
+                          cursor: "pointer",
+                        }}
+                        onClick={() => setLightbox(img?.url || img)}
+                      />
+                    </Box>
+                  ))}
                 </Slider>
               </Box>
             )}
@@ -297,7 +310,7 @@ export default function Home() {
         )}
       </Dialog>
 
-      {/* Lightbox simple */}
+      {/* Lightbox */}
       {lightbox && (
         <Dialog open={!!lightbox} onClose={() => setLightbox(null)} maxWidth="lg">
           <Box sx={{ position: "relative" }}>
@@ -322,4 +335,4 @@ export default function Home() {
       )}
     </>
   );
-            }
+}
