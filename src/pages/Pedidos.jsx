@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { getPedidos } from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import {
@@ -20,8 +20,8 @@ export default function Pedidos() {
   const { access } = useAuth();
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);       // página actual
-  const [next, setNext] = useState(null);    // url de la siguiente página
+  const [page, setPage] = useState(1); // Página actual
+  const [next, setNext] = useState(null); // URL de la siguiente página
 
   useEffect(() => {
     setLoading(true);
@@ -29,35 +29,24 @@ export default function Pedidos() {
       .then((data) => {
         if (!data?.results) return;
 
-        const ordenados = [...data.results].sort(
-          (a, b) => new Date(b.fecha) - new Date(a.fecha)
-        );
-
-        const pedidosNumerados = ordenados.map((p, index) => ({
+        // Numerar pedidos sin reordenar ni recalcular toda la lista
+        const startIndex = (page - 1) * 40; // PAGE_SIZE del backend (ajústalo si cambias PAGE_SIZE)
+        const pedidosNumerados = data.results.map((p, i) => ({
           ...p,
-          numeroLocal: pedidos.length + ordenados.length - index,
+          numeroLocal: startIndex + i + 1,
         }));
 
         setPedidos((prev) => [...prev, ...pedidosNumerados]);
-        setNext(data.next); // actualizar next
+        setNext(data.next);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [access, page]);
 
-  if (loading && pedidos.length === 0)
-    return <Container sx={{ mt: 4 }}>Cargando pedidos...</Container>;
-
-  if (pedidos.length === 0)
-    return <Container sx={{ mt: 4 }}>Aún no tienes pedidos.</Container>;
-
-  return (
-    <Container sx={{ mt: 4, mb: 6 }}>
-      <Typography variant="h5" gutterBottom>
-        Mis pedidos
-      </Typography>
-
-      {pedidos.map((p) => (
+  // Memorizar el renderizado de pedidos para evitar renders innecesarios
+  const pedidosRender = useMemo(
+    () =>
+      pedidos.map((p) => (
         <Card
           key={p.id}
           sx={{
@@ -130,7 +119,23 @@ export default function Pedidos() {
             </List>
           </CardContent>
         </Card>
-      ))}
+      )),
+    [pedidos]
+  );
+
+  if (loading && pedidos.length === 0)
+    return <Container sx={{ mt: 4 }}>Cargando pedidos...</Container>;
+
+  if (!loading && pedidos.length === 0)
+    return <Container sx={{ mt: 4 }}>Aún no tienes pedidos.</Container>;
+
+  return (
+    <Container sx={{ mt: 4, mb: 6 }}>
+      <Typography variant="h5" gutterBottom>
+        Mis pedidos
+      </Typography>
+
+      {pedidosRender}
 
       {/* Botón “Ver más” */}
       {next && (
@@ -144,6 +149,13 @@ export default function Pedidos() {
           </Button>
         </Box>
       )}
+
+      {/* Feedback de carga incremental */}
+      {loading && pedidos.length > 0 && (
+        <Typography sx={{ textAlign: "center", mt: 2 }}>
+          Cargando más pedidos...
+        </Typography>
+      )}
     </Container>
   );
-}
+                  }
