@@ -16,48 +16,46 @@ import {
   Button,
 } from "@mui/material";
 
-const PAGE_SIZE = 10; // 👈 cantidad de pedidos por página
+const PAGE_SIZE = 10; // 👈 debe coincidir con la paginación del back
 
 export default function Pedidos() {
   const { access } = useAuth();
-  const [allPedidos, setAllPedidos] = useState([]); // todos los pedidos
+  const [pedidos, setPedidos] = useState([]); // pedidos de la página actual
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1); // página actual
+  const [totalCount, setTotalCount] = useState(0); // total de pedidos
 
   useEffect(() => {
     setLoading(true);
-    getPedidos(access) // ⚡️ trae todos los pedidos
+    getPedidos(access, page) // ⚡️ importante: que acepte número de página
       .then((data) => {
         if (!data?.results) return;
 
-        // ordenar por fecha descendente (recientes primero)
+        setTotalCount(data.count);
+
+        // ordenar por fecha descendente (por si acaso)
         const ordenados = [...data.results].sort(
           (a, b) => new Date(b.fecha) - new Date(a.fecha)
         );
 
-        // numerarlos de forma global (más reciente = número mayor)
+        // numeración global (más reciente = mayor número)
         const pedidosNumerados = ordenados.map((p, index) => ({
           ...p,
-          numeroLocal: ordenados.length - index,
+          numeroLocal: data.count - ((page - 1) * PAGE_SIZE + index),
         }));
 
-        setAllPedidos(pedidosNumerados);
+        setPedidos(pedidosNumerados);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [access]);
+  }, [access, page]);
 
-  // calcular pedidos visibles según la página
-  const startIndex = (page - 1) * PAGE_SIZE;
-  const endIndex = startIndex + PAGE_SIZE;
-  const pedidosVisibles = allPedidos.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
-  const totalPages = Math.ceil(allPedidos.length / PAGE_SIZE);
-
-  if (loading && allPedidos.length === 0)
+  if (loading && pedidos.length === 0)
     return <Container sx={{ mt: 4 }}>Cargando pedidos...</Container>;
 
-  if (allPedidos.length === 0)
+  if (totalCount === 0)
     return <Container sx={{ mt: 4 }}>Aún no tienes pedidos.</Container>;
 
   return (
@@ -66,7 +64,7 @@ export default function Pedidos() {
         Mis pedidos
       </Typography>
 
-      {pedidosVisibles.map((p) => (
+      {pedidos.map((p) => (
         <Card
           key={p.id}
           sx={{
@@ -163,4 +161,4 @@ export default function Pedidos() {
       </Stack>
     </Container>
   );
-                        }
+}
