@@ -70,6 +70,7 @@ export default function Navbar() {
 
   return (
     <>
+      {/* Navbar desktop */}
       <motion.div initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
         <AppBar
           position="fixed"
@@ -218,16 +219,30 @@ export default function Navbar() {
               }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Botón X arriba a la derecha */}
-              <IconButton
-                onClick={() => setOpen(false)}
-                sx={{ position: "absolute", top: "1rem", right: "1rem", color: "#fff" }}
-              >
-                <CloseIcon fontSize="large" />
-              </IconButton>
-
               <Stack spacing={2} sx={{ mt: 2 }}>
-                {/* Nombre de usuario como encabezado */}
+                {/* Botón X flotante */}
+                <motion.div
+                  custom={-1}
+                  variants={itemVariants}
+                  initial="hidden"
+                  animate="visible"
+                  style={{ position: "absolute", top: 16, right: 16 }}
+                >
+                  <IconButton
+                    onClick={() => setOpen(false)}
+                    sx={{
+                      color: "#fff",
+                      background: "rgba(0,0,0,0.25)",
+                      "&:hover": {
+                        background: "rgba(0,0,0,0.4)",
+                      },
+                    }}
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                </motion.div>
+
+                {/* Nombre de usuario */}
                 {isAuthenticated && user && (
                   <motion.div custom={0} variants={itemVariants} initial="hidden" animate="visible">
                     <Typography
@@ -244,7 +259,7 @@ export default function Navbar() {
                   </motion.div>
                 )}
 
-                {/* Opciones del menú */}
+                {/* Opciones */}
                 {menuItems.map((item, i) => (
                   <motion.div key={i} custom={i + 1} variants={itemVariants} initial="hidden" animate="visible">
                     <Button
@@ -271,7 +286,7 @@ export default function Navbar() {
                   </motion.div>
                 ))}
 
-                {/* Botón cerrar sesión */}
+                {/* Logout */}
                 {isAuthenticated && (
                   <motion.div custom={menuItems.length + 1} variants={itemVariants} initial="hidden" animate="visible">
                     <Button
@@ -302,4 +317,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-                }
+                        }
