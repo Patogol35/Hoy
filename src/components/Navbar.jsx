@@ -9,7 +9,6 @@ import {
   IconButton,
   Stack,
   useTheme,
-  Avatar,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
@@ -142,14 +141,30 @@ export default function Navbar() {
               ))}
 
               {isAuthenticated && user && (
-                <Stack direction="row" spacing={1} alignItems="center" sx={{ ml: 2 }}>
+                <Stack direction="row" spacing={1.5} alignItems="center" sx={{ ml: 2 }}>
                   <AccountCircleIcon sx={{ color: "#fff" }} />
                   <Typography sx={{ color: "#fff", fontWeight: 600 }}>
                     {user.username}
                   </Typography>
-                  <IconButton onClick={handleLogout} sx={{ color: "#fff" }}>
-                    <LogoutIcon />
-                  </IconButton>
+                  <Button
+                    onClick={handleLogout}
+                    startIcon={<LogoutIcon />}
+                    sx={{
+                      fontWeight: 600,
+                      textTransform: "none",
+                      borderRadius: "12px",
+                      px: 2,
+                      py: 0.8,
+                      fontSize: "0.95rem",
+                      color: "#fff",
+                      background: "linear-gradient(135deg, #c62828, #ef5350)",
+                      "&:hover": {
+                        boxShadow: "0 0 15px rgba(0,0,0,0.45)",
+                      },
+                    }}
+                  >
+                    Cerrar sesión
+                  </Button>
                 </Stack>
               )}
             </Box>
@@ -213,14 +228,30 @@ export default function Navbar() {
               </IconButton>
 
               {isAuthenticated && user && (
-                <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 3 }}>
+                <Stack direction="row" alignItems="center" spacing={1.5} sx={{ mb: 3 }}>
                   <AccountCircleIcon sx={{ color: "#fff" }} />
                   <Typography sx={{ color: "#fff", fontWeight: 600 }}>
                     {user.username}
                   </Typography>
-                  <IconButton onClick={handleLogout} sx={{ color: "#fff" }}>
-                    <LogoutIcon />
-                  </IconButton>
+                  <Button
+                    onClick={handleLogout}
+                    startIcon={<LogoutIcon />}
+                    sx={{
+                      fontWeight: 600,
+                      textTransform: "none",
+                      borderRadius: "12px",
+                      px: 2,
+                      py: 0.8,
+                      fontSize: "0.95rem",
+                      color: "#fff",
+                      background: "linear-gradient(135deg, #c62828, #ef5350)",
+                      "&:hover": {
+                        boxShadow: "0 0 15px rgba(0,0,0,0.45)",
+                      },
+                    }}
+                  >
+                    Cerrar sesión
+                  </Button>
                 </Stack>
               )}
 
@@ -257,4 +288,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-      }
+}
