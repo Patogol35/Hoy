@@ -9,7 +9,6 @@ import {
   IconButton,
   Stack,
   useTheme,
-  Avatar,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
@@ -20,7 +19,6 @@ import LoginIcon from "@mui/icons-material/Login";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -141,16 +139,26 @@ export default function Navbar() {
                 </motion.div>
               ))}
 
+              {/* Nombre de usuario como botón de cerrar sesión */}
               {isAuthenticated && user && (
-                <Stack direction="row" spacing={1} alignItems="center" sx={{ ml: 2 }}>
-                  <AccountCircleIcon sx={{ color: "#fff" }} />
-                  <Typography sx={{ color: "#fff", fontWeight: 600 }}>
-                    {user.username}
-                  </Typography>
-                  <IconButton onClick={handleLogout} sx={{ color: "#fff" }}>
-                    <LogoutIcon />
-                  </IconButton>
-                </Stack>
+                <Button
+                  onClick={handleLogout}
+                  startIcon={<LogoutIcon />}
+                  sx={{
+                    background: "linear-gradient(135deg, #d32f2f, #f44336)",
+                    color: "#fff",
+                    fontWeight: 600,
+                    borderRadius: "12px",
+                    textTransform: "none",
+                    px: 2.5,
+                    py: 1,
+                    "&:hover": {
+                      boxShadow: "0 0 15px rgba(0,0,0,0.35)",
+                    },
+                  }}
+                >
+                  {user.username} {/* Solo el nombre, al hacer clic cierra sesión */}
+                </Button>
               )}
             </Box>
 
@@ -212,18 +220,6 @@ export default function Navbar() {
                 <CloseIcon fontSize="large" />
               </IconButton>
 
-              {isAuthenticated && user && (
-                <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 3 }}>
-                  <AccountCircleIcon sx={{ color: "#fff" }} />
-                  <Typography sx={{ color: "#fff", fontWeight: 600 }}>
-                    {user.username}
-                  </Typography>
-                  <IconButton onClick={handleLogout} sx={{ color: "#fff" }}>
-                    <LogoutIcon />
-                  </IconButton>
-                </Stack>
-              )}
-
               <Stack spacing={2} sx={{ mt: 2 }}>
                 {menuItems.map((item, i) => (
                   <motion.div key={i} custom={i} variants={itemVariants} initial="hidden" animate="visible">
@@ -251,10 +247,33 @@ export default function Navbar() {
                   </motion.div>
                 ))}
               </Stack>
+
+              {/* Nombre de usuario como botón de cerrar sesión */}
+              {isAuthenticated && user && (
+                <Button
+                  onClick={handleLogout}
+                  startIcon={<LogoutIcon />}
+                  sx={{
+                    width: "100%",
+                    background: "linear-gradient(135deg, #d32f2f, #f44336)",
+                    color: "#fff",
+                    fontWeight: 600,
+                    borderRadius: "12px",
+                    textTransform: "none",
+                    py: 1.2,
+                    mt: 4,
+                    "&:hover": {
+                      boxShadow: "0 0 15px rgba(0,0,0,0.35)",
+                    },
+                  }}
+                >
+                  {user.username}
+                </Button>
+              )}
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
     </>
   );
-}
+          }
