@@ -208,7 +208,7 @@ export default function Navbar() {
                 width: "280px",
                 background: theme.palette.primary.main,
                 borderRadius: "16px 0 0 16px",
-                padding: "2rem",
+                padding: "2rem 1rem 1rem 1rem",
                 boxShadow: "0 6px 20px rgba(0,0,0,0.35)",
                 display: "flex",
                 flexDirection: "column",
@@ -219,96 +219,84 @@ export default function Navbar() {
               onClick={(e) => e.stopPropagation()}
             >
               {/* Botón X flotante */}
-              <motion.div
-                custom={-1}
-                variants={itemVariants}
-                initial="hidden"
-                animate="visible"
-                style={{ position: "absolute", top: 16, right: 16, zIndex: 1500 }}
+              <IconButton
+                onClick={() => setOpen(false)}
+                sx={{
+                  position: "absolute",
+                  top: 8,
+                  right: 8,
+                  color: "#fff",
+                  background: "rgba(0,0,0,0.6)",
+                  zIndex: 2000,
+                  "&:hover": {
+                    background: "rgba(0,0,0,0.9)",
+                  },
+                }}
               >
-                <IconButton
-                  onClick={() => setOpen(false)}
-                  sx={{
-                    color: "#fff",
-                    background: "rgba(0,0,0,0.5)",
-                    "&:hover": {
-                      background: "rgba(0,0,0,0.8)",
-                    },
-                  }}
-                >
-                  <CloseIcon fontSize="large" />
-                </IconButton>
-              </motion.div>
+                <CloseIcon fontSize="large" />
+              </IconButton>
 
-              {/* Contenido con espacio extra para que no tape la X */}
-              <Stack spacing={2} sx={{ mt: 8 }}>
-                {/* Nombre de usuario */}
+              {/* Contenido con espacio debajo de la X */}
+              <Stack spacing={2} sx={{ mt: 6 }}>
                 {isAuthenticated && user && (
-                  <motion.div custom={0} variants={itemVariants} initial="hidden" animate="visible">
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        color: "#fff",
-                        fontWeight: 700,
-                        textAlign: "center",
-                        mb: 1,
-                      }}
-                    >
-                      👤 {user.username}
-                    </Typography>
-                  </motion.div>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      color: "#fff",
+                      fontWeight: 700,
+                      textAlign: "center",
+                      mb: 1,
+                    }}
+                  >
+                    👤 {user.username}
+                  </Typography>
                 )}
 
-                {/* Opciones */}
                 {menuItems.map((item, i) => (
-                  <motion.div key={i} custom={i + 1} variants={itemVariants} initial="hidden" animate="visible">
-                    <Button
-                      component={Link}
-                      to={item.path}
-                      onClick={() => setOpen(false)}
-                      startIcon={item.icon}
-                      sx={{
-                        fontSize: "1.1rem",
-                        fontWeight: 600,
-                        color: "#fff",
-                        borderRadius: "12px",
-                        textTransform: "none",
-                        background: item.color,
-                        width: "100%",
-                        py: 1.2,
-                        "&:hover": {
-                          boxShadow: "0 0 15px rgba(0,0,0,0.35)",
-                        },
-                      }}
-                    >
-                      {item.label}
-                    </Button>
-                  </motion.div>
+                  <Button
+                    key={i}
+                    component={Link}
+                    to={item.path}
+                    onClick={() => setOpen(false)}
+                    startIcon={item.icon}
+                    sx={{
+                      fontSize: "1.1rem",
+                      fontWeight: 600,
+                      color: "#fff",
+                      borderRadius: "12px",
+                      textTransform: "none",
+                      background: item.color,
+                      width: "100%",
+                      py: 1.2,
+                      "&:hover": {
+                        boxShadow: "0 0 15px rgba(0,0,0,0.35)",
+                      },
+                    }}
+                  >
+                    {item.label}
+                  </Button>
                 ))}
 
-                {/* Logout */}
                 {isAuthenticated && (
-                  <motion.div custom={menuItems.length + 1} variants={itemVariants} initial="hidden" animate="visible">
-                    <Button
-                      onClick={handleLogout}
-                      startIcon={<LogoutIcon />}
-                      sx={{
-                        fontSize: "1.1rem",
-                        fontWeight: 600,
-                        color: "#fff",
-                        borderRadius: "12px",
-                        textTransform: "none",
-                        background: "linear-gradient(135deg, #d32f2f, #f44336)",
-                        width: "100%",
-                        py: 1.2,
-                        "&:hover": {
-                          boxShadow: "0 0 15px rgba(0,0,0,0.35)",
-                        },
-                      }}
-                    >
-                      Cerrar sesión
-                    </Button>
-                  </motion.div>
+                  <Button
+                    onClick={handleLogout}
+                    startIcon={<LogoutIcon />}
+                    sx={{
+                      fontSize: "1.1rem",
+                      fontWeight: 600,
+                      color: "#fff",
+                      borderRadius: "12px",
+                      textTransform: "none",
+                      background: "linear-gradient(135deg, #d32f2f, #f44336)",
+                      width: "100%",
+                      py: 1.2,
+                      "&:hover": {
+                        boxShadow: "0 0 15px rgba(0,0,0,0.35)",
+                      },
+                    }}
+                  >
+                    Cerrar sesión
+                  </Button>
                 )}
               </Stack>
             </motion.div>
@@ -317,4 +305,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-                    }
+      }
