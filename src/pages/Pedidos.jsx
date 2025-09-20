@@ -23,9 +23,9 @@ export default function Pedidos() {
   const [page, setPage] = useState(1); // página actual
   const [next, setNext] = useState(null); // link a la siguiente página
 
-  useEffect(() => {
+  const fetchPedidos = (pageNum) => {
     setLoading(true);
-    getPedidos(access, page)
+    getPedidos(access, pageNum)
       .then((data) => {
         if (!data?.results) return;
 
@@ -45,6 +45,11 @@ export default function Pedidos() {
       })
       .catch(console.error)
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchPedidos(page);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [access, page]);
 
   if (loading && pedidos.length === 0)
@@ -140,6 +145,13 @@ export default function Pedidos() {
           <Button variant="outlined" onClick={() => setPage((p) => p + 1)}>
             Ver más
           </Button>
+        </Box>
+      )}
+
+      {/* Indicador de carga al traer más */}
+      {loading && pedidos.length > 0 && (
+        <Box textAlign="center" mt={2}>
+          Cargando más pedidos...
         </Box>
       )}
     </Container>
