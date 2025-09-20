@@ -16,57 +16,47 @@ import {
   Button,
 } from "@mui/material";
 
-const PAGE_SIZE = 10; // 👈 cantidad de pedidos por página
+const PAGE_SIZE = 10; // 👈 ya no se usa para cortar localmente, solo para pedir al back
 
 export default function Pedidos() {
   const { access } = useAuth();
-  const [allPedidos, setAllPedidos] = useState([]); // todos los pedidos
+  const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1); // página actual
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     setLoading(true);
-    getPedidos(access) // ⚡️ trae todos los pedidos
+
+    // ⚡️ ahora sí pasamos el número de página al backend
+    getPedidos(access, page)
       .then((data) => {
         if (!data?.results) return;
 
-        // ordenar por fecha descendente
-        const ordenados = [...data.results].sort(
-          (a, b) => new Date(b.fecha) - new Date(a.fecha)
-        );
-
-        // numerarlos
-        const pedidosNumerados = ordenados.map((p, index) => ({
+        // numerarlos localmente dentro de la página
+        const pedidosNumerados = data.results.map((p, index) => ({
           ...p,
-          numeroLocal: ordenados.length - index,
+          numeroLocal: data.count - ((page - 1) * PAGE_SIZE + index),
         }));
 
-        setAllPedidos(pedidosNumerados);
+        setPedidos(pedidosNumerados);
+        setTotalPages(Math.ceil(data.count / PAGE_SIZE));
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [access]);
+  }, [access, page]);
 
-  // calcular pedidos visibles según la página
-  const startIndex = (page - 1) * PAGE_SIZE;
-  const endIndex = startIndex + PAGE_SIZE;
-  const pedidosVisibles = allPedidos.slice(startIndex, endIndex);
-
-  const totalPages = Math.ceil(allPedidos.length / PAGE_SIZE);
-
-  if (loading && allPedidos.length === 0)
+  if (loading && pedidos.length === 0)
     return <Container sx={{ mt: 4 }}>Cargando pedidos...</Container>;
 
-  if (allPedidos.length === 0)
+  if (pedidos.length === 0)
     return <Container sx={{ mt: 4 }}>Aún no tienes pedidos.</Container>;
 
   return (
     <Container sx={{ mt: 4, mb: 6 }}>
-      <Typography variant="h5" gutterBottom>
-        Mis pedidos
-      </Typography>
+      <Typography variant="h5" sx={{ mb: 2 }}>Mis pedidos</Typography>
 
-      {pedidosVisibles.map((p) => (
+      {pedidos.map((p) => (
         <Card
           key={p.id}
           sx={{
