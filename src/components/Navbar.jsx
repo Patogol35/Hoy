@@ -1,183 +1,136 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import React, { useState, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
 import {
   AppBar,
   Toolbar,
-  Button,
   Typography,
-  Box,
   IconButton,
+  Button,
   Stack,
   useTheme,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import CloseIcon from "@mui/icons-material/Close";
-import HomeIcon from "@mui/icons-material/Home";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import ListAltIcon from "@mui/icons-material/ListAlt";
-import LoginIcon from "@mui/icons-material/Login";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import LogoutIcon from "@mui/icons-material/Logout";
-import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
-import { useEffect, useState, useRef } from "react";
+import CloseIcon from "@mui/icons-material/Close";
 import { motion, AnimatePresence } from "framer-motion";
-
-// Animaciones
-const menuVariants = {
-  hidden: { x: "100%", opacity: 0 },
-  visible: { x: 0, opacity: 1, transition: { duration: 0.25, ease: "easeOut" } },
-  exit: { x: "100%", opacity: 0, transition: { duration: 0.2, ease: "easeIn" } },
-};
-const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: (i) => ({
-    y: 0,
-    opacity: 1,
-    transition: { delay: i * 0.05, duration: 0.25, ease: "easeOut" },
-  }),
-};
+import { useAuth } from "../context/AuthContext";
+import { useCarrito } from "../context/CarritoContext";
 
 export default function Navbar() {
-  const { isAuthenticated, logout, user } = useAuth();
-  const navigate = useNavigate();
   const theme = useTheme();
+  const { isAuthenticated, user, logout } = useAuth();
+  const { carrito } = useCarrito();
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const menuRef = useRef(null);
 
   const handleLogout = () => {
     logout();
-    navigate("/login");
     setOpen(false);
   };
 
-  const menuItems = isAuthenticated
-    ? [
-        { label: "Inicio", path: "/", icon: <HomeIcon />, color: "linear-gradient(135deg, #0288d1, #26c6da)" },
-        { label: "Carrito", path: "/carrito", icon: <ShoppingCartIcon />, color: "linear-gradient(135deg, #2e7d32, #66bb6a)" },
-        { label: "Mis pedidos", path: "/pedidos", icon: <ListAltIcon />, color: "linear-gradient(135deg, #f57c00, #ffb74d)" },
-      ]
-    : [
-        { label: "Iniciar sesión", path: "/login", icon: <LoginIcon />, color: "linear-gradient(135deg, #0288d1, #26c6da)" },
-        { label: "Registrarse", path: "/register", icon: <PersonAddIcon />, color: "linear-gradient(135deg, #6a1b9a, #ab47bc)" },
-      ];
+  const menuItems = [
+    { label: "Inicio", path: "/", icon: <MenuIcon />, color: "#4f46e5" },
+    {
+      label: `Carrito (${carrito.length})`,
+      path: "/carrito",
+      icon: <ShoppingCartIcon />,
+      color: "#16a34a",
+    },
+    { label: "Mis pedidos", path: "/pedidos", icon: <MenuIcon />, color: "#f59e0b" },
+  ];
 
+  const menuVariants = {
+    hidden: { x: "100%" },
+    visible: { x: 0, transition: { type: "spring", stiffness: 300, damping: 30 } },
+    exit: { x: "100%", transition: { duration: 0.25 } },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: { delay: i * 0.1, duration: 0.4 },
+    }),
+  };
+
+  // cerrar al hacer click fuera
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    function handleClickOutside(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setOpen(false);
+      }
+    }
+    if (open) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [open]);
 
   return (
     <>
-      {/* Navbar desktop */}
-      <motion.div initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
-        <AppBar
-          position="fixed"
-          elevation={2}
-          sx={{
-            backgroundColor: theme.palette.primary.main,
-            boxShadow: scrolled ? "0 4px 20px rgba(0,0,0,0.3)" : "none",
-            zIndex: 1400,
-          }}
-        >
-          <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-            {/* Logo */}
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Typography
-                variant="h6"
+      {/* AppBar */}
+      <AppBar position="static" sx={{ background: theme.palette.primary.main }}>
+        <Toolbar sx={{ justifyContent: "space-between" }}>
+          <Typography
+            variant="h6"
+            component={Link}
+            to="/"
+            sx={{
+              textDecoration: "none",
+              color: "#fff",
+              fontWeight: "bold",
+            }}
+          >
+            🛍️ MiTienda
+          </Typography>
+
+          {/* Desktop */}
+          <Stack direction="row" spacing={2} sx={{ display: { xs: "none", md: "flex" } }}>
+            {menuItems.map((item, i) => (
+              <Button
+                key={i}
                 component={Link}
-                to="/"
+                to={item.path}
+                startIcon={item.icon}
                 sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1,
-                  fontWeight: "bold",
                   color: "#fff",
-                  cursor: "pointer",
-                  lineHeight: 1.2,
-                  textDecoration: "none",
+                  fontWeight: 600,
+                  textTransform: "none",
+                  background: item.color,
+                  borderRadius: "10px",
+                  "&:hover": { opacity: 0.9 },
                 }}
               >
-                <ShoppingBagIcon
-                  sx={{
-                    fontSize: 28,
-                    background: "linear-gradient(135deg, #FF5722, #FFC107)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                  }}
-                />
-                Tienda Patricio
-              </Typography>
-            </motion.div>
+                {item.label}
+              </Button>
+            ))}
+            {isAuthenticated && (
+              <Button
+                onClick={handleLogout}
+                startIcon={<LogoutIcon />}
+                sx={{
+                  color: "#fff",
+                  fontWeight: 600,
+                  textTransform: "none",
+                  background: "linear-gradient(135deg,#d32f2f,#f44336)",
+                  borderRadius: "10px",
+                  "&:hover": { opacity: 0.9 },
+                }}
+              >
+                Cerrar sesión
+              </Button>
+            )}
+          </Stack>
 
-            {/* Desktop menu */}
-            <Box sx={{ display: { xs: "none", lg: "flex" }, gap: 2, alignItems: "center" }}>
-              {menuItems.map((item, i) => (
-                <motion.div key={i} whileHover={{ y: -2, scale: 1.08 }} whileTap={{ scale: 0.95 }}>
-                  <Button
-                    component={Link}
-                    to={item.path}
-                    startIcon={item.icon}
-                    sx={{
-                      color: "#fff",
-                      fontWeight: 600,
-                      textTransform: "none",
-                      fontSize: "1rem",
-                      borderRadius: "12px",
-                      px: 2.5,
-                      py: 1,
-                      transition: "all 0.3s ease",
-                      background: "rgba(255,255,255,0.08)",
-                      "&:hover": {
-                        background: item.color,
-                        boxShadow: "0 0 20px rgba(0,0,0,0.35)",
-                      },
-                    }}
-                  >
-                    {item.label}
-                  </Button>
-                </motion.div>
-              ))}
-
-              {/* Nombre de usuario + botón logout */}
-              {isAuthenticated && user && (
-                <>
-                  <Typography sx={{ color: "#fff", fontWeight: 600, mx: 2 }}>
-                    👤 {user.username}
-                  </Typography>
-                  <Button
-                    onClick={handleLogout}
-                    startIcon={<LogoutIcon />}
-                    sx={{
-                      background: "linear-gradient(135deg, #d32f2f, #f44336)",
-                      color: "#fff",
-                      fontWeight: 600,
-                      borderRadius: "12px",
-                      textTransform: "none",
-                      px: 2.5,
-                      py: 1,
-                      "&:hover": {
-                        boxShadow: "0 0 15px rgba(0,0,0,0.35)",
-                      },
-                    }}
-                  >
-                    Cerrar sesión
-                  </Button>
-                </>
-              )}
-            </Box>
-
-            {/* Botón menú móvil */}
-            <IconButton
-              sx={{ display: { xs: "block", lg: "none" }, color: "#fff" }}
-              onClick={() => setOpen(true)}
-            >
-              <MenuIcon fontSize="large" />
-            </IconButton>
-          </Toolbar>
-        </AppBar>
-      </motion.div>
+          {/* Botón menú móvil */}
+          <IconButton
+            onClick={() => setOpen(true)}
+            sx={{ display: { xs: "flex", md: "none" }, color: "#fff" }}
+          >
+            <MenuIcon />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
 
       {/* Drawer móvil */}
       <AnimatePresence>
@@ -231,14 +184,12 @@ export default function Navbar() {
                   <IconButton
                     onClick={() => setOpen(false)}
                     sx={{
-                      color: "#fff",
-                      background: "rgba(0,0,0,0.25)",
-                      "&:hover": {
-                        background: "rgba(0,0,0,0.4)",
-                      },
+                      color: "#000",
+                      background: "rgba(255,255,255,0.8)",
+                      "&:hover": { background: "rgba(255,255,255,1)" },
                     }}
                   >
-                    <CloseIcon />
+                    <CloseIcon fontSize="medium" />
                   </IconButton>
                 </motion.div>
 
@@ -276,9 +227,7 @@ export default function Navbar() {
                         background: item.color,
                         width: "100%",
                         py: 1.2,
-                        "&:hover": {
-                          boxShadow: "0 0 15px rgba(0,0,0,0.35)",
-                        },
+                        "&:hover": { boxShadow: "0 0 15px rgba(0,0,0,0.35)" },
                       }}
                     >
                       {item.label}
@@ -298,12 +247,10 @@ export default function Navbar() {
                         color: "#fff",
                         borderRadius: "12px",
                         textTransform: "none",
-                        background: "linear-gradient(135deg, #d32f2f, #f44336)",
+                        background: "linear-gradient(135deg,#d32f2f,#f44336)",
                         width: "100%",
                         py: 1.2,
-                        "&:hover": {
-                          boxShadow: "0 0 15px rgba(0,0,0,0.35)",
-                        },
+                        "&:hover": { boxShadow: "0 0 15px rgba(0,0,0,0.35)" },
                       }}
                     >
                       Cerrar sesión
@@ -317,4 +264,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-                        }
+}
