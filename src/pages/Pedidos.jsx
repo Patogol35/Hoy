@@ -1,4 +1,3 @@
-// src/pages/Pedidos.jsx
 import { useEffect, useState } from "react";
 import { getPedidos } from "../api/api";
 import { useAuth } from "../context/AuthContext";
@@ -17,26 +16,48 @@ import {
   Button,
 } from "@mui/material";
 
+const PAGE_SIZE = 10; // 👈 cantidad de pedidos por página
+
 export default function Pedidos() {
   const { access } = useAuth();
-  const [pedidos, setPedidos] = useState([]);
+  const [allPedidos, setAllPedidos] = useState([]); // todos los pedidos
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [page, setPage] = useState(1); // página actual
 
   useEffect(() => {
     setLoading(true);
-    getPedidos(access, page)
+    getPedidos(access) // ⚡️ trae todos los pedidos
       .then((data) => {
-        setPedidos(data.results ?? []);
-        setTotalPages(Math.ceil(data.count / 40)); // 40 = page_size en backend
+        if (!data?.results) return;
+
+        // ordenar por fecha descendente
+        const ordenados = [...data.results].sort(
+          (a, b) => new Date(b.fecha) - new Date(a.fecha)
+        );
+
+        // numerarlos
+        const pedidosNumerados = ordenados.map((p, index) => ({
+          ...p,
+          numeroLocal: ordenados.length - index,
+        }));
+
+        setAllPedidos(pedidosNumerados);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [access, page]);
+  }, [access]);
 
-  if (loading) return <Container sx={{ mt: 4 }}>Cargando pedidos...</Container>;
-  if (pedidos.length === 0)
+  // calcular pedidos visibles según la página
+  const startIndex = (page - 1) * PAGE_SIZE;
+  const endIndex = startIndex + PAGE_SIZE;
+  const pedidosVisibles = allPedidos.slice(startIndex, endIndex);
+
+  const totalPages = Math.ceil(allPedidos.length / PAGE_SIZE);
+
+  if (loading && allPedidos.length === 0)
+    return <Container sx={{ mt: 4 }}>Cargando pedidos...</Container>;
+
+  if (allPedidos.length === 0)
     return <Container sx={{ mt: 4 }}>Aún no tienes pedidos.</Container>;
 
   return (
@@ -45,7 +66,7 @@ export default function Pedidos() {
         Mis pedidos
       </Typography>
 
-      {pedidos.map((p, index) => (
+      {pedidosVisibles.map((p) => (
         <Card
           key={p.id}
           sx={{
@@ -65,7 +86,7 @@ export default function Pedidos() {
               sx={{ mb: 1 }}
             >
               <Typography variant="h6" fontWeight="bold">
-                Pedido #{(page - 1) * 40 + (index + 1)}
+                Pedido #{p.numeroLocal}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {new Date(p.fecha).toLocaleString()}
