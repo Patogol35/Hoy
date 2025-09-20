@@ -30,12 +30,12 @@ export default function Pedidos() {
       .then((data) => {
         if (!data?.results) return;
 
-        // ordenar por fecha descendente
+        // ordenar por fecha descendente (recientes primero)
         const ordenados = [...data.results].sort(
           (a, b) => new Date(b.fecha) - new Date(a.fecha)
         );
 
-        // numerarlos
+        // numerarlos de forma global (más reciente = número mayor)
         const pedidosNumerados = ordenados.map((p, index) => ({
           ...p,
           numeroLocal: ordenados.length - index,
@@ -163,4 +163,4 @@ export default function Pedidos() {
       </Stack>
     </Container>
   );
-}
+                        }
