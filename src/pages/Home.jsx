@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { getProductos } from "../api/api";
 import ProductoCard from "../components/ProductoCard";
 import {
   Typography,
@@ -34,25 +33,31 @@ export default function Home() {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  // Modal detalle producto
   const [selected, setSelected] = useState(null);
   const [open, setOpen] = useState(false);
-
-  // Lightbox
   const [lightbox, setLightbox] = useState(null);
 
   const { agregarAlCarrito } = useCarrito();
 
-  // 🔹 Traer todos los productos con la función de tu api.js
-  const fetchProductos = async () => {
+  // 🔹 Traer todos los productos (paginar automáticamente)
+  const fetchAllProductos = async () => {
+    let url = "/api/productos/";
+    let all = [];
     try {
-      const data = await getProductos();
-      // data puede ser array directo o objeto con results
-      const all = Array.isArray(data)
-        ? data
-        : Array.isArray(data?.results)
-        ? data.results
-        : [];
+      while (url) {
+        const res = await fetch(url);
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          all = [...all, ...data];
+          url = null;
+        } else if (data?.results) {
+          all = [...all, ...data.results];
+          url = data.next;
+        } else {
+          all = [];
+          url = null;
+        }
+      }
       setProductos(all);
     } catch (err) {
       console.error("Error cargando productos:", err);
@@ -63,10 +68,9 @@ export default function Home() {
   };
 
   useEffect(() => {
-    fetchProductos();
+    fetchAllProductos();
   }, []);
 
-  // 🔹 Delay en buscador
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(search.toLowerCase());
@@ -74,7 +78,6 @@ export default function Home() {
     return () => clearTimeout(handler);
   }, [search]);
 
-  // 🔹 Filtrado + orden
   const filtered = productos
     .filter((p) =>
       debouncedSearch === "" ? true : p.nombre?.toLowerCase().includes(debouncedSearch)
@@ -159,7 +162,7 @@ export default function Home() {
           }}
         />
 
-        {/* Buscador y orden */}
+        {/* Buscador y ordenamiento */}
         <Stack
           direction={{ xs: "column", sm: "row" }}
           spacing={2}
@@ -250,21 +253,27 @@ export default function Home() {
             {selected.imagenes?.length > 0 && (
               <Box sx={{ mt: 2 }}>
                 <Slider {...settings}>
-                  {selected.imagenes.map((img, idx) => (
-                    <Box key={idx} sx={{ display: "flex", justifyContent: "center" }}>
-                      <img
-                        src={img.url || img} // img puede ser URL directa
-                        alt={selected.nombre}
-                        style={{
-                          maxHeight: "400px",
-                          width: "100%",
-                          objectFit: "contain",
-                          cursor: "pointer",
-                        }}
-                        onClick={() => setLightbox(img.url || img)}
-                      />
-                    </Box>
-                  ))}
+                  {selected.imagenes.map((img, idx) => {
+                    const src = typeof img === "string" ? img : img.url;
+                    return (
+                      <Box
+                        key={idx}
+                        sx={{ display: "flex", justifyContent: "center" }}
+                      >
+                        <img
+                          src={src}
+                          alt={selected.nombre}
+                          style={{
+                            maxHeight: "400px",
+                            width: "100%",
+                            objectFit: "contain",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => setLightbox(src)}
+                        />
+                      </Box>
+                    );
+                  })}
                 </Slider>
               </Box>
             )}
@@ -313,4 +322,4 @@ export default function Home() {
       )}
     </>
   );
-}
+            }
