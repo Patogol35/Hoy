@@ -91,8 +91,9 @@ export const register = async (data) => {
 };
 
 // PRODUCTOS
+
 export const getProductos = async () => {
-  return authFetch(`${BASE_URL}/productos/`, { method: "GET" });
+  return authFetch(`${BASE_URL}/productos/?limit=1000`, { method: "GET" });
 };
 
 // CARRITO
@@ -136,3 +137,4 @@ export const getPedidos = async (token, page = 1) => {
   // 🔹 ahora acepta page y devuelve el objeto de paginación
   return authFetch(`${BASE_URL}/pedidos/?page=${page}`, { method: "GET" }, token);
 };
+
