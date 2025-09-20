@@ -16,42 +16,48 @@ import {
   Button,
 } from "@mui/material";
 
+const PAGE_SIZE = 10; // 👈 cantidad de pedidos por página
+
 export default function Pedidos() {
   const { access } = useAuth();
-  const [pedidos, setPedidos] = useState([]);
+  const [allPedidos, setAllPedidos] = useState([]); // todos los pedidos
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1); // página actual
-  const [next, setNext] = useState(null);
-  const [previous, setPrevious] = useState(null);
 
   useEffect(() => {
     setLoading(true);
-    getPedidos(access, page) // ⚡️ pedimos la página actual al back
+    getPedidos(access) // ⚡️ trae todos los pedidos del usuario
       .then((data) => {
-        if (!data?.results) return;
+        if (!data) return;
 
-        const ordenados = [...data.results].sort(
+        // ordenar por fecha descendente
+        const ordenados = [...data].sort(
           (a, b) => new Date(b.fecha) - new Date(a.fecha)
         );
 
+        // numerarlos
         const pedidosNumerados = ordenados.map((p, index) => ({
           ...p,
-          numeroLocal: ordenados.length - index + (page - 1) * ordenados.length,
+          numeroLocal: ordenados.length - index,
         }));
 
-        // 🔑 solo reemplazamos, no acumulamos
-        setPedidos(pedidosNumerados);
-        setNext(data.next);
-        setPrevious(data.previous);
+        setAllPedidos(pedidosNumerados);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [access, page]);
+  }, [access]);
 
-  if (loading && pedidos.length === 0)
+  // calcular pedidos visibles según la página
+  const startIndex = (page - 1) * PAGE_SIZE;
+  const endIndex = startIndex + PAGE_SIZE;
+  const pedidosVisibles = allPedidos.slice(startIndex, endIndex);
+
+  const totalPages = Math.ceil(allPedidos.length / PAGE_SIZE);
+
+  if (loading && allPedidos.length === 0)
     return <Container sx={{ mt: 4 }}>Cargando pedidos...</Container>;
 
-  if (pedidos.length === 0)
+  if (allPedidos.length === 0)
     return <Container sx={{ mt: 4 }}>Aún no tienes pedidos.</Container>;
 
   return (
@@ -60,7 +66,7 @@ export default function Pedidos() {
         Mis pedidos
       </Typography>
 
-      {pedidos.map((p) => (
+      {pedidosVisibles.map((p) => (
         <Card
           key={p.id}
           sx={{
@@ -135,18 +141,21 @@ export default function Pedidos() {
         </Card>
       ))}
 
-      {/* Botones de paginación */}
+      {/* Controles de paginación */}
       <Stack direction="row" justifyContent="center" spacing={2} mt={3}>
         <Button
           variant="outlined"
-          disabled={!previous || loading}
-          onClick={() => setPage((p) => Math.max(1, p - 1))}
+          disabled={page === 1}
+          onClick={() => setPage((p) => p - 1)}
         >
           Anterior
         </Button>
+        <Typography variant="body2" sx={{ mt: 1 }}>
+          Página {page} de {totalPages}
+        </Typography>
         <Button
           variant="outlined"
-          disabled={!next || loading}
+          disabled={page === totalPages}
           onClick={() => setPage((p) => p + 1)}
         >
           Siguiente
