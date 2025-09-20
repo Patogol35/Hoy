@@ -20,12 +20,13 @@ export default function Pedidos() {
   const { access } = useAuth();
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);       // página actual
-  const [next, setNext] = useState(null);    // url de la siguiente página
+  const [page, setPage] = useState(1); // página actual
+  const [next, setNext] = useState(null);
+  const [previous, setPrevious] = useState(null);
 
   useEffect(() => {
     setLoading(true);
-    getPedidos(access, page)
+    getPedidos(access, page) // ⚡️ pedimos la página actual al back
       .then((data) => {
         if (!data?.results) return;
 
@@ -35,11 +36,13 @@ export default function Pedidos() {
 
         const pedidosNumerados = ordenados.map((p, index) => ({
           ...p,
-          numeroLocal: pedidos.length + ordenados.length - index,
+          numeroLocal: ordenados.length - index + (page - 1) * ordenados.length,
         }));
 
-        setPedidos((prev) => [...prev, ...pedidosNumerados]);
-        setNext(data.next); // actualizar next
+        // 🔑 solo reemplazamos, no acumulamos
+        setPedidos(pedidosNumerados);
+        setNext(data.next);
+        setPrevious(data.previous);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -132,18 +135,23 @@ export default function Pedidos() {
         </Card>
       ))}
 
-      {/* Botón “Ver más” */}
-      {next && (
-        <Box textAlign="center" mt={2}>
-          <Button
-            variant="outlined"
-            onClick={() => setPage((p) => p + 1)}
-            disabled={loading}
-          >
-            {loading ? "Cargando..." : "Ver más"}
-          </Button>
-        </Box>
-      )}
+      {/* Botones de paginación */}
+      <Stack direction="row" justifyContent="center" spacing={2} mt={3}>
+        <Button
+          variant="outlined"
+          disabled={!previous || loading}
+          onClick={() => setPage((p) => Math.max(1, p - 1))}
+        >
+          Anterior
+        </Button>
+        <Button
+          variant="outlined"
+          disabled={!next || loading}
+          onClick={() => setPage((p) => p + 1)}
+        >
+          Siguiente
+        </Button>
+      </Stack>
     </Container>
   );
 }
