@@ -20,30 +20,29 @@ export default function Pedidos() {
   const { access } = useAuth();
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);       // página actual
-  const [next, setNext] = useState(null);    // url de la siguiente página
+  const [next, setNext] = useState("/api/pedidos/"); // primera página
 
-  useEffect(() => {
+  const cargarPedidos = (url) => {
+    if (!url) return;
     setLoading(true);
-    getPedidos(access, page)
+
+    getPedidos(access, url)
       .then((data) => {
         if (!data?.results) return;
 
-        const ordenados = [...data.results].sort(
-          (a, b) => new Date(b.fecha) - new Date(a.fecha)
-        );
-
-        const pedidosNumerados = ordenados.map((p, index) => ({
-          ...p,
-          numeroLocal: pedidos.length + ordenados.length - index,
-        }));
-
-        setPedidos((prev) => [...prev, ...pedidosNumerados]);
-        setNext(data.next); // actualizar next
+        // Ya vienen ordenados desde el backend (order_by('-fecha'))
+        setPedidos((prev) => [...prev, ...data.results]);
+        setNext(data.next); // actualizar link de la siguiente página
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [access, page]);
+  };
+
+  useEffect(() => {
+    if (access && next === "/api/pedidos/") {
+      cargarPedidos(next);
+    }
+  }, [access, next]);
 
   if (loading && pedidos.length === 0)
     return <Container sx={{ mt: 4 }}>Cargando pedidos...</Container>;
@@ -77,7 +76,7 @@ export default function Pedidos() {
               sx={{ mb: 1 }}
             >
               <Typography variant="h6" fontWeight="bold">
-                Pedido #{p.numeroLocal}
+                Pedido #{p.id}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {new Date(p.fecha).toLocaleString()}
@@ -137,7 +136,7 @@ export default function Pedidos() {
         <Box textAlign="center" mt={2}>
           <Button
             variant="outlined"
-            onClick={() => setPage((p) => p + 1)}
+            onClick={() => cargarPedidos(next)}
             disabled={loading}
           >
             {loading ? "Cargando..." : "Ver más"}
@@ -146,4 +145,4 @@ export default function Pedidos() {
       )}
     </Container>
   );
-      }
+}
