@@ -139,34 +139,31 @@ export default function Navbar() {
                 </motion.div>
               ))}
 
-              {/* Nombre de usuario + cerrar sesión en dos líneas */}
+              {/* Nombre de usuario + botón logout */}
               {isAuthenticated && user && (
-                <Button
-                  onClick={handleLogout}
-                  startIcon={<LogoutIcon />}
-                  sx={{
-                    background: "linear-gradient(135deg, #d32f2f, #f44336)",
-                    color: "#fff",
-                    fontWeight: 600,
-                    borderRadius: "12px",
-                    textTransform: "none",
-                    px: 2.5,
-                    py: 1,
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "flex-start",
-                    "&:hover": {
-                      boxShadow: "0 0 15px rgba(0,0,0,0.35)",
-                    },
-                  }}
-                >
-                  <Typography variant="body1" sx={{ fontWeight: 700, lineHeight: 1 }}>
-                    {user.username}
+                <>
+                  <Typography sx={{ color: "#fff", fontWeight: 600, mx: 2 }}>
+                    👤 {user.username}
                   </Typography>
-                  <Typography variant="caption" sx={{ fontWeight: 400, opacity: 0.9, lineHeight: 1 }}>
+                  <Button
+                    onClick={handleLogout}
+                    startIcon={<LogoutIcon />}
+                    sx={{
+                      background: "linear-gradient(135deg, #d32f2f, #f44336)",
+                      color: "#fff",
+                      fontWeight: 600,
+                      borderRadius: "12px",
+                      textTransform: "none",
+                      px: 2.5,
+                      py: 1,
+                      "&:hover": {
+                        boxShadow: "0 0 15px rgba(0,0,0,0.35)",
+                      },
+                    }}
+                  >
                     Cerrar sesión
-                  </Typography>
-                </Button>
+                  </Button>
+                </>
               )}
             </Box>
 
@@ -221,16 +218,50 @@ export default function Navbar() {
               }}
               onClick={(e) => e.stopPropagation()}
             >
-              <IconButton
-                onClick={() => setOpen(false)}
-                sx={{ position: "absolute", top: "1rem", right: "1rem", color: "#fff" }}
-              >
-                <CloseIcon fontSize="large" />
-              </IconButton>
-
               <Stack spacing={2} sx={{ mt: 2 }}>
+                {/* Botón X para cerrar el menú */}
+                <motion.div custom={-1} variants={itemVariants} initial="hidden" animate="visible">
+                  <Button
+                    onClick={() => setOpen(false)}
+                    startIcon={<CloseIcon />}
+                    sx={{
+                      fontSize: "1.1rem",
+                      fontWeight: 600,
+                      color: "#fff",
+                      borderRadius: "12px",
+                      textTransform: "none",
+                      background: "linear-gradient(135deg, #757575, #9e9e9e)",
+                      width: "100%",
+                      py: 1.2,
+                      "&:hover": {
+                        boxShadow: "0 0 15px rgba(0,0,0,0.35)",
+                      },
+                    }}
+                  >
+                    Cerrar menú
+                  </Button>
+                </motion.div>
+
+                {/* Nombre de usuario como encabezado */}
+                {isAuthenticated && user && (
+                  <motion.div custom={0} variants={itemVariants} initial="hidden" animate="visible">
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        color: "#fff",
+                        fontWeight: 700,
+                        textAlign: "center",
+                        mb: 1,
+                      }}
+                    >
+                      👤 {user.username}
+                    </Typography>
+                  </motion.div>
+                )}
+
+                {/* Opciones del menú */}
                 {menuItems.map((item, i) => (
-                  <motion.div key={i} custom={i} variants={itemVariants} initial="hidden" animate="visible">
+                  <motion.div key={i} custom={i + 1} variants={itemVariants} initial="hidden" animate="visible">
                     <Button
                       component={Link}
                       to={item.path}
@@ -254,42 +285,36 @@ export default function Navbar() {
                     </Button>
                   </motion.div>
                 ))}
-              </Stack>
 
-              {/* Nombre de usuario + cerrar sesión en dos líneas */}
-              {isAuthenticated && user && (
-                <Button
-                  onClick={handleLogout}
-                  startIcon={<LogoutIcon />}
-                  sx={{
-                    width: "100%",
-                    background: "linear-gradient(135deg, #d32f2f, #f44336)",
-                    color: "#fff",
-                    fontWeight: 600,
-                    borderRadius: "12px",
-                    textTransform: "none",
-                    py: 1.2,
-                    mt: 4,
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "flex-start",
-                    "&:hover": {
-                      boxShadow: "0 0 15px rgba(0,0,0,0.35)",
-                    },
-                  }}
-                >
-                  <Typography variant="body1" sx={{ fontWeight: 700, lineHeight: 1 }}>
-                    {user.username}
-                  </Typography>
-                  <Typography variant="caption" sx={{ fontWeight: 400, opacity: 0.9, lineHeight: 1 }}>
-                    Cerrar sesión
-                  </Typography>
-                </Button>
-              )}
+                {/* Botón cerrar sesión */}
+                {isAuthenticated && (
+                  <motion.div custom={menuItems.length + 1} variants={itemVariants} initial="hidden" animate="visible">
+                    <Button
+                      onClick={handleLogout}
+                      startIcon={<LogoutIcon />}
+                      sx={{
+                        fontSize: "1.1rem",
+                        fontWeight: 600,
+                        color: "#fff",
+                        borderRadius: "12px",
+                        textTransform: "none",
+                        background: "linear-gradient(135deg, #d32f2f, #f44336)",
+                        width: "100%",
+                        py: 1.2,
+                        "&:hover": {
+                          boxShadow: "0 0 15px rgba(0,0,0,0.35)",
+                        },
+                      }}
+                    >
+                      Cerrar sesión
+                    </Button>
+                  </motion.div>
+                )}
+              </Stack>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
     </>
   );
-                        }
+                    }
