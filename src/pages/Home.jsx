@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { getProductos } from "../api/api";
 import ProductoCard from "../components/ProductoCard";
 import {
   Typography,
@@ -37,30 +38,21 @@ export default function Home() {
   const [selected, setSelected] = useState(null);
   const [open, setOpen] = useState(false);
 
-  // Lightbox (para imágenes)
+  // Lightbox
   const [lightbox, setLightbox] = useState(null);
 
   const { agregarAlCarrito } = useCarrito();
 
-  // 🔹 Función para traer todos los productos (aunque el backend tenga paginación)
-  const fetchAllProductos = async () => {
-    let url = "/api/productos/";
-    let all = [];
+  // 🔹 Traer todos los productos con la función de tu api.js
+  const fetchProductos = async () => {
     try {
-      while (url) {
-        const res = await fetch(url);
-        const data = await res.json();
-        if (Array.isArray(data)) {
-          all = [...all, ...data];
-          url = null;
-        } else if (data?.results) {
-          all = [...all, ...data.results];
-          url = data.next;
-        } else {
-          all = [];
-          url = null;
-        }
-      }
+      const data = await getProductos();
+      // data puede ser array directo o objeto con results
+      const all = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.results)
+        ? data.results
+        : [];
       setProductos(all);
     } catch (err) {
       console.error("Error cargando productos:", err);
@@ -71,7 +63,7 @@ export default function Home() {
   };
 
   useEffect(() => {
-    fetchAllProductos();
+    fetchProductos();
   }, []);
 
   // 🔹 Delay en buscador
@@ -82,16 +74,12 @@ export default function Home() {
     return () => clearTimeout(handler);
   }, [search]);
 
-  // 🔹 Filtro + ordenamiento
+  // 🔹 Filtrado + orden
   const filtered = productos
     .filter((p) =>
-      debouncedSearch === ""
-        ? true
-        : p.nombre?.toLowerCase().includes(debouncedSearch)
+      debouncedSearch === "" ? true : p.nombre?.toLowerCase().includes(debouncedSearch)
     )
-    .sort((a, b) =>
-      sort === "asc" ? a.precio - b.precio : b.precio - a.precio
-    );
+    .sort((a, b) => (sort === "asc" ? a.precio - b.precio : b.precio - a.precio));
 
   const settings = {
     dots: true,
@@ -171,7 +159,7 @@ export default function Home() {
           }}
         />
 
-        {/* Buscador y ordenamiento */}
+        {/* Buscador y orden */}
         <Stack
           direction={{ xs: "column", sm: "row" }}
           spacing={2}
@@ -230,11 +218,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: i * 0.05 }}
-                style={{
-                  display: "flex",
-                  width: "100%",
-                  justifyContent: "center",
-                }}
+                style={{ display: "flex", width: "100%", justifyContent: "center" }}
               >
                 <ProductoCard
                   producto={prod}
@@ -267,16 +251,9 @@ export default function Home() {
               <Box sx={{ mt: 2 }}>
                 <Slider {...settings}>
                   {selected.imagenes.map((img, idx) => (
-                    <Box
-                      key={idx}
-                      sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
+                    <Box key={idx} sx={{ display: "flex", justifyContent: "center" }}>
                       <img
-                        src={img.url}
+                        src={img.url || img} // img puede ser URL directa
                         alt={selected.nombre}
                         style={{
                           maxHeight: "400px",
@@ -284,7 +261,7 @@ export default function Home() {
                           objectFit: "contain",
                           cursor: "pointer",
                         }}
-                        onClick={() => setLightbox(img.url)}
+                        onClick={() => setLightbox(img.url || img)}
                       />
                     </Box>
                   ))}
@@ -296,9 +273,7 @@ export default function Home() {
 
             <Stack direction="row" spacing={1} sx={{ mt: 2, flexWrap: "wrap" }}>
               <Chip label={`Precio: $${selected.precio}`} color="primary" />
-              {selected.categoria && (
-                <Chip label={`Categoría: ${selected.categoria}`} />
-              )}
+              {selected.categoria && <Chip label={`Categoría: ${selected.categoria}`} />}
             </Stack>
 
             <Button
