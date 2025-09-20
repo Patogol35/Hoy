@@ -20,7 +20,7 @@ export default function Pedidos() {
   const { access } = useAuth();
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [next, setNext] = useState("/api/pedidos/"); // primera página
+  const [next, setNext] = useState(null); // 🔹 inicia en null
 
   const cargarPedidos = (url) => {
     if (!url) return;
@@ -30,25 +30,27 @@ export default function Pedidos() {
       .then((data) => {
         if (!data?.results) return;
 
-        // Ya vienen ordenados desde el backend (order_by('-fecha'))
-        setPedidos((prev) => [...prev, ...data.results]);
-        setNext(data.next); // actualizar link de la siguiente página
+        setPedidos((prev) => [...prev, ...data.results]); // acumula
+        setNext(data.next); // guarda link a la siguiente página
       })
       .catch(console.error)
       .finally(() => setLoading(false));
   };
 
   useEffect(() => {
-    if (access && next === "/api/pedidos/") {
-      cargarPedidos(next);
+    if (access) {
+      // 🔹 siempre empieza desde la primera página
+      cargarPedidos("/api/pedidos/");
     }
-  }, [access, next]);
+  }, [access]);
 
-  if (loading && pedidos.length === 0)
+  if (loading && pedidos.length === 0) {
     return <Container sx={{ mt: 4 }}>Cargando pedidos...</Container>;
+  }
 
-  if (pedidos.length === 0)
+  if (!loading && pedidos.length === 0) {
     return <Container sx={{ mt: 4 }}>Aún no tienes pedidos.</Container>;
+  }
 
   return (
     <Container sx={{ mt: 4, mb: 6 }}>
