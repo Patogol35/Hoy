@@ -1,4 +1,3 @@
-// src/components/Navbar.jsx
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -192,7 +191,9 @@ export default function Navbar() {
 
               {isAuthenticated && user && (
                 <>
-                  <Typography sx={{ color: "#fff", fontWeight: 600, mx: 2 }}>
+                  <Typography
+                    sx={{ color: "#fff", fontWeight: 600, mx: 2 }}
+                  >
                     👤 {user.username}
                   </Typography>
                   <Button
@@ -258,38 +259,36 @@ export default function Navbar() {
                 width: "280px",
                 background: theme.palette.primary.main,
                 borderRadius: "16px 0 0 16px",
-                padding: "2rem 1rem",
+                padding: "4rem 1.5rem 2rem",
                 boxShadow: "0 6px 20px rgba(0,0,0,0.35)",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "flex-start",
-                alignItems: "center",
-                maxHeight: "100vh",
+                alignItems: "stretch",
+                height: "100vh",
                 overflowY: "auto",
                 position: "relative",
               }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Botón X arriba derecha */}
+              {/* Botón X más pequeño */}
               <IconButton
                 onClick={() => setOpen(false)}
                 sx={{
-                  position: "absolute",
-                  top: 16,
-                  right: 16,
-                  zIndex: 10,
+                  mb: 3,
                   color: "#fff",
-                  background: "rgba(0,0,0,0.5)",
-                  "&:hover": { background: "rgba(0,0,0,0.8)" },
-                  width: 36,
-                  height: 36,
+                  background: "rgba(0,0,0,0.6)",
+                  "&:hover": { background: "rgba(0,0,0,0.9)" },
+                  alignSelf: "center",
+                  width: 42,
+                  height: 42,
                 }}
                 aria-label="Cerrar menú"
               >
-                <CloseIcon fontSize="medium" />
+                <CloseIcon sx={{ fontSize: 26 }} />
               </IconButton>
 
-              <Stack spacing={2} sx={{ width: "100%", mt: 6 }}>
+              <Stack spacing={2} sx={{ width: "100%" }}>
                 {isAuthenticated && user && (
                   <Typography
                     variant="h6"
@@ -336,4 +335,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-              }
+      }
