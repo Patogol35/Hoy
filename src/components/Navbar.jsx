@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
   AppBar,
@@ -44,6 +44,7 @@ function useLockBodyScroll(isLocked) {
 export default function Navbar() {
   const { isAuthenticated, logout, user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const theme = useTheme();
 
   const [open, setOpen] = useState(false);
@@ -65,13 +66,38 @@ export default function Navbar() {
 
   const menuItems = isAuthenticated
     ? [
-        { label: "Inicio", path: "/", icon: <HomeIcon />, color: "linear-gradient(135deg, #0288d1, #26c6da)" },
-        { label: "Carrito", path: "/carrito", icon: <ShoppingCartIcon />, color: "linear-gradient(135deg, #2e7d32, #66bb6a)" },
-        { label: "Mis pedidos", path: "/pedidos", icon: <ListAltIcon />, color: "linear-gradient(135deg, #f57c00, #ffb74d)" },
+        {
+          label: "Inicio",
+          path: "/",
+          icon: <HomeIcon />,
+          color: "linear-gradient(135deg, #0288d1, #26c6da)",
+        },
+        {
+          label: "Carrito",
+          path: "/carrito",
+          icon: <ShoppingCartIcon />,
+          color: "linear-gradient(135deg, #2e7d32, #66bb6a)",
+        },
+        {
+          label: "Mis pedidos",
+          path: "/pedidos",
+          icon: <ListAltIcon />,
+          color: "linear-gradient(135deg, #f57c00, #ffb74d)",
+        },
       ]
     : [
-        { label: "Iniciar sesión", path: "/login", icon: <LoginIcon />, color: "linear-gradient(135deg, #0288d1, #26c6da)" },
-        { label: "Registrarse", path: "/register", icon: <PersonAddIcon />, color: "linear-gradient(135deg, #6a1b9a, #ab47bc)" },
+        {
+          label: "Iniciar sesión",
+          path: "/login",
+          icon: <LoginIcon />,
+          color: "linear-gradient(135deg, #0288d1, #26c6da)",
+        },
+        {
+          label: "Registrarse",
+          path: "/register",
+          icon: <PersonAddIcon />,
+          color: "linear-gradient(135deg, #6a1b9a, #ab47bc)",
+        },
       ];
 
   const buttonStyle = {
@@ -88,7 +114,11 @@ export default function Navbar() {
   return (
     <>
       {/* Navbar Desktop */}
-      <motion.div initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
+      <motion.div
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6 }}
+      >
         <AppBar
           position="fixed"
           elevation={scrolled ? 6 : 2}
@@ -129,30 +159,44 @@ export default function Navbar() {
             </motion.div>
 
             {/* Desktop Menu */}
-            <Box sx={{ display: { xs: "none", lg: "flex" }, gap: 2, alignItems: "center" }}>
-              {menuItems.map((item, i) => (
-                <motion.div key={i} whileHover={{ y: -2, scale: 1.08 }} whileTap={{ scale: 0.95 }}>
-                  <Button
-                    component={Link}
-                    to={item.path}
-                    startIcon={item.icon}
-                    sx={{
-                      ...buttonStyle,
-                      background: "rgba(255,255,255,0.08)",
-                      "&:hover": {
-                        background: item.color,
-                        boxShadow: "0 0 20px rgba(0,0,0,0.35)",
-                      },
-                    }}
+            <Box
+              sx={{ display: { xs: "none", lg: "flex" }, gap: 2, alignItems: "center" }}
+            >
+              {menuItems.map((item, i) => {
+                const isActive = location.pathname === item.path;
+                return (
+                  <motion.div
+                    key={i}
+                    whileHover={{ y: -2, scale: 1.08 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    {item.label}
-                  </Button>
-                </motion.div>
-              ))}
+                    <Button
+                      component={Link}
+                      to={item.path}
+                      startIcon={item.icon}
+                      sx={{
+                        ...buttonStyle,
+                        background: isActive
+                          ? item.color
+                          : "rgba(255,255,255,0.08)",
+                        border: isActive ? "2px solid #fff" : "none",
+                        "&:hover": {
+                          background: item.color,
+                          boxShadow: "0 0 20px rgba(0,0,0,0.35)",
+                        },
+                      }}
+                    >
+                      {item.label}
+                    </Button>
+                  </motion.div>
+                );
+              })}
 
               {isAuthenticated && user && (
                 <>
-                  <Typography sx={{ color: "#fff", fontWeight: 600, mx: 2 }}>👤 {user.username}</Typography>
+                  <Typography sx={{ color: "#fff", fontWeight: 600, mx: 2 }}>
+                    👤 {user.username}
+                  </Typography>
                   <Button
                     onClick={handleLogout}
                     startIcon={<LogoutIcon />}
@@ -174,7 +218,11 @@ export default function Navbar() {
             </Box>
 
             {/* Botón menú móvil */}
-            <IconButton sx={{ display: { xs: "block", lg: "none" }, color: "#fff" }} onClick={() => setOpen(true)} aria-label="Abrir menú">
+            <IconButton
+              sx={{ display: { xs: "block", lg: "none" }, color: "#fff" }}
+              onClick={() => setOpen(true)}
+              aria-label="Abrir menú"
+            >
               <MenuIcon fontSize="large" />
             </IconButton>
           </Toolbar>
@@ -245,7 +293,7 @@ export default function Navbar() {
                     fontWeight: 700,
                     textAlign: "center",
                     mb: 2,
-                    position: "sticky",   // clave para que quede fijo
+                    position: "sticky",
                     top: 0,
                     background: theme.palette.primary.main,
                     zIndex: 10,
@@ -259,24 +307,37 @@ export default function Navbar() {
               {/* Contenedor scrolleable */}
               <Box sx={{ flex: 1, overflowY: "auto", pb: 6 }}>
                 <Stack spacing={2} sx={{ width: "100%" }}>
-                  {menuItems.map((item, i) => (
-                    <Button
-                      key={i}
-                      component={Link}
-                      to={item.path}
-                      onClick={() => setOpen(false)}
-                      startIcon={item.icon}
-                      sx={{ ...buttonStyle, background: item.color }}
-                    >
-                      {item.label}
-                    </Button>
-                  ))}
+                  {menuItems.map((item, i) => {
+                    const isActive = location.pathname === item.path;
+                    return (
+                      <Button
+                        key={i}
+                        component={Link}
+                        to={item.path}
+                        onClick={() => setOpen(false)}
+                        startIcon={item.icon}
+                        sx={{
+                          ...buttonStyle,
+                          background: isActive
+                            ? item.color
+                            : "rgba(255,255,255,0.15)",
+                          border: isActive ? "2px solid #fff" : "none",
+                        }}
+                      >
+                        {item.label}
+                      </Button>
+                    );
+                  })}
 
                   {isAuthenticated && (
                     <Button
                       onClick={handleLogout}
                       startIcon={<LogoutIcon />}
-                      sx={{ ...buttonStyle, background: "linear-gradient(135deg, #d32f2f, #f44336)" }}
+                      sx={{
+                        ...buttonStyle,
+                        background:
+                          "linear-gradient(135deg, #d32f2f, #f44336)",
+                      }}
                     >
                       Cerrar sesión
                     </Button>
@@ -289,4 +350,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-}
+              }
