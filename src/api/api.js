@@ -149,3 +149,9 @@ export const getUserProfile = async (token) => {
   const API_ROOT = BASE_URL.replace("/api", "");
   return authFetch(`${API_ROOT}/user/profile/`, { method: "GET" }, token);
 };
+
+
+
+export const getCategorias = async () => {
+  return authFetch(`${BASE_URL}/categorias/`, { method: "GET" });
+};
