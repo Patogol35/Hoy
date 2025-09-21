@@ -192,9 +192,7 @@ export default function Navbar() {
 
               {isAuthenticated && user && (
                 <>
-                  <Typography
-                    sx={{ color: "#fff", fontWeight: 600, mx: 2 }}
-                  >
+                  <Typography sx={{ color: "#fff", fontWeight: 600, mx: 2 }}>
                     👤 {user.username}
                   </Typography>
                   <Button
@@ -277,11 +275,12 @@ export default function Navbar() {
                 onClick={() => setOpen(false)}
                 sx={{
                   position: "absolute",
-                  top: 12,
-                  right: 12,
+                  top: 16,
+                  right: 16,
+                  zIndex: 10,
                   color: "#fff",
-                  background: "rgba(0,0,0,0.6)",
-                  "&:hover": { background: "rgba(0,0,0,0.9)" },
+                  background: "rgba(0,0,0,0.5)",
+                  "&:hover": { background: "rgba(0,0,0,0.8)" },
                   width: 36,
                   height: 36,
                 }}
@@ -337,4 +336,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-                }
+              }
