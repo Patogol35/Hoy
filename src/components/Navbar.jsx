@@ -199,14 +199,17 @@ export default function Navbar() {
                     onClick={handleLogout}
                     startIcon={<LogoutIcon />}
                     sx={{
-                      background: "linear-gradient(135deg, #d32f2f, #f44336)",
+                      background:
+                        "linear-gradient(135deg, #d32f2f, #f44336)",
                       color: "#fff",
                       fontWeight: 600,
                       borderRadius: "12px",
                       textTransform: "none",
                       px: 2.5,
                       py: 1,
-                      "&:hover": { boxShadow: "0 0 15px rgba(0,0,0,0.35)" },
+                      "&:hover": {
+                        boxShadow: "0 0 15px rgba(0,0,0,0.35)",
+                      },
                     }}
                   >
                     Cerrar sesión
@@ -256,90 +259,79 @@ export default function Navbar() {
                 width: "280px",
                 background: theme.palette.primary.main,
                 borderRadius: "16px 0 0 16px",
+                padding: "1.5rem 1rem 2.5rem 1rem", // 👈 padding abajo extra
                 boxShadow: "0 6px 20px rgba(0,0,0,0.35)",
                 display: "flex",
                 flexDirection: "column",
-                height: "100vh",
+                height: "100vh", // 👈 ocupa toda la altura
+                overflowY: "auto", // 👈 permite scroll
                 position: "relative",
               }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Header fijo */}
-              <Box
+              {/* Botón X */}
+              <IconButton
+                onClick={() => setOpen(false)}
                 sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  p: 2,
-                  borderBottom: "1px solid rgba(255,255,255,0.2)",
+                  position: "absolute",
+                  top: 12,
+                  right: 12,
+                  color: "#fff",
+                  background: "rgba(0,0,0,0.6)",
+                  "&:hover": { background: "rgba(0,0,0,0.9)" },
+                  zIndex: 20,
                 }}
+                aria-label="Cerrar menú"
               >
+                <CloseIcon fontSize="large" />
+              </IconButton>
+
+              <Stack spacing={2} sx={{ pt: 6 }}>
                 {isAuthenticated && user && (
-                  <Typography sx={{ color: "#fff", fontWeight: 700 }}>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      color: "#fff",
+                      fontWeight: 700,
+                      textAlign: "center",
+                      mb: 1,
+                    }}
+                  >
                     👤 {user.username}
                   </Typography>
                 )}
-                <IconButton
-                  onClick={() => setOpen(false)}
-                  sx={{
-                    color: "#fff",
-                    background: "rgba(0,0,0,0.6)",
-                    "&:hover": { background: "rgba(0,0,0,0.9)" },
-                  }}
-                  aria-label="Cerrar menú"
-                >
-                  <CloseIcon fontSize="large" />
-                </IconButton>
-              </Box>
 
-              {/* Cuerpo scrollable */}
-              <Box
-                sx={{
-                  flex: 1,
-                  overflowY: "auto",
-                  p: 2,
-                }}
-              >
-                <Stack spacing={2}>
-                  {menuItems.map((item, i) => (
-                    <Button
-                      key={i}
-                      component={Link}
-                      to={item.path}
-                      onClick={() => setOpen(false)}
-                      startIcon={item.icon}
-                      sx={{ ...buttonStyle, background: item.color }}
-                    >
-                      {item.label}
-                    </Button>
-                  ))}
-                </Stack>
-              </Box>
+                {menuItems.map((item, i) => (
+                  <Button
+                    key={i}
+                    component={Link}
+                    to={item.path}
+                    onClick={() => setOpen(false)}
+                    startIcon={item.icon}
+                    sx={{ ...buttonStyle, background: item.color }}
+                  >
+                    {item.label}
+                  </Button>
+                ))}
 
-              {/* Footer fijo */}
-              {isAuthenticated && (
-                <Box
-                  sx={{
-                    p: 2,
-                    borderTop: "1px solid rgba(255,255,255,0.2)",
-                  }}
-                >
+                {isAuthenticated && (
                   <Button
                     onClick={handleLogout}
                     startIcon={<LogoutIcon />}
                     sx={{
                       ...buttonStyle,
-                      background: "linear-gradient(135deg, #d32f2f, #f44336)",
+                      background:
+                        "linear-gradient(135deg, #d32f2f, #f44336)",
                     }}
                   >
                     Cerrar sesión
                   </Button>
-                </Box>
-              )}
+                )}
+              </Stack>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
     </>
   );
-}
+            }
