@@ -210,7 +210,7 @@ export default function Navbar() {
                 width: "280px",
                 background: theme.palette.primary.main,
                 borderRadius: "16px 0 0 16px",
-                padding: "4rem 1.5rem 2rem",
+                padding: "1.5rem", // 🔹 padding reducido
                 boxShadow: "0 6px 20px rgba(0,0,0,0.35)",
                 display: "flex",
                 flexDirection: "column",
@@ -236,11 +236,11 @@ export default function Navbar() {
                 <CloseIcon sx={{ fontSize: 26 }} />
               </IconButton>
 
-              {/* Contenedor scrolleable */}
-              <Box sx={{ flex: 1, overflowY: "auto", pb: 3 }}>
-                <Stack spacing={2} sx={{ width: "100%" }}>
+              {/* Contenedor scroll completo */}
+              <Box sx={{ flex: 1, overflowY: "auto", mt: 1 }}>
+                <Stack spacing={2} sx={{ width: "100%", pb: 3 }}>
                   {isAuthenticated && user && (
-                    <Typography variant="h6" sx={{ color: "#fff", fontWeight: 700, textAlign: "center", mb: 1 }}>
+                    <Typography variant="h6" sx={{ color: "#fff", fontWeight: 700, textAlign: "center" }}>
                       👤 {user.username}
                     </Typography>
                   )}
@@ -275,4 +275,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-                                }
+}
