@@ -108,6 +108,7 @@ export default function Navbar() {
     textTransform: "none",
     width: "100%",
     py: 1.2,
+    transition: "all 0.2s ease",
     "&:hover": { boxShadow: "0 0 15px rgba(0,0,0,0.35)" },
   };
 
@@ -176,14 +177,12 @@ export default function Navbar() {
                       startIcon={item.icon}
                       sx={{
                         ...buttonStyle,
-                        background: isActive
-                          ? item.color
-                          : "rgba(255,255,255,0.08)",
-                        border: isActive ? "2px solid #fff" : "none",
-                        "&:hover": {
-                          background: item.color,
-                          boxShadow: "0 0 20px rgba(0,0,0,0.35)",
-                        },
+                        background: item.color,
+                        // 🔹 Realce sutil si está activo
+                        boxShadow: isActive
+                          ? "0 0 15px rgba(255,255,255,0.6)"
+                          : "none",
+                        transform: isActive ? "scale(1.05)" : "scale(1)",
                       }}
                     >
                       {item.label}
@@ -318,10 +317,11 @@ export default function Navbar() {
                         startIcon={item.icon}
                         sx={{
                           ...buttonStyle,
-                          background: isActive
-                            ? item.color
-                            : "rgba(255,255,255,0.15)",
-                          border: isActive ? "2px solid #fff" : "none",
+                          background: item.color,
+                          boxShadow: isActive
+                            ? "0 0 15px rgba(255,255,255,0.6)"
+                            : "none",
+                          transform: isActive ? "scale(1.03)" : "scale(1)",
                         }}
                       >
                         {item.label}
@@ -350,4 +350,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-              }
+}
