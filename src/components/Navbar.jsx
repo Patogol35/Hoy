@@ -1,5 +1,3 @@
-// src/components/Navbar.jsx
-import React, { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
@@ -21,51 +19,23 @@ import LoginIcon from "@mui/icons-material/Login";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
+import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-/* Animaciones del drawer */
+// Animaciones
 const menuVariants = {
   hidden: { x: "100%", opacity: 0 },
   visible: { x: 0, opacity: 1, transition: { duration: 0.25, ease: "easeOut" } },
   exit: { x: "100%", opacity: 0, transition: { duration: 0.2, ease: "easeIn" } },
 };
 
-/* Hook para bloquear el scroll del body cuando el drawer está abierto */
-function useLockBodyScroll(isLocked, menuRef) {
-  useEffect(() => {
-    if (isLocked) {
-      const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
-      document.body.style.overflow = "hidden";
-      document.body.style.paddingRight = `${scrollBarWidth}px`;
-      // intenta enfocar el menú para accesibilidad
-      try { menuRef.current?.focus(); } catch (e) {}
-    } else {
-      document.body.style.overflow = "";
-      document.body.style.paddingRight = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-      document.body.style.paddingRight = "";
-    };
-  }, [isLocked, menuRef]);
-}
-
 export default function Navbar() {
   const { isAuthenticated, logout, user } = useAuth();
   const navigate = useNavigate();
   const theme = useTheme();
-
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const menuRef = useRef(null);
-
-  useLockBodyScroll(open, menuRef);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   const handleLogout = () => {
     logout();
@@ -84,13 +54,19 @@ export default function Navbar() {
         { label: "Registrarse", path: "/register", icon: <PersonAddIcon />, color: "linear-gradient(135deg, #6a1b9a, #ab47bc)" },
       ];
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
     <>
       {/* Navbar desktop */}
       <motion.div initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
         <AppBar
           position="fixed"
-          elevation={scrolled ? 6 : 2}
+          elevation={2}
           sx={{
             backgroundColor: theme.palette.primary.main,
             boxShadow: scrolled ? "0 4px 20px rgba(0,0,0,0.3)" : "none",
@@ -187,7 +163,6 @@ export default function Navbar() {
             <IconButton
               sx={{ display: { xs: "block", lg: "none" }, color: "#fff" }}
               onClick={() => setOpen(true)}
-              aria-label="Abrir menú"
             >
               <MenuIcon fontSize="large" />
             </IconButton>
@@ -212,8 +187,6 @@ export default function Navbar() {
               justifyContent: "flex-end",
             }}
             onClick={() => setOpen(false)}
-            role="dialog"
-            aria-modal="true"
           >
             <motion.div
               variants={menuVariants}
@@ -226,7 +199,7 @@ export default function Navbar() {
                 width: "280px",
                 background: theme.palette.primary.main,
                 borderRadius: "16px 0 0 16px",
-                padding: "1.5rem 1rem 1rem 1rem", // espacio equilibrado
+                padding: "2rem 1rem 1rem 1rem", // 🔹 menos espacio arriba
                 boxShadow: "0 6px 20px rgba(0,0,0,0.35)",
                 display: "flex",
                 flexDirection: "column",
@@ -236,25 +209,24 @@ export default function Navbar() {
               }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Botón X arriba (fijo y siempre visible) */}
+              {/* Botón X arriba absoluto */}
               <IconButton
                 onClick={() => setOpen(false)}
                 sx={{
                   position: "absolute",
-                  top: 12,
-                  right: 12,
+                  top: 16,
+                  right: 16,
                   color: "#fff",
                   background: "rgba(0,0,0,0.6)",
                   "&:hover": { background: "rgba(0,0,0,0.9)" },
-                  zIndex: 20,
+                  zIndex: 2,
                 }}
-                aria-label="Cerrar menú"
               >
                 <CloseIcon fontSize="large" />
               </IconButton>
 
               {/* Contenido con espacio debajo de la X */}
-              <Stack spacing={2} sx={{ pt: 6 }}>
+              <Stack spacing={2} sx={{ mt: 8 }}>
                 {isAuthenticated && user && (
                   <Typography
                     variant="h6"
