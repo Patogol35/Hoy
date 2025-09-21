@@ -65,38 +65,13 @@ export default function Navbar() {
 
   const menuItems = isAuthenticated
     ? [
-        {
-          label: "Inicio",
-          path: "/",
-          icon: <HomeIcon />,
-          color: "linear-gradient(135deg, #0288d1, #26c6da)",
-        },
-        {
-          label: "Carrito",
-          path: "/carrito",
-          icon: <ShoppingCartIcon />,
-          color: "linear-gradient(135deg, #2e7d32, #66bb6a)",
-        },
-        {
-          label: "Mis pedidos",
-          path: "/pedidos",
-          icon: <ListAltIcon />,
-          color: "linear-gradient(135deg, #f57c00, #ffb74d)",
-        },
+        { label: "Inicio", path: "/", icon: <HomeIcon />, color: "linear-gradient(135deg, #0288d1, #26c6da)" },
+        { label: "Carrito", path: "/carrito", icon: <ShoppingCartIcon />, color: "linear-gradient(135deg, #2e7d32, #66bb6a)" },
+        { label: "Mis pedidos", path: "/pedidos", icon: <ListAltIcon />, color: "linear-gradient(135deg, #f57c00, #ffb74d)" },
       ]
     : [
-        {
-          label: "Iniciar sesión",
-          path: "/login",
-          icon: <LoginIcon />,
-          color: "linear-gradient(135deg, #0288d1, #26c6da)",
-        },
-        {
-          label: "Registrarse",
-          path: "/register",
-          icon: <PersonAddIcon />,
-          color: "linear-gradient(135deg, #6a1b9a, #ab47bc)",
-        },
+        { label: "Iniciar sesión", path: "/login", icon: <LoginIcon />, color: "linear-gradient(135deg, #0288d1, #26c6da)" },
+        { label: "Registrarse", path: "/register", icon: <PersonAddIcon />, color: "linear-gradient(135deg, #6a1b9a, #ab47bc)" },
       ];
 
   const buttonStyle = {
@@ -113,11 +88,7 @@ export default function Navbar() {
   return (
     <>
       {/* Navbar Desktop */}
-      <motion.div
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6 }}
-      >
+      <motion.div initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
         <AppBar
           position="fixed"
           elevation={scrolled ? 6 : 2}
@@ -158,19 +129,9 @@ export default function Navbar() {
             </motion.div>
 
             {/* Desktop Menu */}
-            <Box
-              sx={{
-                display: { xs: "none", lg: "flex" },
-                gap: 2,
-                alignItems: "center",
-              }}
-            >
+            <Box sx={{ display: { xs: "none", lg: "flex" }, gap: 2, alignItems: "center" }}>
               {menuItems.map((item, i) => (
-                <motion.div
-                  key={i}
-                  whileHover={{ y: -2, scale: 1.08 }}
-                  whileTap={{ scale: 0.95 }}
-                >
+                <motion.div key={i} whileHover={{ y: -2, scale: 1.08 }} whileTap={{ scale: 0.95 }}>
                   <Button
                     component={Link}
                     to={item.path}
@@ -191,11 +152,7 @@ export default function Navbar() {
 
               {isAuthenticated && user && (
                 <>
-                  <Typography
-                    sx={{ color: "#fff", fontWeight: 600, mx: 2 }}
-                  >
-                    👤 {user.username}
-                  </Typography>
+                  <Typography sx={{ color: "#fff", fontWeight: 600, mx: 2 }}>👤 {user.username}</Typography>
                   <Button
                     onClick={handleLogout}
                     startIcon={<LogoutIcon />}
@@ -207,9 +164,7 @@ export default function Navbar() {
                       textTransform: "none",
                       px: 2.5,
                       py: 1,
-                      "&:hover": {
-                        boxShadow: "0 0 15px rgba(0,0,0,0.35)",
-                      },
+                      "&:hover": { boxShadow: "0 0 15px rgba(0,0,0,0.35)" },
                     }}
                   >
                     Cerrar sesión
@@ -219,11 +174,7 @@ export default function Navbar() {
             </Box>
 
             {/* Botón menú móvil */}
-            <IconButton
-              sx={{ display: { xs: "block", lg: "none" }, color: "#fff" }}
-              onClick={() => setOpen(true)}
-              aria-label="Abrir menú"
-            >
+            <IconButton sx={{ display: { xs: "block", lg: "none" }, color: "#fff" }} onClick={() => setOpen(true)} aria-label="Abrir menú">
               <MenuIcon fontSize="large" />
             </IconButton>
           </Toolbar>
@@ -263,15 +214,12 @@ export default function Navbar() {
                 boxShadow: "0 6px 20px rgba(0,0,0,0.35)",
                 display: "flex",
                 flexDirection: "column",
-                justifyContent: "flex-start",
-                alignItems: "stretch",
                 height: "100vh",
-                overflowY: "auto",
                 position: "relative",
               }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Botón X más pequeño */}
+              {/* Botón X */}
               <IconButton
                 onClick={() => setOpen(false)}
                 sx={{
@@ -288,51 +236,43 @@ export default function Navbar() {
                 <CloseIcon sx={{ fontSize: 26 }} />
               </IconButton>
 
-              <Stack spacing={2} sx={{ width: "100%" }}>
-                {isAuthenticated && user && (
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      color: "#fff",
-                      fontWeight: 700,
-                      textAlign: "center",
-                      mb: 1,
-                    }}
-                  >
-                    👤 {user.username}
-                  </Typography>
-                )}
+              {/* Contenedor scrolleable */}
+              <Box sx={{ flex: 1, overflowY: "auto", pb: 3 }}>
+                <Stack spacing={2} sx={{ width: "100%" }}>
+                  {isAuthenticated && user && (
+                    <Typography variant="h6" sx={{ color: "#fff", fontWeight: 700, textAlign: "center", mb: 1 }}>
+                      👤 {user.username}
+                    </Typography>
+                  )}
 
-                {menuItems.map((item, i) => (
-                  <Button
-                    key={i}
-                    component={Link}
-                    to={item.path}
-                    onClick={() => setOpen(false)}
-                    startIcon={item.icon}
-                    sx={{ ...buttonStyle, background: item.color }}
-                  >
-                    {item.label}
-                  </Button>
-                ))}
+                  {menuItems.map((item, i) => (
+                    <Button
+                      key={i}
+                      component={Link}
+                      to={item.path}
+                      onClick={() => setOpen(false)}
+                      startIcon={item.icon}
+                      sx={{ ...buttonStyle, background: item.color }}
+                    >
+                      {item.label}
+                    </Button>
+                  ))}
 
-                {isAuthenticated && (
-                  <Button
-                    onClick={handleLogout}
-                    startIcon={<LogoutIcon />}
-                    sx={{
-                      ...buttonStyle,
-                      background: "linear-gradient(135deg, #d32f2f, #f44336)",
-                    }}
-                  >
-                    Cerrar sesión
-                  </Button>
-                )}
-              </Stack>
+                  {isAuthenticated && (
+                    <Button
+                      onClick={handleLogout}
+                      startIcon={<LogoutIcon />}
+                      sx={{ ...buttonStyle, background: "linear-gradient(135deg, #d32f2f, #f44336)" }}
+                    >
+                      Cerrar sesión
+                    </Button>
+                  )}
+                </Stack>
+              </Box>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
     </>
   );
-                  }
+                                }
