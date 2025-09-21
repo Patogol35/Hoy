@@ -260,14 +260,14 @@ export default function Navbar() {
                 width: "280px",
                 background: theme.palette.primary.main,
                 borderRadius: "16px 0 0 16px",
-                padding: "2rem 1rem",
+                padding: "4rem 1.5rem 2rem", // 🔥 más espacio arriba y abajo
                 boxShadow: "0 6px 20px rgba(0,0,0,0.35)",
                 display: "flex",
                 flexDirection: "column",
-                justifyContent: "flex-start", // 🔥 menú desde arriba
-                alignItems: "stretch",         // 🔥 botones ancho completo
-                height: "100vh",               // 🔥 pantalla completa
-                overflowY: "auto",             // 🔥 scroll si hay muchos
+                justifyContent: "flex-start",
+                alignItems: "stretch",
+                height: "100vh",
+                overflowY: "auto",
                 position: "relative",
               }}
               onClick={(e) => e.stopPropagation()}
@@ -334,4 +334,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-            }
+}
