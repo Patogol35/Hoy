@@ -1,3 +1,5 @@
+// src/components/Navbar.jsx
+import React, { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
@@ -11,7 +13,6 @@ import {
   useTheme,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import CloseIcon from "@mui/icons-material/Close";
 import HomeIcon from "@mui/icons-material/Home";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ListAltIcon from "@mui/icons-material/ListAlt";
@@ -19,23 +20,53 @@ import LoginIcon from "@mui/icons-material/Login";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
-import { useEffect, useState, useRef } from "react";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward"; // 👈 nuevo icono
 import { motion, AnimatePresence } from "framer-motion";
 
-// Animaciones
+/* Animaciones del drawer */
 const menuVariants = {
   hidden: { x: "100%", opacity: 0 },
   visible: { x: 0, opacity: 1, transition: { duration: 0.25, ease: "easeOut" } },
   exit: { x: "100%", opacity: 0, transition: { duration: 0.2, ease: "easeIn" } },
 };
 
+/* Hook para bloquear el scroll del body cuando el drawer está abierto */
+function useLockBodyScroll(isLocked, menuRef) {
+  useEffect(() => {
+    if (isLocked) {
+      const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.overflow = "hidden";
+      document.body.style.paddingRight = `${scrollBarWidth}px`;
+      try {
+        menuRef.current?.focus();
+      } catch (e) {}
+    } else {
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
+    };
+  }, [isLocked, menuRef]);
+}
+
 export default function Navbar() {
   const { isAuthenticated, logout, user } = useAuth();
   const navigate = useNavigate();
   const theme = useTheme();
+
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const menuRef = useRef(null);
+
+  useLockBodyScroll(open, menuRef);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -45,28 +76,51 @@ export default function Navbar() {
 
   const menuItems = isAuthenticated
     ? [
-        { label: "Inicio", path: "/", icon: <HomeIcon />, color: "linear-gradient(135deg, #0288d1, #26c6da)" },
-        { label: "Carrito", path: "/carrito", icon: <ShoppingCartIcon />, color: "linear-gradient(135deg, #2e7d32, #66bb6a)" },
-        { label: "Mis pedidos", path: "/pedidos", icon: <ListAltIcon />, color: "linear-gradient(135deg, #f57c00, #ffb74d)" },
+        {
+          label: "Inicio",
+          path: "/",
+          icon: <HomeIcon />,
+          color: "linear-gradient(135deg, #0288d1, #26c6da)",
+        },
+        {
+          label: "Carrito",
+          path: "/carrito",
+          icon: <ShoppingCartIcon />,
+          color: "linear-gradient(135deg, #2e7d32, #66bb6a)",
+        },
+        {
+          label: "Mis pedidos",
+          path: "/pedidos",
+          icon: <ListAltIcon />,
+          color: "linear-gradient(135deg, #f57c00, #ffb74d)",
+        },
       ]
     : [
-        { label: "Iniciar sesión", path: "/login", icon: <LoginIcon />, color: "linear-gradient(135deg, #0288d1, #26c6da)" },
-        { label: "Registrarse", path: "/register", icon: <PersonAddIcon />, color: "linear-gradient(135deg, #6a1b9a, #ab47bc)" },
+        {
+          label: "Iniciar sesión",
+          path: "/login",
+          icon: <LoginIcon />,
+          color: "linear-gradient(135deg, #0288d1, #26c6da)",
+        },
+        {
+          label: "Registrarse",
+          path: "/register",
+          icon: <PersonAddIcon />,
+          color: "linear-gradient(135deg, #6a1b9a, #ab47bc)",
+        },
       ];
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   return (
     <>
       {/* Navbar desktop */}
-      <motion.div initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
+      <motion.div
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6 }}
+      >
         <AppBar
           position="fixed"
-          elevation={2}
+          elevation={scrolled ? 6 : 2}
           sx={{
             backgroundColor: theme.palette.primary.main,
             boxShadow: scrolled ? "0 4px 20px rgba(0,0,0,0.3)" : "none",
@@ -104,9 +158,19 @@ export default function Navbar() {
             </motion.div>
 
             {/* Desktop menu */}
-            <Box sx={{ display: { xs: "none", lg: "flex" }, gap: 2, alignItems: "center" }}>
+            <Box
+              sx={{
+                display: { xs: "none", lg: "flex" },
+                gap: 2,
+                alignItems: "center",
+              }}
+            >
               {menuItems.map((item, i) => (
-                <motion.div key={i} whileHover={{ y: -2, scale: 1.08 }} whileTap={{ scale: 0.95 }}>
+                <motion.div
+                  key={i}
+                  whileHover={{ y: -2, scale: 1.08 }}
+                  whileTap={{ scale: 0.95 }}
+                >
                   <Button
                     component={Link}
                     to={item.path}
@@ -163,6 +227,7 @@ export default function Navbar() {
             <IconButton
               sx={{ display: { xs: "block", lg: "none" }, color: "#fff" }}
               onClick={() => setOpen(true)}
+              aria-label="Abrir menú"
             >
               <MenuIcon fontSize="large" />
             </IconButton>
@@ -187,6 +252,8 @@ export default function Navbar() {
               justifyContent: "flex-end",
             }}
             onClick={() => setOpen(false)}
+            role="dialog"
+            aria-modal="true"
           >
             <motion.div
               variants={menuVariants}
@@ -199,7 +266,7 @@ export default function Navbar() {
                 width: "280px",
                 background: theme.palette.primary.main,
                 borderRadius: "16px 0 0 16px",
-                padding: "2rem 1rem 1rem 1rem", // 🔹 menos espacio arriba
+                padding: "1.5rem 1rem",
                 boxShadow: "0 6px 20px rgba(0,0,0,0.35)",
                 display: "flex",
                 flexDirection: "column",
@@ -209,24 +276,7 @@ export default function Navbar() {
               }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Botón X arriba absoluto */}
-              <IconButton
-                onClick={() => setOpen(false)}
-                sx={{
-                  position: "absolute",
-                  top: 16,
-                  right: 16,
-                  color: "#fff",
-                  background: "rgba(0,0,0,0.6)",
-                  "&:hover": { background: "rgba(0,0,0,0.9)" },
-                  zIndex: 2,
-                }}
-              >
-                <CloseIcon fontSize="large" />
-              </IconButton>
-
-              {/* Contenido con espacio debajo de la X */}
-              <Stack spacing={2} sx={{ mt: 8 }}>
+              <Stack spacing={2}>
                 {isAuthenticated && user && (
                   <Typography
                     variant="h6"
@@ -287,6 +337,28 @@ export default function Navbar() {
                     Cerrar sesión
                   </Button>
                 )}
+
+                {/* Nuevo botón para cerrar el menú */}
+                <Button
+                  onClick={() => setOpen(false)}
+                  endIcon={<ArrowForwardIcon />}
+                  sx={{
+                    fontSize: "1rem",
+                    fontWeight: 600,
+                    color: "#fff",
+                    borderRadius: "12px",
+                    textTransform: "none",
+                    background: "linear-gradient(135deg, #616161, #9e9e9e)",
+                    width: "100%",
+                    py: 1,
+                    mt: 2,
+                    "&:hover": {
+                      boxShadow: "0 0 12px rgba(0,0,0,0.3)",
+                    },
+                  }}
+                >
+                  Cerrar menú
+                </Button>
               </Stack>
             </motion.div>
           </motion.div>
@@ -294,4 +366,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-      }
+}
