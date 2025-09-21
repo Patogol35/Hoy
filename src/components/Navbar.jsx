@@ -260,34 +260,37 @@ export default function Navbar() {
                 width: "280px",
                 background: theme.palette.primary.main,
                 borderRadius: "16px 0 0 16px",
-                padding: "4rem 1.5rem 2rem", // 🔥 más espacio arriba y abajo
+                padding: "2rem 1rem",
                 boxShadow: "0 6px 20px rgba(0,0,0,0.35)",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "flex-start",
-                alignItems: "stretch",
-                height: "100vh",
+                alignItems: "center",
+                maxHeight: "100vh",
                 overflowY: "auto",
                 position: "relative",
               }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Botón X */}
+              {/* Botón X arriba derecha */}
               <IconButton
                 onClick={() => setOpen(false)}
                 sx={{
-                  mb: 3,
+                  position: "absolute",
+                  top: 12,
+                  right: 12,
                   color: "#fff",
                   background: "rgba(0,0,0,0.6)",
                   "&:hover": { background: "rgba(0,0,0,0.9)" },
-                  alignSelf: "center",
+                  width: 36,
+                  height: 36,
                 }}
                 aria-label="Cerrar menú"
               >
-                <CloseIcon fontSize="large" />
+                <CloseIcon fontSize="medium" />
               </IconButton>
 
-              <Stack spacing={2} sx={{ width: "100%" }}>
+              <Stack spacing={2} sx={{ width: "100%", mt: 6 }}>
                 {isAuthenticated && user && (
                   <Typography
                     variant="h6"
@@ -334,4 +337,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-}
+                }
