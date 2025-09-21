@@ -16,13 +16,15 @@ import {
   InputLabel,
   Dialog,
   IconButton,
+  Chip,
   Button,
 } from "@mui/material";
 import { motion } from "framer-motion";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
-import StorefrontIcon from "@mui/icons-material/Storefront";
+import StorefrontIcon from "@mui/icons-material/Storefront"; // 👈 agregado
+import Slider from "react-slick";
 import { useCarrito } from "../context/CarritoContext";
 import { toast } from "react-toastify";
 
@@ -31,11 +33,13 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [sort, setSort] = useState("asc");
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  // Modal detalle
+  // Modal
   const [selected, setSelected] = useState(null);
+  const [open, setOpen] = useState(false);
 
-  // Lightbox (zoom de imagen)
+  // Lightbox
   const [lightbox, setLightbox] = useState(null);
 
   const { agregarAlCarrito } = useCarrito();
@@ -48,19 +52,41 @@ export default function Home() {
           : Array.isArray(data?.results)
           ? data.results
           : [];
+        console.log("Productos cargados:", lista);
         setProductos(lista);
       })
-      .catch(() => setProductos([]))
+      .catch((err) => {
+        console.error("Error cargando productos:", err);
+        setProductos([]);
+      })
       .finally(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search.toLowerCase());
+    }, 400);
+    return () => clearTimeout(handler);
+  }, [search]);
+
   const filtered = (productos || [])
     .filter((p) =>
-      search === "" ? true : p.nombre?.toLowerCase().includes(search.toLowerCase())
+      debouncedSearch === ""
+        ? true
+        : p.nombre?.toLowerCase().includes(debouncedSearch)
     )
     .sort((a, b) =>
       sort === "asc" ? a.precio - b.precio : b.precio - a.precio
     );
+
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    adaptiveHeight: true,
+  };
 
   const handleAdd = async (prod) => {
     try {
@@ -119,8 +145,8 @@ export default function Home() {
           sx={{
             color: "primary.main",
             display: "flex",
-            justifyContent: "center",
             alignItems: "center",
+            justifyContent: "center",
             gap: 1,
           }}
         >
@@ -196,11 +222,18 @@ export default function Home() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: i * 0.05 }}
-                style={{ display: "flex", width: "100%", justifyContent: "center" }}
+                style={{
+                  display: "flex",
+                  width: "100%",
+                  justifyContent: "center",
+                }}
               >
                 <ProductoCard
                   producto={prod}
-                  onVerDetalle={() => setSelected(prod)}
+                  onVerDetalle={() => {
+                    setSelected(prod);
+                    setOpen(true);
+                  }}
                 />
               </motion.div>
             </Grid>
@@ -210,34 +243,78 @@ export default function Home() {
 
       {/* Modal Detalle */}
       <Dialog
-        open={!!selected}
-        onClose={() => setSelected(null)}
+        open={open}
+        onClose={() => setOpen(false)}
         maxWidth="lg"
         fullWidth
+        sx={{
+          zIndex: 1600,
+          "& .MuiBackdrop-root": {
+            backgroundColor: "rgba(0,0,0,0.85)",
+            backdropFilter: "blur(5px)",
+          },
+        }}
+        PaperProps={{
+          sx: {
+            borderRadius: { xs: 0, md: 3 },
+            p: 3,
+            bgcolor: "#1e1e1e",
+            color: "white",
+            maxWidth: { md: 900 },
+            width: "100%",
+            position: "relative",
+          },
+        }}
       >
         {selected && (
-          <Box sx={{ p: 3, position: "relative" }}>
+          <Box>
             <IconButton
-              onClick={() => setSelected(null)}
-              sx={{ position: "absolute", top: 12, right: 12 }}
+              onClick={() => setOpen(false)}
+              sx={{
+                position: "absolute",
+                top: 12,
+                right: 12,
+                bgcolor: "rgba(0,0,0,0.6)",
+                color: "white",
+                "&:hover": { bgcolor: "rgba(255,255,255,0.2)" },
+              }}
             >
               <CloseIcon />
             </IconButton>
             <Grid container spacing={4}>
-              {/* Imagen con zoom */}
+              {/* Slider imágenes */}
               <Grid item xs={12} md={6}>
-                <Box
-                  component="img"
-                  src={selected.imagen}
-                  alt={selected.nombre}
-                  sx={{
-                    width: "100%",
-                    borderRadius: 2,
-                    objectFit: "contain",
-                    cursor: "zoom-in",
-                  }}
-                  onClick={() => setLightbox(selected.imagen)}
-                />
+                <Slider {...settings}>
+                  {(selected.imagenes || [selected.imagen]).map((img, i) => (
+                    <Box
+                      key={i}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: { xs: 300, md: 400 },
+                        cursor: "zoom-in",
+                      }}
+                      onClick={() => setLightbox(img)}
+                    >
+                      <Box
+                        component="img"
+                        src={img}
+                        alt={selected.nombre}
+                        sx={{
+                          maxWidth: "100%",
+                          maxHeight: "100%",
+                          objectFit: "contain",
+                          borderRadius: 2,
+                          border: "2px solid rgba(255,255,255,0.2)",
+                          boxShadow: "0 4px 15px rgba(0,0,0,0.5)",
+                          transition: "transform 0.3s ease",
+                          "&:hover": { transform: "scale(1.02)" },
+                        }}
+                      />
+                    </Box>
+                  ))}
+                </Slider>
               </Grid>
 
               {/* Info producto */}
@@ -247,18 +324,41 @@ export default function Home() {
                     {selected.nombre}
                   </Typography>
 
-                  <Typography variant="h6" color="primary">
-                    ${selected.precio}
+                  <Box>
+                    <Typography
+                      variant="h6"
+                      fontWeight="bold"
+                      color="primary"
+                      sx={{ mb: 1 }}
+                    >
+                      ${selected.precio}
+                    </Typography>
+                    <Chip
+                      label="En stock"
+                      color="success"
+                      variant="outlined"
+                      sx={{ color: "white", borderColor: "white" }}
+                    />
+                  </Box>
+
+                  <Divider sx={{ bgcolor: "rgba(255,255,255,0.3)" }} />
+
+                  <Typography
+                    sx={{ lineHeight: 1.6, color: "rgba(255,255,255,0.85)" }}
+                  >
+                    {selected.descripcion}
                   </Typography>
-
-                  <Divider />
-
-                  <Typography>{selected.descripcion}</Typography>
 
                   <Button
                     variant="contained"
                     startIcon={<ShoppingCartIcon />}
                     onClick={() => handleAdd(selected)}
+                    sx={{
+                      borderRadius: 3,
+                      py: 1.5,
+                      background: "linear-gradient(135deg, #1976d2, #42a5f5)",
+                      "&:hover": { transform: "translateY(-2px)" },
+                    }}
                   >
                     Agregar al carrito
                   </Button>
@@ -269,7 +369,7 @@ export default function Home() {
         )}
       </Dialog>
 
-      {/* Lightbox Zoom */}
+      {/* Lightbox */}
       <Dialog
         open={!!lightbox}
         onClose={() => setLightbox(null)}
@@ -309,4 +409,4 @@ export default function Home() {
       </Dialog>
     </>
   );
-            }
+    }
