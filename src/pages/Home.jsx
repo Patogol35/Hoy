@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getProductos } from "../api/api";
+import { getProductos, getCategorias } from "../api/api";
 import ProductoCard from "../components/ProductoCard";
 import {
   Typography,
@@ -30,6 +30,8 @@ import { toast } from "react-toastify";
 
 export default function Home() {
   const [productos, setProductos] = useState([]);
+  const [categorias, setCategorias] = useState([]);
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("");
   const [loading, setLoading] = useState(true);
   const [sort, setSort] = useState("asc");
   const [search, setSearch] = useState("");
@@ -44,8 +46,20 @@ export default function Home() {
 
   const { agregarAlCarrito } = useCarrito();
 
+  // Cargar categorías una sola vez
   useEffect(() => {
-    getProductos()
+    getCategorias()
+      .then((data) => setCategorias(data))
+      .catch(() => setCategorias([]));
+  }, []);
+
+  // Cargar productos cada vez que cambia la categoría
+  useEffect(() => {
+    setLoading(true);
+    const params = {};
+    if (categoriaSeleccionada) params.categoria = categoriaSeleccionada;
+
+    getProductos(params)
       .then((data) => {
         const lista = Array.isArray(data)
           ? data
@@ -59,8 +73,9 @@ export default function Home() {
         setProductos([]);
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [categoriaSeleccionada]);
 
+  // Debounce para búsqueda
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(search.toLowerCase());
@@ -162,7 +177,7 @@ export default function Home() {
           }}
         />
 
-        {/* Buscador y ordenamiento */}
+        {/* Buscador, orden y categorías */}
         <Stack
           direction={{ xs: "column", sm: "row" }}
           spacing={2}
@@ -185,7 +200,7 @@ export default function Home() {
             sx={{ width: { xs: "100%", sm: 250 } }}
           />
 
-          <FormControl size="small" sx={{ minWidth: 180 }}>
+          <FormControl size="small" sx={{ minWidth: 160 }}>
             <InputLabel>Ordenar por</InputLabel>
             <Select
               value={sort}
@@ -196,10 +211,26 @@ export default function Home() {
               <MenuItem value="desc">Precio: mayor a menor</MenuItem>
             </Select>
           </FormControl>
+
+          <FormControl size="small" sx={{ minWidth: 160 }}>
+            <InputLabel>Categoría</InputLabel>
+            <Select
+              value={categoriaSeleccionada}
+              label="Categoría"
+              onChange={(e) => setCategoriaSeleccionada(e.target.value)}
+            >
+              <MenuItem value="">Todas</MenuItem>
+              {categorias.map((cat) => (
+                <MenuItem key={cat.id} value={cat.id}>
+                  {cat.nombre}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </Stack>
       </Box>
 
-      {/* Grid */}
+      {/* Grid de productos */}
       {filtered.length === 0 ? (
         <Box sx={{ textAlign: "center", mt: 8, color: "text.secondary" }}>
           <ShoppingCartIcon sx={{ fontSize: 60, mb: 2, opacity: 0.6 }} />
@@ -233,7 +264,7 @@ export default function Home() {
                     setSelected(prod);
                     setOpen(true);
                   }}
-                  onAgregar={handleAdd} // ahora también pasa la función de agregar
+                  onAgregar={handleAdd}
                 />
               </motion.div>
             </Grid>
@@ -282,7 +313,6 @@ export default function Home() {
               <CloseIcon />
             </IconButton>
             <Grid container spacing={4}>
-              {/* Slider imágenes */}
               <Grid item xs={12} md={6}>
                 <Slider {...settings}>
                   {(selected.imagenes || [selected.imagen]).map((img, i) => (
@@ -317,13 +347,11 @@ export default function Home() {
                 </Slider>
               </Grid>
 
-              {/* Info producto */}
               <Grid item xs={12} md={6}>
                 <Stack spacing={3}>
                   <Typography variant="h5" fontWeight="bold">
                     {selected.nombre}
                   </Typography>
-
                   <Box>
                     <Typography
                       variant="h6"
@@ -333,7 +361,6 @@ export default function Home() {
                     >
                       ${selected.precio}
                     </Typography>
-
                     <Chip
                       label={selected.stock > 0 ? "En stock" : "Agotado"}
                       color={selected.stock > 0 ? "success" : "error"}
@@ -345,15 +372,12 @@ export default function Home() {
                       }}
                     />
                   </Box>
-
                   <Divider sx={{ bgcolor: "rgba(255,255,255,0.3)" }} />
-
                   <Typography
                     sx={{ lineHeight: 1.6, color: "rgba(255,255,255,0.85)" }}
                   >
                     {selected.descripcion}
                   </Typography>
-
                   <Button
                     variant="contained"
                     startIcon={<ShoppingCartIcon />}
@@ -418,4 +442,4 @@ export default function Home() {
       </Dialog>
     </>
   );
-}
+        }
