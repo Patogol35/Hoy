@@ -264,15 +264,15 @@ export default function Navbar() {
                 boxShadow: "0 6px 20px rgba(0,0,0,0.35)",
                 display: "flex",
                 flexDirection: "column",
-                justifyContent: "center", // 🔥 centrar vertical
-                alignItems: "center", // 🔥 centrar horizontal
-                maxHeight: "100vh",
-                overflowY: "auto",
+                justifyContent: "flex-start", // 🔥 menú desde arriba
+                alignItems: "stretch",         // 🔥 botones ancho completo
+                height: "100vh",               // 🔥 pantalla completa
+                overflowY: "auto",             // 🔥 scroll si hay muchos
                 position: "relative",
               }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Botón X centrado también */}
+              {/* Botón X */}
               <IconButton
                 onClick={() => setOpen(false)}
                 sx={{
@@ -280,6 +280,7 @@ export default function Navbar() {
                   color: "#fff",
                   background: "rgba(0,0,0,0.6)",
                   "&:hover": { background: "rgba(0,0,0,0.9)" },
+                  alignSelf: "center",
                 }}
                 aria-label="Cerrar menú"
               >
@@ -333,4 +334,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-}
+            }
