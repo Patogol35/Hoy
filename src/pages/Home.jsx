@@ -22,7 +22,7 @@ import { motion } from "framer-motion";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
-import StorefrontIcon from "@mui/icons-material/Storefront"; // 👈 nuevo icono
+import StorefrontIcon from "@mui/icons-material/Storefront";
 import { useCarrito } from "../context/CarritoContext";
 import { toast } from "react-toastify";
 
@@ -34,6 +34,9 @@ export default function Home() {
 
   // Modal detalle
   const [selected, setSelected] = useState(null);
+
+  // Lightbox (zoom de imagen)
+  const [lightbox, setLightbox] = useState(null);
 
   const { agregarAlCarrito } = useCarrito();
 
@@ -221,7 +224,7 @@ export default function Home() {
               <CloseIcon />
             </IconButton>
             <Grid container spacing={4}>
-              {/* Imagen */}
+              {/* Imagen con zoom */}
               <Grid item xs={12} md={6}>
                 <Box
                   component="img"
@@ -231,7 +234,9 @@ export default function Home() {
                     width: "100%",
                     borderRadius: 2,
                     objectFit: "contain",
+                    cursor: "zoom-in",
                   }}
+                  onClick={() => setLightbox(selected.imagen)}
                 />
               </Grid>
 
@@ -263,6 +268,45 @@ export default function Home() {
           </Box>
         )}
       </Dialog>
+
+      {/* Lightbox Zoom */}
+      <Dialog
+        open={!!lightbox}
+        onClose={() => setLightbox(null)}
+        fullScreen
+        sx={{ zIndex: 1600 }}
+        PaperProps={{
+          sx: {
+            bgcolor: "rgba(0,0,0,0.95)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          },
+        }}
+      >
+        <IconButton
+          onClick={() => setLightbox(null)}
+          sx={{
+            position: "absolute",
+            top: 16,
+            right: 16,
+            bgcolor: "rgba(0,0,0,0.6)",
+            color: "white",
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+        <Box
+          component="img"
+          src={lightbox}
+          alt="Zoom"
+          sx={{
+            maxWidth: "95%",
+            maxHeight: "95%",
+            objectFit: "contain",
+          }}
+        />
+      </Dialog>
     </>
   );
-}
+            }
