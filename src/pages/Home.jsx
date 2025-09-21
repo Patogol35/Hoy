@@ -46,18 +46,18 @@ export default function Home() {
 
   const { agregarAlCarrito } = useCarrito();
 
-  // Cargar categorías una sola vez
+  // Cargar categorías
   useEffect(() => {
     getCategorias()
       .then((data) => setCategorias(data))
       .catch(() => setCategorias([]));
   }, []);
 
-  // Cargar productos cada vez que cambia la categoría
+  // Cargar productos según categoría
   useEffect(() => {
     setLoading(true);
     const params = {};
-    if (categoriaSeleccionada) params.categoria = categoriaSeleccionada;
+    if (categoriaSeleccionada) params.categoria_id = categoriaSeleccionada; // ⚡ corregido
 
     getProductos(params)
       .then((data) => {
@@ -66,7 +66,11 @@ export default function Home() {
           : Array.isArray(data?.results)
           ? data.results
           : [];
-        setProductos(lista);
+
+        // ⚡ asegurar que cada producto tenga id
+        const listaConId = lista.map((p) => ({ ...p, id: p.id ?? p.pk }));
+
+        setProductos(listaConId);
       })
       .catch((err) => {
         console.error("Error cargando productos:", err);
@@ -103,6 +107,11 @@ export default function Home() {
   };
 
   const handleAdd = async (prod) => {
+    if (!prod?.id) {
+      toast.error("Producto inválido, no se puede agregar al carrito");
+      return;
+    }
+
     try {
       await agregarAlCarrito(prod.id, 1);
       toast.success(`${prod.nombre} agregado al carrito ✅`);
@@ -442,4 +451,4 @@ export default function Home() {
       </Dialog>
     </>
   );
-        }
+              }
