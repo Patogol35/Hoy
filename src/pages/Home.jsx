@@ -34,6 +34,7 @@ export default function Home() {
   const [sort, setSort] = useState("asc");
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [categoria, setCategoria] = useState("");
 
   // Modal
   const [selected, setSelected] = useState(null);
@@ -44,22 +45,32 @@ export default function Home() {
 
   const { agregarAlCarrito } = useCarrito();
 
+  // Cargar productos
+  const cargarProductos = async () => {
+    setLoading(true);
+    try {
+      const filtros = {};
+      if (categoria) filtros.categoria_nombre = categoria;
+      if (debouncedSearch) filtros.search = debouncedSearch;
+
+      const data = await getProductos(filtros);
+      const lista = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.results)
+        ? data.results
+        : [];
+      setProductos(lista);
+    } catch (err) {
+      console.error("Error cargando productos:", err);
+      setProductos([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    getProductos()
-      .then((data) => {
-        const lista = Array.isArray(data)
-          ? data
-          : Array.isArray(data?.results)
-          ? data.results
-          : [];
-        setProductos(lista);
-      })
-      .catch((err) => {
-        console.error("Error cargando productos:", err);
-        setProductos([]);
-      })
-      .finally(() => setLoading(false));
-  }, []);
+    cargarProductos();
+  }, [debouncedSearch, categoria]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -68,15 +79,9 @@ export default function Home() {
     return () => clearTimeout(handler);
   }, [search]);
 
-  const filtered = (productos || [])
-    .filter((p) =>
-      debouncedSearch === ""
-        ? true
-        : p.nombre?.toLowerCase().includes(debouncedSearch)
-    )
-    .sort((a, b) =>
-      sort === "asc" ? a.precio - b.precio : b.precio - a.precio
-    );
+  const filtered = (productos || []).sort((a, b) =>
+    sort === "asc" ? a.precio - b.precio : b.precio - a.precio
+  );
 
   const settings = {
     dots: true,
@@ -162,7 +167,7 @@ export default function Home() {
           }}
         />
 
-        {/* Buscador y ordenamiento */}
+        {/* Buscador, categoría y ordenamiento */}
         <Stack
           direction={{ xs: "column", sm: "row" }}
           spacing={2}
@@ -184,6 +189,20 @@ export default function Home() {
             }}
             sx={{ width: { xs: "100%", sm: 250 } }}
           />
+
+          <FormControl size="small" sx={{ minWidth: 180 }}>
+            <InputLabel>Categoría</InputLabel>
+            <Select
+              value={categoria}
+              label="Categoría"
+              onChange={(e) => setCategoria(e.target.value)}
+            >
+              <MenuItem value="">Todas</MenuItem>
+              <MenuItem value="Ropa">Ropa</MenuItem>
+              <MenuItem value="Electrónica">Electrónica</MenuItem>
+              <MenuItem value="Hogar">Hogar</MenuItem>
+            </Select>
+          </FormControl>
 
           <FormControl size="small" sx={{ minWidth: 180 }}>
             <InputLabel>Ordenar por</InputLabel>
@@ -221,11 +240,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: i * 0.05 }}
-                style={{
-                  display: "flex",
-                  width: "100%",
-                  justifyContent: "center",
-                }}
+                style={{ display: "flex", width: "100%", justifyContent: "center" }}
               >
                 <ProductoCard
                   producto={prod}
@@ -233,7 +248,7 @@ export default function Home() {
                     setSelected(prod);
                     setOpen(true);
                   }}
-                  onAgregar={handleAdd} // ahora también pasa la función de agregar
+                  onAgregar={handleAdd}
                 />
               </motion.div>
             </Grid>
@@ -242,141 +257,107 @@ export default function Home() {
       )}
 
       {/* Modal Detalle */}
-      <Dialog
-        open={open}
-        onClose={() => setOpen(false)}
-        maxWidth="lg"
-        fullWidth
-        sx={{
-          zIndex: 1600,
-          "& .MuiBackdrop-root": {
-            backgroundColor: "rgba(0,0,0,0.85)",
-            backdropFilter: "blur(5px)",
-          },
-        }}
-        PaperProps={{
-          sx: {
-            borderRadius: { xs: 0, md: 3 },
-            p: 3,
-            bgcolor: "#1e1e1e",
-            color: "white",
-            maxWidth: { md: 900 },
-            width: "100%",
-            position: "relative",
-          },
-        }}
-      >
-        {selected && (
-          <Box>
-            <IconButton
-              onClick={() => setOpen(false)}
-              sx={{
-                position: "absolute",
-                top: 12,
-                right: 12,
-                bgcolor: "rgba(0,0,0,0.6)",
-                color: "white",
-                "&:hover": { bgcolor: "rgba(255,255,255,0.2)" },
-              }}
-            >
-              <CloseIcon />
-            </IconButton>
-            <Grid container spacing={4}>
-              {/* Slider imágenes */}
-              <Grid item xs={12} md={6}>
-                <Slider {...settings}>
-                  {(selected.imagenes || [selected.imagen]).map((img, i) => (
+      {selected && (
+        <Dialog
+          open={open}
+          onClose={() => setOpen(false)}
+          maxWidth="lg"
+          fullWidth
+          sx={{ zIndex: 1600 }}
+          PaperProps={{
+            sx: {
+              borderRadius: { xs: 0, md: 3 },
+              p: 3,
+              bgcolor: "#1e1e1e",
+              color: "white",
+              maxWidth: { md: 900 },
+              width: "100%",
+              position: "relative",
+            },
+          }}
+        >
+          <IconButton
+            onClick={() => setOpen(false)}
+            sx={{
+              position: "absolute",
+              top: 12,
+              right: 12,
+              bgcolor: "rgba(0,0,0,0.6)",
+              color: "white",
+              "&:hover": { bgcolor: "rgba(255,255,255,0.2)" },
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+
+          <Grid container spacing={4}>
+            <Grid item xs={12} md={6}>
+              <Slider {...settings}>
+                {(selected.imagenes || [selected.imagen]).map((img, i) => (
+                  <Box
+                    key={i}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      height: { xs: 300, md: 400 },
+                      cursor: "zoom-in",
+                    }}
+                    onClick={() => setLightbox(img)}
+                  >
                     <Box
-                      key={i}
+                      component="img"
+                      src={img}
+                      alt={selected.nombre}
                       sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        height: { xs: 300, md: 400 },
-                        cursor: "zoom-in",
-                      }}
-                      onClick={() => setLightbox(img)}
-                    >
-                      <Box
-                        component="img"
-                        src={img}
-                        alt={selected.nombre}
-                        sx={{
-                          maxWidth: "100%",
-                          maxHeight: "100%",
-                          objectFit: "contain",
-                          borderRadius: 2,
-                          border: "2px solid rgba(255,255,255,0.2)",
-                          boxShadow: "0 4px 15px rgba(0,0,0,0.5)",
-                          transition: "transform 0.3s ease",
-                          "&:hover": { transform: "scale(1.02)" },
-                        }}
-                      />
-                    </Box>
-                  ))}
-                </Slider>
-              </Grid>
-
-              {/* Info producto */}
-              <Grid item xs={12} md={6}>
-                <Stack spacing={3}>
-                  <Typography variant="h5" fontWeight="bold">
-                    {selected.nombre}
-                  </Typography>
-
-                  <Box>
-                    <Typography
-                      variant="h6"
-                      fontWeight="bold"
-                      color="primary"
-                      sx={{ mb: 1 }}
-                    >
-                      ${selected.precio}
-                    </Typography>
-
-                    <Chip
-                      label={selected.stock > 0 ? "En stock" : "Agotado"}
-                      color={selected.stock > 0 ? "success" : "error"}
-                      variant="outlined"
-                      sx={{
-                        color: "white",
-                        borderColor: "white",
-                        fontWeight: "bold",
+                        maxWidth: "100%",
+                        maxHeight: "100%",
+                        objectFit: "contain",
+                        borderRadius: 2,
+                        border: "2px solid rgba(255,255,255,0.2)",
+                        boxShadow: "0 4px 15px rgba(0,0,0,0.5)",
+                        transition: "transform 0.3s ease",
+                        "&:hover": { transform: "scale(1.02)" },
                       }}
                     />
                   </Box>
-
-                  <Divider sx={{ bgcolor: "rgba(255,255,255,0.3)" }} />
-
-                  <Typography
-                    sx={{ lineHeight: 1.6, color: "rgba(255,255,255,0.85)" }}
-                  >
-                    {selected.descripcion}
-                  </Typography>
-
-                  <Button
-                    variant="contained"
-                    startIcon={<ShoppingCartIcon />}
-                    onClick={() => handleAdd(selected)}
-                    disabled={selected.stock === 0}
-                    sx={{
-                      borderRadius: 3,
-                      py: 1.5,
-                      background: "linear-gradient(135deg, #1976d2, #42a5f5)",
-                      "&:hover": {
-                        transform:
-                          selected.stock > 0 ? "translateY(-2px)" : "none",
-                      },
-                    }}
-                  >
-                    {selected.stock > 0 ? "Agregar al carrito" : "Agotado"}
-                  </Button>
-                </Stack>
-              </Grid>
+                ))}
+              </Slider>
             </Grid>
-          </Box>
-        )}
-      </Dialog>
+
+            <Grid item xs={12} md={6}>
+              <Stack spacing={3}>
+                <Typography variant="h5" fontWeight="bold">{selected.nombre}</Typography>
+                <Typography variant="h6" color="primary">${selected.precio}</Typography>
+                <Chip
+                  label={selected.stock > 0 ? "En stock" : "Agotado"}
+                  color={selected.stock > 0 ? "success" : "error"}
+                  variant="outlined"
+                  sx={{ color: "white", borderColor: "white" }}
+                />
+                <Divider sx={{ bgcolor: "rgba(255,255,255,0.3)" }} />
+                <Typography sx={{ color: "rgba(255,255,255,0.85)" }}>
+                  {selected.descripcion}
+                </Typography>
+                <Button
+                  variant="contained"
+                  startIcon={<ShoppingCartIcon />}
+                  onClick={() => handleAdd(selected)}
+                  disabled={selected.stock === 0}
+                  sx={{
+                    borderRadius: 3,
+                    py: 1.5,
+                    background: "linear-gradient(135deg, #1976d2, #42a5f5)",
+                    "&:hover": { transform: selected.stock > 0 ? "translateY(-2px)" : "none" },
+                  }}
+                >
+                  {selected.stock > 0 ? "Agregar al carrito" : "Agotado"}
+                </Button>
+              </Stack>
+            </Grid>
+          </Grid>
+        </Dialog>
+      )}
 
       {/* Lightbox */}
       <Dialog
@@ -384,38 +365,16 @@ export default function Home() {
         onClose={() => setLightbox(null)}
         fullScreen
         sx={{ zIndex: 1600 }}
-        PaperProps={{
-          sx: {
-            bgcolor: "rgba(0,0,0,0.95)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          },
-        }}
+        PaperProps={{ sx: { bgcolor: "rgba(0,0,0,0.95)", display: "flex", justifyContent: "center", alignItems: "center" } }}
       >
         <IconButton
           onClick={() => setLightbox(null)}
-          sx={{
-            position: "absolute",
-            top: 16,
-            right: 16,
-            bgcolor: "rgba(0,0,0,0.6)",
-            color: "white",
-          }}
+          sx={{ position: "absolute", top: 16, right: 16, bgcolor: "rgba(0,0,0,0.6)", color: "white" }}
         >
           <CloseIcon />
         </IconButton>
-        <Box
-          component="img"
-          src={lightbox}
-          alt="Zoom"
-          sx={{
-            maxWidth: "95%",
-            maxHeight: "95%",
-            objectFit: "contain",
-          }}
-        />
+        <Box component="img" src={lightbox} alt="Zoom" sx={{ maxWidth: "95%", maxHeight: "95%", objectFit: "contain" }} />
       </Dialog>
     </>
   );
-}
+      }
