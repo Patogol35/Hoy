@@ -192,15 +192,16 @@ export default function Navbar() {
 
               {isAuthenticated && user && (
                 <>
-                  <Typography sx={{ color: "#fff", fontWeight: 600, mx: 2 }}>
+                  <Typography
+                    sx={{ color: "#fff", fontWeight: 600, mx: 2 }}
+                  >
                     👤 {user.username}
                   </Typography>
                   <Button
                     onClick={handleLogout}
                     startIcon={<LogoutIcon />}
                     sx={{
-                      background:
-                        "linear-gradient(135deg, #d32f2f, #f44336)",
+                      background: "linear-gradient(135deg, #d32f2f, #f44336)",
                       color: "#fff",
                       fontWeight: 600,
                       borderRadius: "12px",
@@ -259,44 +260,33 @@ export default function Navbar() {
                 width: "280px",
                 background: theme.palette.primary.main,
                 borderRadius: "16px 0 0 16px",
-                padding: "1.5rem 1rem 2.5rem 1rem",
+                padding: "2rem 1rem",
                 boxShadow: "0 6px 20px rgba(0,0,0,0.35)",
                 display: "flex",
                 flexDirection: "column",
-                height: "100vh",
+                justifyContent: "center", // 🔥 centrar vertical
+                alignItems: "center", // 🔥 centrar horizontal
+                maxHeight: "100vh",
                 overflowY: "auto",
                 position: "relative",
               }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Botón X */}
+              {/* Botón X centrado también */}
               <IconButton
                 onClick={() => setOpen(false)}
                 sx={{
-                  position: "absolute",
-                  top: 12,
-                  right: 12,
+                  mb: 3,
                   color: "#fff",
                   background: "rgba(0,0,0,0.6)",
                   "&:hover": { background: "rgba(0,0,0,0.9)" },
-                  zIndex: 20,
                 }}
                 aria-label="Cerrar menú"
               >
                 <CloseIcon fontSize="large" />
               </IconButton>
 
-              {/* Contenido centrado */}
-              <Stack
-                spacing={2}
-                sx={{
-                  m: "auto", // 👈 centra vertical y evita que se tapen
-                  width: "100%",
-                  alignItems: "center",
-                  textAlign: "center",
-                  pb: 3,
-                }}
-              >
+              <Stack spacing={2} sx={{ width: "100%" }}>
                 {isAuthenticated && user && (
                   <Typography
                     variant="h6"
@@ -330,8 +320,7 @@ export default function Navbar() {
                     startIcon={<LogoutIcon />}
                     sx={{
                       ...buttonStyle,
-                      background:
-                        "linear-gradient(135deg, #d32f2f, #f44336)",
+                      background: "linear-gradient(135deg, #d32f2f, #f44336)",
                     }}
                   >
                     Cerrar sesión
