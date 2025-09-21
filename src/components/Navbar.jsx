@@ -223,7 +223,7 @@ export default function Navbar() {
               <IconButton
                 onClick={() => setOpen(false)}
                 sx={{
-                  mb: 3,
+                  mb: 2,
                   color: "#fff",
                   background: "rgba(0,0,0,0.6)",
                   "&:hover": { background: "rgba(0,0,0,0.9)" },
@@ -236,15 +236,29 @@ export default function Navbar() {
                 <CloseIcon sx={{ fontSize: 26 }} />
               </IconButton>
 
-              {/* Contenedor scrolleable */}
-              <Box sx={{ flex: 1, overflowY: "auto", pb: 5 }}>
-                <Stack spacing={2} sx={{ width: "100%" }}>
-                  {isAuthenticated && user && (
-                    <Typography variant="h6" sx={{ color: "#fff", fontWeight: 700, textAlign: "center", mb: 1 }}>
-                      👤 {user.username}
-                    </Typography>
-                  )}
+              {/* Nombre de usuario fijo */}
+              {isAuthenticated && user && (
+                <Typography
+                  variant="h6"
+                  sx={{
+                    color: "#fff",
+                    fontWeight: 700,
+                    textAlign: "center",
+                    mb: 2,
+                    position: "sticky",   // clave para que quede fijo
+                    top: 0,
+                    background: theme.palette.primary.main,
+                    zIndex: 10,
+                    py: 1,
+                  }}
+                >
+                  👤 {user.username}
+                </Typography>
+              )}
 
+              {/* Contenedor scrolleable */}
+              <Box sx={{ flex: 1, overflowY: "auto", pb: 6 }}>
+                <Stack spacing={2} sx={{ width: "100%" }}>
                   {menuItems.map((item, i) => (
                     <Button
                       key={i}
