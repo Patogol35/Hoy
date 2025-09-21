@@ -39,7 +39,7 @@ async function authFetch(url, options = {}, token) {
         localStorage.setItem("access", newTokens.access);
         token = newTokens.access;
 
-        // reintento con nuevo token
+        // Reintento con nuevo token
         headers = {
           ...(options.headers || {}),
           ...(options.body && { "Content-Type": "application/json" }),
@@ -91,13 +91,16 @@ export const register = async (data) => {
 };
 
 // PRODUCTOS
-
-// api.js
 export const getProductos = async (params = {}) => {
   const query = new URLSearchParams(params).toString();
   return authFetch(`${BASE_URL}/productos/${query ? `?${query}` : ""}`, {
     method: "GET",
   });
+};
+
+// 📌 CATEGORÍAS (Agregado para el filtro)
+export const getCategorias = async () => {
+  return authFetch(`${BASE_URL}/categorias/`, { method: "GET" });
 };
 
 // CARRITO
@@ -138,18 +141,11 @@ export const crearPedido = async (token) => {
 };
 
 export const getPedidos = async (token, page = 1) => {
-  // 🔹 ahora acepta page y devuelve el objeto de paginación
   return authFetch(`${BASE_URL}/pedidos/?page=${page}`, { method: "GET" }, token);
 };
 
-
-
-// api.js
-
 // PERFIL DE USUARIO
 export const getUserProfile = async (token) => {
-  // quitamos /api porque el endpoint es /user/profile/
   const API_ROOT = BASE_URL.replace("/api", "");
   return authFetch(`${API_ROOT}/user/profile/`, { method: "GET" }, token);
 };
-
