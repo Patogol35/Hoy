@@ -91,8 +91,13 @@ export const register = async (data) => {
 };
 
 // PRODUCTOS
-export const getProductos = async () => {
-  return authFetch(`${BASE_URL}/productos/`, { method: "GET" });
+
+// api.js
+export const getProductos = async (params = {}) => {
+  const query = new URLSearchParams(params).toString();
+  return authFetch(`${BASE_URL}/productos/${query ? `?${query}` : ""}`, {
+    method: "GET",
+  });
 };
 
 // CARRITO
@@ -147,3 +152,4 @@ export const getUserProfile = async (token) => {
   const API_ROOT = BASE_URL.replace("/api", "");
   return authFetch(`${API_ROOT}/user/profile/`, { method: "GET" }, token);
 };
+
