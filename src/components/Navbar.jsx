@@ -259,12 +259,12 @@ export default function Navbar() {
                 width: "280px",
                 background: theme.palette.primary.main,
                 borderRadius: "16px 0 0 16px",
-                padding: "1.5rem 1rem 2.5rem 1rem", // 👈 padding abajo extra
+                padding: "1.5rem 1rem 2.5rem 1rem",
                 boxShadow: "0 6px 20px rgba(0,0,0,0.35)",
                 display: "flex",
                 flexDirection: "column",
-                height: "100vh", // 👈 ocupa toda la altura
-                overflowY: "auto", // 👈 permite scroll
+                height: "100vh",
+                overflowY: "auto",
                 position: "relative",
               }}
               onClick={(e) => e.stopPropagation()}
@@ -286,7 +286,17 @@ export default function Navbar() {
                 <CloseIcon fontSize="large" />
               </IconButton>
 
-              <Stack spacing={2} sx={{ pt: 6 }}>
+              {/* Contenido centrado */}
+              <Stack
+                spacing={2}
+                sx={{
+                  m: "auto", // 👈 centra vertical y evita que se tapen
+                  width: "100%",
+                  alignItems: "center",
+                  textAlign: "center",
+                  pb: 3,
+                }}
+              >
                 {isAuthenticated && user && (
                   <Typography
                     variant="h6"
@@ -334,4 +344,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-            }
+}
