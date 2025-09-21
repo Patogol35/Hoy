@@ -17,7 +17,7 @@ import StarIcon from "@mui/icons-material/Star";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 
 export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
-  const { isAuthenticated, access } = useAuth(); // 👈 Traemos access
+  const { isAuthenticated } = useAuth();
   const { agregarAlCarrito } = useCarrito();
   const navigate = useNavigate();
 
@@ -35,8 +35,7 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
     }
 
     try {
-      // 👈 Pasamos access token a la función
-      await agregarAlCarrito(producto.id, 1, access);
+      await agregarAlCarrito(producto.id, 1);
       toast.success(`${producto.nombre} agregado al carrito ✅`);
     } catch (e) {
       toast.error(e.message);
@@ -173,4 +172,4 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
       </Box>
     </Card>
   );
-}
+          }
