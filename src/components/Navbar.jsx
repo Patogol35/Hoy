@@ -237,7 +237,7 @@ export default function Navbar() {
               </IconButton>
 
               {/* Contenedor scrolleable */}
-              <Box sx={{ flex: 1, overflowY: "auto", pb: 3 }}>
+              <Box sx={{ flex: 1, overflowY: "auto", pb: 5 }}>
                 <Stack spacing={2} sx={{ width: "100%" }}>
                   {isAuthenticated && user && (
                     <Typography variant="h6" sx={{ color: "#fff", fontWeight: 700, textAlign: "center", mb: 1 }}>
