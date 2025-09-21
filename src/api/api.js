@@ -152,6 +152,3 @@ export const getUserProfile = async (token) => {
 
 
 
-export const getCategorias = async () => {
-  return authFetch(`${BASE_URL}/categorias/`, { method: "GET" });
-};
