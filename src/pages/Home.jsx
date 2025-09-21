@@ -23,7 +23,7 @@ import { motion } from "framer-motion";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
-import StorefrontIcon from "@mui/icons-material/Storefront"; // 👈 agregado
+import StorefrontIcon from "@mui/icons-material/Storefront";
 import Slider from "react-slick";
 import { useCarrito } from "../context/CarritoContext";
 import { toast } from "react-toastify";
@@ -52,7 +52,6 @@ export default function Home() {
           : Array.isArray(data?.results)
           ? data.results
           : [];
-        console.log("Productos cargados:", lista);
         setProductos(lista);
       })
       .catch((err) => {
@@ -234,6 +233,7 @@ export default function Home() {
                     setSelected(prod);
                     setOpen(true);
                   }}
+                  onAgregar={handleAdd} // ahora también pasa la función de agregar
                 />
               </motion.div>
             </Grid>
@@ -333,11 +333,16 @@ export default function Home() {
                     >
                       ${selected.precio}
                     </Typography>
+
                     <Chip
-                      label="En stock"
-                      color="success"
+                      label={selected.stock > 0 ? "En stock" : "Agotado"}
+                      color={selected.stock > 0 ? "success" : "error"}
                       variant="outlined"
-                      sx={{ color: "white", borderColor: "white" }}
+                      sx={{
+                        color: "white",
+                        borderColor: "white",
+                        fontWeight: "bold",
+                      }}
                     />
                   </Box>
 
@@ -353,14 +358,18 @@ export default function Home() {
                     variant="contained"
                     startIcon={<ShoppingCartIcon />}
                     onClick={() => handleAdd(selected)}
+                    disabled={selected.stock === 0}
                     sx={{
                       borderRadius: 3,
                       py: 1.5,
                       background: "linear-gradient(135deg, #1976d2, #42a5f5)",
-                      "&:hover": { transform: "translateY(-2px)" },
+                      "&:hover": {
+                        transform:
+                          selected.stock > 0 ? "translateY(-2px)" : "none",
+                      },
                     }}
                   >
-                    Agregar al carrito
+                    {selected.stock > 0 ? "Agregar al carrito" : "Agotado"}
                   </Button>
                 </Stack>
               </Grid>
@@ -409,4 +418,4 @@ export default function Home() {
       </Dialog>
     </>
   );
-    }
+}
