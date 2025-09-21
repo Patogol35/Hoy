@@ -31,7 +31,6 @@ async function authFetch(url, options = {}, token) {
 
   let res = await fetch(url, { ...options, headers });
 
-  // Si expira el access → intentar refrescar
   if (res.status === 401 && localStorage.getItem("refresh")) {
     try {
       const newTokens = await refreshToken(localStorage.getItem("refresh"));
@@ -39,7 +38,6 @@ async function authFetch(url, options = {}, token) {
         localStorage.setItem("access", newTokens.access);
         token = newTokens.access;
 
-        // reintento con nuevo token
         headers = {
           ...(options.headers || {}),
           ...(options.body && { "Content-Type": "application/json" }),
@@ -133,17 +131,20 @@ export const crearPedido = async (token) => {
 };
 
 export const getPedidos = async (token, page = 1) => {
-  // 🔹 ahora acepta page y devuelve el objeto de paginación
   return authFetch(`${BASE_URL}/pedidos/?page=${page}`, { method: "GET" }, token);
 };
 
-
-
-// api.js
+// ⚡ Nueva función para marcar un pedido como completado
+export const marcarPedidoCompletado = async (token, pedidoId) => {
+  return authFetch(
+    `${BASE_URL}/pedido/${pedidoId}/completar/`,
+    { method: "PUT" },
+    token
+  );
+};
 
 // PERFIL DE USUARIO
 export const getUserProfile = async (token) => {
-  // quitamos /api porque el endpoint es /user/profile/
   const API_ROOT = BASE_URL.replace("/api", "");
   return authFetch(`${API_ROOT}/user/profile/`, { method: "GET" }, token);
 };
