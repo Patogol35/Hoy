@@ -36,7 +36,9 @@ const menuVariants = {
 function useLockBodyScroll(isLocked) {
   useEffect(() => {
     document.body.style.overflow = isLocked ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [isLocked]);
 }
 
@@ -64,13 +66,38 @@ export default function Navbar() {
 
   const menuItems = isAuthenticated
     ? [
-        { label: "Inicio", path: "/", icon: <HomeIcon />, color: "linear-gradient(135deg, #0288d1, #26c6da)" },
-        { label: "Carrito", path: "/carrito", icon: <ShoppingCartIcon />, color: "linear-gradient(135deg, #2e7d32, #66bb6a)" },
-        { label: "Mis pedidos", path: "/pedidos", icon: <ListAltIcon />, color: "linear-gradient(135deg, #f57c00, #ffb74d)" },
+        {
+          label: "Inicio",
+          path: "/",
+          icon: <HomeIcon />,
+          color: "linear-gradient(135deg, #0288d1, #26c6da)",
+        },
+        {
+          label: "Carrito",
+          path: "/carrito",
+          icon: <ShoppingCartIcon />,
+          color: "linear-gradient(135deg, #2e7d32, #66bb6a)",
+        },
+        {
+          label: "Mis pedidos",
+          path: "/pedidos",
+          icon: <ListAltIcon />,
+          color: "linear-gradient(135deg, #f57c00, #ffb74d)",
+        },
       ]
     : [
-        { label: "Iniciar sesión", path: "/login", icon: <LoginIcon />, color: "linear-gradient(135deg, #0288d1, #26c6da)" },
-        { label: "Registrarse", path: "/register", icon: <PersonAddIcon />, color: "linear-gradient(135deg, #6a1b9a, #ab47bc)" },
+        {
+          label: "Iniciar sesión",
+          path: "/login",
+          icon: <LoginIcon />,
+          color: "linear-gradient(135deg, #0288d1, #26c6da)",
+        },
+        {
+          label: "Registrarse",
+          path: "/register",
+          icon: <PersonAddIcon />,
+          color: "linear-gradient(135deg, #6a1b9a, #ab47bc)",
+        },
       ];
 
   const buttonStyle = {
@@ -87,7 +114,11 @@ export default function Navbar() {
   return (
     <>
       {/* Navbar Desktop */}
-      <motion.div initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
+      <motion.div
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6 }}
+      >
         <AppBar
           position="fixed"
           elevation={scrolled ? 6 : 2}
@@ -128,10 +159,32 @@ export default function Navbar() {
             </motion.div>
 
             {/* Desktop Menu */}
-            <Box sx={{ display: { xs: "none", lg: "flex" }, gap: 2, alignItems: "center" }}>
+            <Box
+              sx={{
+                display: { xs: "none", lg: "flex" },
+                gap: 2,
+                alignItems: "center",
+              }}
+            >
               {menuItems.map((item, i) => (
-                <motion.div key={i} whileHover={{ y: -2, scale: 1.08 }} whileTap={{ scale: 0.95 }}>
-                  <Button component={Link} to={item.path} startIcon={item.icon} sx={{ ...buttonStyle, background: "rgba(255,255,255,0.08)", "&:hover": { background: item.color, boxShadow: "0 0 20px rgba(0,0,0,0.35)" } }}>
+                <motion.div
+                  key={i}
+                  whileHover={{ y: -2, scale: 1.08 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button
+                    component={Link}
+                    to={item.path}
+                    startIcon={item.icon}
+                    sx={{
+                      ...buttonStyle,
+                      background: "rgba(255,255,255,0.08)",
+                      "&:hover": {
+                        background: item.color,
+                        boxShadow: "0 0 20px rgba(0,0,0,0.35)",
+                      },
+                    }}
+                  >
                     {item.label}
                   </Button>
                 </motion.div>
@@ -163,7 +216,11 @@ export default function Navbar() {
             </Box>
 
             {/* Botón menú móvil */}
-            <IconButton sx={{ display: { xs: "block", lg: "none" }, color: "#fff" }} onClick={() => setOpen(true)} aria-label="Abrir menú">
+            <IconButton
+              sx={{ display: { xs: "block", lg: "none" }, color: "#fff" }}
+              onClick={() => setOpen(true)}
+              aria-label="Abrir menú"
+            >
               <MenuIcon fontSize="large" />
             </IconButton>
           </Toolbar>
@@ -178,7 +235,14 @@ export default function Navbar() {
             animate={{ opacity: 1, backdropFilter: "blur(6px)" }}
             exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
             transition={{ duration: 0.25 }}
-            style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 1300, display: "flex", justifyContent: "flex-end" }}
+            style={{
+              position: "fixed",
+              inset: 0,
+              background: "rgba(0,0,0,0.45)",
+              zIndex: 1300,
+              display: "flex",
+              justifyContent: "flex-end",
+            }}
             onClick={() => setOpen(false)}
             role="dialog"
             aria-modal="true"
@@ -196,8 +260,7 @@ export default function Navbar() {
                 boxShadow: "0 6px 20px rgba(0,0,0,0.35)",
                 display: "flex",
                 flexDirection: "column",
-                maxHeight: "100vh",
-                overflowY: "auto",
+                height: "100vh", // ocupa toda la pantalla
                 position: "relative",
               }}
               onClick={(e) => e.stopPropagation()}
@@ -205,27 +268,65 @@ export default function Navbar() {
               {/* Botón X */}
               <IconButton
                 onClick={() => setOpen(false)}
-                sx={{ position: "absolute", top: 12, right: 12, color: "#fff", background: "rgba(0,0,0,0.6)", "&:hover": { background: "rgba(0,0,0,0.9)" }, zIndex: 20 }}
+                sx={{
+                  position: "absolute",
+                  top: 12,
+                  right: 12,
+                  color: "#fff",
+                  background: "rgba(0,0,0,0.6)",
+                  "&:hover": { background: "rgba(0,0,0,0.9)" },
+                  zIndex: 20,
+                }}
                 aria-label="Cerrar menú"
               >
                 <CloseIcon fontSize="large" />
               </IconButton>
 
-              <Stack spacing={2} sx={{ pt: 6 }}>
+              <Stack
+                spacing={2}
+                sx={{
+                  pt: 10, // deja espacio para la X
+                  pb: 3,
+                  flex: 1,
+                  overflowY: "auto", // si hay demasiados botones, scrollea
+                }}
+              >
                 {isAuthenticated && user && (
-                  <Typography variant="h6" sx={{ color: "#fff", fontWeight: 700, textAlign: "center", mb: 1 }}>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      color: "#fff",
+                      fontWeight: 700,
+                      textAlign: "center",
+                      mb: 1,
+                    }}
+                  >
                     👤 {user.username}
                   </Typography>
                 )}
 
                 {menuItems.map((item, i) => (
-                  <Button key={i} component={Link} to={item.path} onClick={() => setOpen(false)} startIcon={item.icon} sx={{ ...buttonStyle, background: item.color }}>
+                  <Button
+                    key={i}
+                    component={Link}
+                    to={item.path}
+                    onClick={() => setOpen(false)}
+                    startIcon={item.icon}
+                    sx={{ ...buttonStyle, background: item.color }}
+                  >
                     {item.label}
                   </Button>
                 ))}
 
                 {isAuthenticated && (
-                  <Button onClick={handleLogout} startIcon={<LogoutIcon />} sx={{ ...buttonStyle, background: "linear-gradient(135deg, #d32f2f, #f44336)" }}>
+                  <Button
+                    onClick={handleLogout}
+                    startIcon={<LogoutIcon />}
+                    sx={{
+                      ...buttonStyle,
+                      background: "linear-gradient(135deg, #d32f2f, #f44336)",
+                    }}
+                  >
                     Cerrar sesión
                   </Button>
                 )}
@@ -236,4 +337,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-                             }
+        }
