@@ -256,69 +256,74 @@ export default function Navbar() {
                 width: "280px",
                 background: theme.palette.primary.main,
                 borderRadius: "16px 0 0 16px",
-                padding: "1.5rem 1rem 1rem 1rem",
                 boxShadow: "0 6px 20px rgba(0,0,0,0.35)",
                 display: "flex",
                 flexDirection: "column",
-                height: "100vh", // ocupa toda la pantalla
+                height: "100vh",
                 position: "relative",
               }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Botón X */}
-              <IconButton
-                onClick={() => setOpen(false)}
+              {/* Header fijo */}
+              <Box
                 sx={{
-                  position: "absolute",
-                  top: 12,
-                  right: 12,
-                  color: "#fff",
-                  background: "rgba(0,0,0,0.6)",
-                  "&:hover": { background: "rgba(0,0,0,0.9)" },
-                  zIndex: 20,
-                }}
-                aria-label="Cerrar menú"
-              >
-                <CloseIcon fontSize="large" />
-              </IconButton>
-
-              <Stack
-                spacing={2}
-                sx={{
-                  pt: 10, // deja espacio para la X
-                  pb: 3,
-                  flex: 1,
-                  overflowY: "auto", // si hay demasiados botones, scrollea
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  p: 2,
+                  borderBottom: "1px solid rgba(255,255,255,0.2)",
                 }}
               >
                 {isAuthenticated && user && (
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      color: "#fff",
-                      fontWeight: 700,
-                      textAlign: "center",
-                      mb: 1,
-                    }}
-                  >
+                  <Typography sx={{ color: "#fff", fontWeight: 700 }}>
                     👤 {user.username}
                   </Typography>
                 )}
+                <IconButton
+                  onClick={() => setOpen(false)}
+                  sx={{
+                    color: "#fff",
+                    background: "rgba(0,0,0,0.6)",
+                    "&:hover": { background: "rgba(0,0,0,0.9)" },
+                  }}
+                  aria-label="Cerrar menú"
+                >
+                  <CloseIcon fontSize="large" />
+                </IconButton>
+              </Box>
 
-                {menuItems.map((item, i) => (
-                  <Button
-                    key={i}
-                    component={Link}
-                    to={item.path}
-                    onClick={() => setOpen(false)}
-                    startIcon={item.icon}
-                    sx={{ ...buttonStyle, background: item.color }}
-                  >
-                    {item.label}
-                  </Button>
-                ))}
+              {/* Cuerpo scrollable */}
+              <Box
+                sx={{
+                  flex: 1,
+                  overflowY: "auto",
+                  p: 2,
+                }}
+              >
+                <Stack spacing={2}>
+                  {menuItems.map((item, i) => (
+                    <Button
+                      key={i}
+                      component={Link}
+                      to={item.path}
+                      onClick={() => setOpen(false)}
+                      startIcon={item.icon}
+                      sx={{ ...buttonStyle, background: item.color }}
+                    >
+                      {item.label}
+                    </Button>
+                  ))}
+                </Stack>
+              </Box>
 
-                {isAuthenticated && (
+              {/* Footer fijo */}
+              {isAuthenticated && (
+                <Box
+                  sx={{
+                    p: 2,
+                    borderTop: "1px solid rgba(255,255,255,0.2)",
+                  }}
+                >
                   <Button
                     onClick={handleLogout}
                     startIcon={<LogoutIcon />}
@@ -329,12 +334,12 @@ export default function Navbar() {
                   >
                     Cerrar sesión
                   </Button>
-                )}
-              </Stack>
+                </Box>
+              )}
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
     </>
   );
-        }
+}
