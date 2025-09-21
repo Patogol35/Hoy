@@ -13,6 +13,7 @@ import {
   useTheme,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import CloseIcon from "@mui/icons-material/Close";
 import HomeIcon from "@mui/icons-material/Home";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ListAltIcon from "@mui/icons-material/ListAlt";
@@ -20,7 +21,6 @@ import LoginIcon from "@mui/icons-material/Login";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward"; // 👈 nuevo icono
 import { motion, AnimatePresence } from "framer-motion";
 
 /* Animaciones del drawer */
@@ -30,11 +30,12 @@ const menuVariants = {
   exit: { x: "100%", opacity: 0, transition: { duration: 0.2, ease: "easeIn" } },
 };
 
-/* Hook para bloquear el scroll del body cuando el drawer está abierto */
+/* Hook bloquear scroll */
 function useLockBodyScroll(isLocked, menuRef) {
   useEffect(() => {
     if (isLocked) {
-      const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+      const scrollBarWidth =
+        window.innerWidth - document.documentElement.clientWidth;
       document.body.style.overflow = "hidden";
       document.body.style.paddingRight = `${scrollBarWidth}px`;
       try {
@@ -159,11 +160,7 @@ export default function Navbar() {
 
             {/* Desktop menu */}
             <Box
-              sx={{
-                display: { xs: "none", lg: "flex" },
-                gap: 2,
-                alignItems: "center",
-              }}
+              sx={{ display: { xs: "none", lg: "flex" }, gap: 2, alignItems: "center" }}
             >
               {menuItems.map((item, i) => (
                 <motion.div
@@ -266,31 +263,50 @@ export default function Navbar() {
                 width: "280px",
                 background: theme.palette.primary.main,
                 borderRadius: "16px 0 0 16px",
-                padding: "1.5rem 1rem",
+                padding: "1.5rem 1rem 1rem 1rem",
                 boxShadow: "0 6px 20px rgba(0,0,0,0.35)",
                 display: "flex",
                 flexDirection: "column",
                 maxHeight: "100vh",
                 overflowY: "auto",
-                position: "relative",
               }}
               onClick={(e) => e.stopPropagation()}
             >
-              <Stack spacing={2}>
-                {isAuthenticated && user && (
+              {/* Usuario + botón cerrar al lado */}
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  mb: 2,
+                }}
+              >
+                {isAuthenticated && user ? (
                   <Typography
                     variant="h6"
-                    sx={{
-                      color: "#fff",
-                      fontWeight: 700,
-                      textAlign: "center",
-                      mb: 1,
-                    }}
+                    sx={{ color: "#fff", fontWeight: 700 }}
                   >
                     👤 {user.username}
                   </Typography>
+                ) : (
+                  <Typography
+                    variant="h6"
+                    sx={{ color: "#fff", fontWeight: 700 }}
+                  >
+                    Menú
+                  </Typography>
                 )}
 
+                <IconButton
+                  onClick={() => setOpen(false)}
+                  sx={{ color: "#fff" }}
+                  aria-label="Cerrar menú"
+                >
+                  <CloseIcon />
+                </IconButton>
+              </Box>
+
+              <Stack spacing={2}>
                 {menuItems.map((item, i) => (
                   <Button
                     key={i}
@@ -337,28 +353,6 @@ export default function Navbar() {
                     Cerrar sesión
                   </Button>
                 )}
-
-                {/* Nuevo botón para cerrar el menú */}
-                <Button
-                  onClick={() => setOpen(false)}
-                  endIcon={<ArrowForwardIcon />}
-                  sx={{
-                    fontSize: "1rem",
-                    fontWeight: 600,
-                    color: "#fff",
-                    borderRadius: "12px",
-                    textTransform: "none",
-                    background: "linear-gradient(135deg, #616161, #9e9e9e)",
-                    width: "100%",
-                    py: 1,
-                    mt: 2,
-                    "&:hover": {
-                      boxShadow: "0 0 12px rgba(0,0,0,0.3)",
-                    },
-                  }}
-                >
-                  Cerrar menú
-                </Button>
               </Stack>
             </motion.div>
           </motion.div>
