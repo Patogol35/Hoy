@@ -16,7 +16,7 @@ import InfoIcon from "@mui/icons-material/Info";
 import StarIcon from "@mui/icons-material/Star";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 
-export default function ProductoCard({ producto, onVerDetalle }) {
+export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
   const { isAuthenticated } = useAuth();
   const { agregarAlCarrito } = useCarrito();
   const navigate = useNavigate();
@@ -27,6 +27,13 @@ export default function ProductoCard({ producto, onVerDetalle }) {
       navigate("/login");
       return;
     }
+
+    // Si se pasó la función desde Home, usarla
+    if (onAgregar) {
+      onAgregar(producto);
+      return;
+    }
+
     try {
       await agregarAlCarrito(producto.id, 1);
       toast.success(`${producto.nombre} agregado al carrito ✅`);
@@ -102,15 +109,8 @@ export default function ProductoCard({ producto, onVerDetalle }) {
           {producto.nombre}
         </Typography>
 
-        {/* Eliminamos la descripción */}
-
         {/* Precio */}
-        <Stack
-          direction="row"
-          alignItems="center"
-          spacing={0.5}
-          sx={{ mb: 2 }}
-        >
+        <Stack direction="row" alignItems="center" spacing={0.5} sx={{ mb: 2 }}>
           <AttachMoneyIcon color="primary" />
           <Typography variant="h6" color="primary" fontWeight="bold">
             {producto.precio}
@@ -133,13 +133,15 @@ export default function ProductoCard({ producto, onVerDetalle }) {
               fontWeight: "bold",
               transition: "all 0.3s ease",
               "&:hover": {
-                transform: "scale(1.05)",
-                boxShadow: "0 6px 15px rgba(0,0,0,0.2)",
+                transform: producto.stock > 0 ? "scale(1.05)" : "none",
+                boxShadow:
+                  producto.stock > 0 ? "0 6px 15px rgba(0,0,0,0.2)" : "none",
               },
             }}
             onClick={onAdd}
+            disabled={producto.stock === 0}
           >
-            Agregar al carrito
+            {producto.stock > 0 ? "Agregar al carrito" : "Agotado"}
           </Button>
 
           <Button
