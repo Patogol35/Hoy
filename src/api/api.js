@@ -64,13 +64,8 @@ async function authFetch(url, options = {}, token) {
   }
 
   if (!res.ok) {
-  console.error("Error en fetch:", data); // 🔎 te muestra la respuesta real
-  const msg =
-    data?.error ||   // ← lo que devuelve tu back en crear_pedido
-    data?.detail ||
-    data?.message ||
-    `Error ${res.status}`;
-  throw new Error(msg);
+    const msg = data?.detail || data?.error || `Error ${res.status}`;
+    throw new Error(msg);
   }
 
   return data;
@@ -152,4 +147,3 @@ export const getUserProfile = async (token) => {
   const API_ROOT = BASE_URL.replace("/api", "");
   return authFetch(`${API_ROOT}/user/profile/`, { method: "GET" }, token);
 };
-
