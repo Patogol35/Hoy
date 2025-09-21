@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getPedidos } from "../api/api";
+import { getPedidos, marcarPedidoCompletado } from "../api/api"; // ⚡️ agregamos función para marcar como completado
 import { useAuth } from "../context/AuthContext";
 import {
   Container,
@@ -25,20 +25,18 @@ export default function Pedidos() {
   const [page, setPage] = useState(1); // página actual
   const [totalCount, setTotalCount] = useState(0); // total de pedidos
 
-  useEffect(() => {
+  const fetchPedidos = () => {
     setLoading(true);
-    getPedidos(access, page) // ⚡️ importante: que acepte número de página
+    getPedidos(access, page)
       .then((data) => {
         if (!data?.results) return;
 
         setTotalCount(data.count);
 
-        // ordenar por fecha descendente (por si acaso)
         const ordenados = [...data.results].sort(
           (a, b) => new Date(b.fecha) - new Date(a.fecha)
         );
 
-        // numeración global (más reciente = mayor número)
         const pedidosNumerados = ordenados.map((p, index) => ({
           ...p,
           numeroLocal: data.count - ((page - 1) * PAGE_SIZE + index),
@@ -48,9 +46,22 @@ export default function Pedidos() {
       })
       .catch(console.error)
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchPedidos();
   }, [access, page]);
 
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
+
+  const handleMarcarCompletado = async (pedidoId) => {
+    try {
+      await marcarPedidoCompletado(access, pedidoId);
+      fetchPedidos(); // refresca la lista
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   if (loading && pedidos.length === 0)
     return <Container sx={{ mt: 4 }}>Cargando pedidos...</Container>;
@@ -86,12 +97,32 @@ export default function Pedidos() {
               <Typography variant="h6" fontWeight="bold">
                 Pedido #{p.numeroLocal}
               </Typography>
+
               <Typography variant="body2" color="text.secondary">
                 {new Date(p.fecha).toLocaleString()}
               </Typography>
+
               <Typography variant="body1" color="primary" fontWeight="bold">
                 Total: ${Number(p.total).toFixed(2)}
               </Typography>
+
+              {/* Chip que muestra estado pendiente/completado */}
+              <Chip
+                label={p.pendiente ? "Pendiente" : "Completado"}
+                color={p.pendiente ? "warning" : "success"}
+                size="small"
+              />
+
+              {/* Botón para marcar como completado solo si está pendiente */}
+              {p.pendiente && (
+                <Button
+                  size="small"
+                  variant="outlined"
+                  onClick={() => handleMarcarCompletado(p.id)}
+                >
+                  Marcar como recibido
+                </Button>
+              )}
             </Stack>
 
             <List dense>
