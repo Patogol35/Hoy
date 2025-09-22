@@ -125,7 +125,7 @@ export default function Carrito() {
                 "&:hover": { boxShadow: "0 6px 16px rgba(0,0,0,0.2)" },
               }}
             >
-              {/* Imagen mejorada */}
+              {/* Imagen ajustada */}
               <CardMedia
                 component="img"
                 image={it.producto?.imagen || undefined}
@@ -133,15 +133,14 @@ export default function Carrito() {
                 sx={{
                   width: { xs: "100%", sm: 160 },
                   height: { xs: 200, sm: 160 },
-                  objectFit: it.producto?.imagen ? "cover" : "contain",
+                  objectFit: "contain", // 🔹 siempre muestra la imagen completa
                   borderRadius: { xs: "12px 12px 0 0", sm: "12px 0 0 12px" },
-                  bgcolor: it.producto?.imagen
-                    ? "#fafafa"
-                    : "linear-gradient(135deg, #f0f0f0, #e0e0e0)",
+                  bgcolor: "#fafafa",
                   border: "1px solid #eee",
+                  p: 1,
                   transition: "transform 0.3s ease",
                   "&:hover": {
-                    transform: "scale(1.05)",
+                    transform: "scale(1.05)", // 🔹 efecto zoom suave
                   },
                 }}
               />
@@ -311,4 +310,4 @@ export default function Carrito() {
       )}
     </Box>
   );
-}
+                }
