@@ -123,21 +123,25 @@ export default function Carrito() {
                 boxShadow: "0 3px 8px rgba(0,0,0,0.12)",
                 transition: "all 0.3s",
                 "&:hover": { boxShadow: "0 6px 16px rgba(0,0,0,0.2)" },
-                overflow: "hidden",
-                alignItems: "stretch", // 🔹 fuerza que hijos tengan la misma altura
               }}
             >
-              {/* Imagen */}
+              {/* Imagen ajustada */}
               <CardMedia
                 component="img"
-                image={it.producto?.imagen}
+                image={it.producto?.imagen || undefined}
                 alt={it.producto?.nombre}
                 sx={{
                   width: { xs: "100%", sm: 160 },
-                  height: "100%", // 🔹 ocupa todo el alto del card
-                  objectFit: "contain", // mantiene proporción
+                  height: { xs: 200, sm: 160 },
+                  objectFit: "contain", // 🔹 siempre muestra la imagen completa
+                  borderRadius: { xs: "12px 12px 0 0", sm: "12px 0 0 12px" },
                   bgcolor: "#fafafa",
+                  border: "1px solid #eee",
                   p: 1,
+                  transition: "transform 0.3s ease",
+                  "&:hover": {
+                    transform: "scale(1.05)", // 🔹 efecto zoom suave
+                  },
                 }}
               />
 
@@ -306,4 +310,4 @@ export default function Carrito() {
       )}
     </Box>
   );
-                  }
+}
