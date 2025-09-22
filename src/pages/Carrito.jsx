@@ -123,7 +123,7 @@ export default function Carrito() {
                 boxShadow: "0 3px 8px rgba(0,0,0,0.12)",
                 transition: "all 0.3s",
                 "&:hover": { boxShadow: "0 6px 16px rgba(0,0,0,0.2)" },
-                overflow: "hidden", // 🔹 asegura que la imagen abarque todo
+                overflow: "hidden",
               }}
             >
               {/* Imagen */}
@@ -133,7 +133,8 @@ export default function Carrito() {
                 alt={it.producto?.nombre}
                 sx={{
                   width: { xs: "100%", sm: 160 },
-                  objectFit: "contain", // 🔹 se ve completa la imagen
+                  maxHeight: { xs: 200, sm: 160 }, // 🔹 evita imágenes muy altas
+                  objectFit: "contain",
                   bgcolor: "#fafafa",
                   p: 1,
                 }}
@@ -304,4 +305,4 @@ export default function Carrito() {
       )}
     </Box>
   );
-                }
+                         }
