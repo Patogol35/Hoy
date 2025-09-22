@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getProductos } from "../api/api";
+import { getProductos, getCategorias } from "../api/api";
 import ProductoCard from "../components/ProductoCard";
 import {
   Typography,
@@ -30,10 +30,13 @@ import { toast } from "react-toastify";
 
 export default function Home() {
   const [productos, setProductos] = useState([]);
+  const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const [sort, setSort] = useState("asc");
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [categoria, setCategoria] = useState(""); // filtro categoría
 
   // Modal
   const [selected, setSelected] = useState(null);
@@ -44,8 +47,20 @@ export default function Home() {
 
   const { agregarAlCarrito } = useCarrito();
 
+  // cargar categorías
   useEffect(() => {
-    getProductos()
+    getCategorias()
+      .then((data) => setCategorias(data))
+      .catch((err) => {
+        console.error("Error cargando categorías:", err);
+        setCategorias([]);
+      });
+  }, []);
+
+  // cargar productos (con filtro de categoría)
+  useEffect(() => {
+    setLoading(true);
+    getProductos(categoria ? { categoria } : {})
       .then((data) => {
         const lista = Array.isArray(data)
           ? data
@@ -59,8 +74,9 @@ export default function Home() {
         setProductos([]);
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [categoria]);
 
+  // buscador con debounce
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(search.toLowerCase());
@@ -162,7 +178,7 @@ export default function Home() {
           }}
         />
 
-        {/* Buscador y ordenamiento */}
+        {/* Buscador, categoría y ordenamiento */}
         <Stack
           direction={{ xs: "column", sm: "row" }}
           spacing={2}
@@ -184,6 +200,22 @@ export default function Home() {
             }}
             sx={{ width: { xs: "100%", sm: 250 } }}
           />
+
+          <FormControl size="small" sx={{ minWidth: 180 }}>
+            <InputLabel>Categoría</InputLabel>
+            <Select
+              value={categoria}
+              label="Categoría"
+              onChange={(e) => setCategoria(e.target.value)}
+            >
+              <MenuItem value="">Todas</MenuItem>
+              {categorias.map((cat) => (
+                <MenuItem key={cat.id} value={cat.id}>
+                  {cat.nombre}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
           <FormControl size="small" sx={{ minWidth: 180 }}>
             <InputLabel>Ordenar por</InputLabel>
@@ -233,7 +265,7 @@ export default function Home() {
                     setSelected(prod);
                     setOpen(true);
                   }}
-                  onAgregar={handleAdd} // ahora también pasa la función de agregar
+                  onAgregar={handleAdd}
                 />
               </motion.div>
             </Grid>
@@ -418,4 +450,4 @@ export default function Home() {
       </Dialog>
     </>
   );
-        }
+          }
