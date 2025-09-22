@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getProductos } from "../api/api";
+import { getProductos, getCategorias } from "../api/api";
 import ProductoCard from "../components/ProductoCard";
 import {
   Typography,
@@ -30,10 +30,13 @@ import { toast } from "react-toastify";
 
 export default function Home() {
   const [productos, setProductos] = useState([]);
+  const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const [sort, setSort] = useState("asc");
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [categoria, setCategoria] = useState(""); // filtro categoría
 
   // Modal
   const [selected, setSelected] = useState(null);
@@ -44,9 +47,20 @@ export default function Home() {
 
   const { agregarAlCarrito } = useCarrito();
 
-  // Carga inicial de productos
+  // cargar categorías
   useEffect(() => {
-    getProductos()
+    getCategorias()
+      .then((data) => setCategorias(data))
+      .catch((err) => {
+        console.error("Error cargando categorías:", err);
+        setCategorias([]);
+      });
+  }, []);
+
+  // cargar productos (con filtro de categoría)
+  useEffect(() => {
+    setLoading(true);
+    getProductos(categoria ? { categoria } : {})
       .then((data) => {
         const lista = Array.isArray(data)
           ? data
@@ -60,9 +74,9 @@ export default function Home() {
         setProductos([]);
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [categoria]);
 
-  // Delay en buscador
+  // buscador con debounce
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(search.toLowerCase());
@@ -70,7 +84,6 @@ export default function Home() {
     return () => clearTimeout(handler);
   }, [search]);
 
-  // Filtro + orden
   const filtered = (productos || [])
     .filter((p) =>
       debouncedSearch === ""
@@ -165,7 +178,7 @@ export default function Home() {
           }}
         />
 
-        {/* Buscador y ordenamiento */}
+        {/* Buscador, categoría y ordenamiento */}
         <Stack
           direction={{ xs: "column", sm: "row" }}
           spacing={2}
@@ -189,6 +202,22 @@ export default function Home() {
           />
 
           <FormControl size="small" sx={{ minWidth: 180 }}>
+            <InputLabel>Categoría</InputLabel>
+            <Select
+              value={categoria}
+              label="Categoría"
+              onChange={(e) => setCategoria(e.target.value)}
+            >
+              <MenuItem value="">Todas</MenuItem>
+              {categorias.map((cat) => (
+                <MenuItem key={cat.id} value={cat.id}>
+                  {cat.nombre}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl size="small" sx={{ minWidth: 180 }}>
             <InputLabel>Ordenar por</InputLabel>
             <Select
               value={sort}
@@ -202,7 +231,7 @@ export default function Home() {
         </Stack>
       </Box>
 
-      {/* Grid de productos */}
+      {/* Grid */}
       {filtered.length === 0 ? (
         <Box sx={{ textAlign: "center", mt: 8, color: "text.secondary" }}>
           <ShoppingCartIcon sx={{ fontSize: 60, mb: 2, opacity: 0.6 }} />
@@ -244,7 +273,7 @@ export default function Home() {
         </Grid>
       )}
 
-      {/* Modal detalle */}
+      {/* Modal Detalle */}
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
@@ -421,4 +450,4 @@ export default function Home() {
       </Dialog>
     </>
   );
-          }
+              }
