@@ -90,9 +90,16 @@ export const register = async (data) => {
   });
 };
 
-// PRODUCTOS
-export const getProductos = async () => {
-  return authFetch(`${BASE_URL}/productos/`, { method: "GET" });
+// PRODUCTOS (con filtros opcionales)
+export const getProductos = async (params = {}) => {
+  const query = new URLSearchParams(params).toString();
+  const url = query ? `${BASE_URL}/productos/?${query}` : `${BASE_URL}/productos/`;
+  return authFetch(url, { method: "GET" });
+};
+
+// CATEGORÍAS
+export const getCategorias = async () => {
+  return authFetch(`${BASE_URL}/categorias/`, { method: "GET" });
 };
 
 // CARRITO
@@ -133,18 +140,11 @@ export const crearPedido = async (token) => {
 };
 
 export const getPedidos = async (token, page = 1) => {
-  // 🔹 ahora acepta page y devuelve el objeto de paginación
   return authFetch(`${BASE_URL}/pedidos/?page=${page}`, { method: "GET" }, token);
 };
 
-
-
-// api.js
-
 // PERFIL DE USUARIO
 export const getUserProfile = async (token) => {
-  // quitamos /api porque el endpoint es /user/profile/
   const API_ROOT = BASE_URL.replace("/api", "");
   return authFetch(`${API_ROOT}/user/profile/`, { method: "GET" }, token);
 };
-
