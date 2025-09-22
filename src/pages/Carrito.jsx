@@ -124,6 +124,7 @@ export default function Carrito() {
                 transition: "all 0.3s",
                 "&:hover": { boxShadow: "0 6px 16px rgba(0,0,0,0.2)" },
                 overflow: "hidden",
+                alignItems: "stretch", // 🔹 fuerza que hijos tengan la misma altura
               }}
             >
               {/* Imagen */}
@@ -133,8 +134,8 @@ export default function Carrito() {
                 alt={it.producto?.nombre}
                 sx={{
                   width: { xs: "100%", sm: 160 },
-                  maxHeight: { xs: 200, sm: 160 }, // 🔹 evita imágenes muy altas
-                  objectFit: "contain",
+                  height: "100%", // 🔹 ocupa todo el alto del card
+                  objectFit: "contain", // mantiene proporción
                   bgcolor: "#fafafa",
                   p: 1,
                 }}
@@ -305,4 +306,4 @@ export default function Carrito() {
       )}
     </Box>
   );
-                         }
+                  }
