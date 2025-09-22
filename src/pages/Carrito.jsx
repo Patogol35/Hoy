@@ -123,25 +123,19 @@ export default function Carrito() {
                 boxShadow: "0 3px 8px rgba(0,0,0,0.12)",
                 transition: "all 0.3s",
                 "&:hover": { boxShadow: "0 6px 16px rgba(0,0,0,0.2)" },
+                overflow: "hidden", // 🔹 asegura que la imagen abarque todo
               }}
             >
-              {/* Imagen ajustada */}
+              {/* Imagen */}
               <CardMedia
                 component="img"
-                image={it.producto?.imagen || undefined}
+                image={it.producto?.imagen}
                 alt={it.producto?.nombre}
                 sx={{
                   width: { xs: "100%", sm: 160 },
-                  height: { xs: 200, sm: 160 },
-                  objectFit: "contain", // 🔹 siempre muestra la imagen completa
-                  borderRadius: { xs: "12px 12px 0 0", sm: "12px 0 0 12px" },
+                  objectFit: "contain", // 🔹 se ve completa la imagen
                   bgcolor: "#fafafa",
-                  border: "1px solid #eee",
                   p: 1,
-                  transition: "transform 0.3s ease",
-                  "&:hover": {
-                    transform: "scale(1.05)", // 🔹 efecto zoom suave
-                  },
                 }}
               />
 
