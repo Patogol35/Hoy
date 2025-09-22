@@ -125,18 +125,24 @@ export default function Carrito() {
                 "&:hover": { boxShadow: "0 6px 16px rgba(0,0,0,0.2)" },
               }}
             >
-              {/* Imagen */}
+              {/* Imagen mejorada */}
               <CardMedia
                 component="img"
-                image={it.producto?.imagen}
+                image={it.producto?.imagen || undefined}
                 alt={it.producto?.nombre}
                 sx={{
-                  width: { xs: "100%", sm: 120 },
-                  height: { xs: 180, sm: 120 },
-                  objectFit: "contain",
-                  bgcolor: "#fafafa",
+                  width: { xs: "100%", sm: 160 },
+                  height: { xs: 200, sm: 160 },
+                  objectFit: it.producto?.imagen ? "cover" : "contain",
                   borderRadius: { xs: "12px 12px 0 0", sm: "12px 0 0 12px" },
-                  p: 1,
+                  bgcolor: it.producto?.imagen
+                    ? "#fafafa"
+                    : "linear-gradient(135deg, #f0f0f0, #e0e0e0)",
+                  border: "1px solid #eee",
+                  transition: "transform 0.3s ease",
+                  "&:hover": {
+                    transform: "scale(1.05)",
+                  },
                 }}
               />
 
