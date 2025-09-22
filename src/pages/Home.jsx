@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getProductos } from "../api/api"; // getProductos ahora acepta un query param opcional
+import { getProductos } from "../api/api";
 import ProductoCard from "../components/ProductoCard";
 import {
   Typography,
@@ -34,7 +34,6 @@ export default function Home() {
   const [sort, setSort] = useState("asc");
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [categoriaSel, setCategoriaSel] = useState(""); // categoría seleccionada
 
   // Modal
   const [selected, setSelected] = useState(null);
@@ -45,16 +44,8 @@ export default function Home() {
 
   const { agregarAlCarrito } = useCarrito();
 
-  // ---------------------------
-  // Cargar productos (con filtro por categoría)
-  // ---------------------------
   useEffect(() => {
-    setLoading(true);
-    let url = "/api/productos/";
-    if (categoriaSel) {
-      url += `?categoria=${categoriaSel}`;
-    }
-    getProductos(url)
+    getProductos()
       .then((data) => {
         const lista = Array.isArray(data)
           ? data
@@ -68,11 +59,8 @@ export default function Home() {
         setProductos([]);
       })
       .finally(() => setLoading(false));
-  }, [categoriaSel]);
+  }, []);
 
-  // ---------------------------
-  // Debounce para búsqueda
-  // ---------------------------
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(search.toLowerCase());
@@ -80,9 +68,6 @@ export default function Home() {
     return () => clearTimeout(handler);
   }, [search]);
 
-  // ---------------------------
-  // Filtrado + ordenamiento
-  // ---------------------------
   const filtered = (productos || [])
     .filter((p) =>
       debouncedSearch === ""
@@ -177,7 +162,7 @@ export default function Home() {
           }}
         />
 
-        {/* Buscador, orden y categoría */}
+        {/* Buscador y ordenamiento */}
         <Stack
           direction={{ xs: "column", sm: "row" }}
           spacing={2}
@@ -209,22 +194,6 @@ export default function Home() {
             >
               <MenuItem value="asc">Precio: menor a mayor</MenuItem>
               <MenuItem value="desc">Precio: mayor a menor</MenuItem>
-            </Select>
-          </FormControl>
-
-          <FormControl size="small" sx={{ minWidth: 180 }}>
-            <InputLabel>Categoría</InputLabel>
-            <Select
-              value={categoriaSel}
-              label="Categoría"
-              onChange={(e) => setCategoriaSel(e.target.value)}
-            >
-              <MenuItem value="">Todas</MenuItem>
-              <MenuItem value="DEPORTES">Deportes</MenuItem>
-              <MenuItem value="TECNOLOGIA">Tecnologías</MenuItem>
-              <MenuItem value="VIDEOJUEGOS">Videojuegos</MenuItem>
-              <MenuItem value="ZAPATOS">Zapatos</MenuItem>
-              <MenuItem value="LIBROS">Libros</MenuItem>
             </Select>
           </FormControl>
         </Stack>
@@ -264,31 +233,13 @@ export default function Home() {
                     setSelected(prod);
                     setOpen(true);
                   }}
-                  onAgregar={handleAdd}
+                  onAgregar={handleAdd} // ahora también pasa la función de agregar
                 />
               </motion.div>
             </Grid>
           ))}
         </Grid>
       )}
-
-      {/* Modal y Lightbox */}
-      {/* ...Aquí puedes mantener tu modal y lightbox como ya lo tenías... */}
-    </>
-  );
-}
-
-
-
-
-
-
-
-
-
-
-
-      
 
       {/* Modal Detalle */}
       <Dialog
