@@ -35,7 +35,7 @@ export default function Login() {
       const data = await apiLogin(form);
       if (data?.access && data?.refresh) {
         login(data.access, data.refresh);
-        toast.success("Bienvenido 👋");
+        toast.success(`Bienvenido/a, ${form.username} 👋`);
         navigate("/");
       } else {
         toast.error("Credenciales inválidas");
