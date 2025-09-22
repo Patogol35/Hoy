@@ -22,7 +22,9 @@ export const refreshToken = async (refresh) => {
 // =====================
 // FETCH CON AUTO REFRESH
 // =====================
-async function authFetch(url, options = {}, token) {
+async function authFetch(url, options = {}) {
+  let token = localStorage.getItem("access"); // 🔹 leer token directamente
+
   let headers = {
     ...(options.headers || {}),
     ...(options.body && { "Content-Type": "application/json" }),
@@ -31,7 +33,7 @@ async function authFetch(url, options = {}, token) {
 
   let res = await fetch(url, { ...options, headers });
 
-  // Si expira el access → intentar refrescar
+  // refrescar token si expira
   if (res.status === 401 && localStorage.getItem("refresh")) {
     try {
       const newTokens = await refreshToken(localStorage.getItem("refresh"));
@@ -39,7 +41,6 @@ async function authFetch(url, options = {}, token) {
         localStorage.setItem("access", newTokens.access);
         token = newTokens.access;
 
-        // reintento con nuevo token
         headers = {
           ...(options.headers || {}),
           ...(options.body && { "Content-Type": "application/json" }),
@@ -96,54 +97,41 @@ export const getProductos = async () => {
 };
 
 // CARRITO
-export const getCarrito = async (token) => {
-  return authFetch(`${BASE_URL}/carrito/`, { method: "GET" }, token);
+export const getCarrito = async () => {
+  return authFetch(`${BASE_URL}/carrito/`, { method: "GET" });
 };
 
-export const agregarAlCarrito = async (producto_id, cantidad = 1, token) => {
-  return authFetch(
-    `${BASE_URL}/carrito/agregar/`,
-    {
-      method: "POST",
-      body: JSON.stringify({ producto_id, cantidad }),
-    },
-    token
-  );
+export const agregarAlCarrito = async (producto_id, cantidad = 1) => {
+  return authFetch(`${BASE_URL}/carrito/agregar/`, {
+    method: "POST",
+    body: JSON.stringify({ producto_id, cantidad }),
+  });
 };
 
-export const eliminarDelCarrito = async (itemId, token) => {
-  return authFetch(
-    `${BASE_URL}/carrito/eliminar/${itemId}/`,
-    { method: "DELETE" },
-    token
-  );
+export const eliminarDelCarrito = async (itemId) => {
+  return authFetch(`${BASE_URL}/carrito/eliminar/${itemId}/`, {
+    method: "DELETE",
+  });
 };
 
-export const setCantidadItem = async (itemId, cantidad, token) => {
-  return authFetch(
-    `${BASE_URL}/carrito/actualizar/${itemId}/`,
-    { method: "PUT", body: JSON.stringify({ cantidad }) },
-    token
-  );
+export const setCantidadItem = async (itemId, cantidad) => {
+  return authFetch(`${BASE_URL}/carrito/actualizar/${itemId}/`, {
+    method: "PUT",
+    body: JSON.stringify({ cantidad }),
+  });
 };
 
 // PEDIDOS
-export const crearPedido = async (token) => {
-  return authFetch(`${BASE_URL}/pedido/crear/`, { method: "POST" }, token);
+export const crearPedido = async () => {
+  return authFetch(`${BASE_URL}/pedido/crear/`, { method: "POST" });
 };
 
-export const getPedidos = async (token, page = 1) => {
-  // 🔹 ahora acepta page y devuelve el objeto de paginación
-  return authFetch(`${BASE_URL}/pedidos/?page=${page}`, { method: "GET" }, token);
+export const getPedidos = async (page = 1) => {
+  return authFetch(`${BASE_URL}/pedidos/?page=${page}`, { method: "GET" });
 };
-
-
-
-// api.js
 
 // PERFIL DE USUARIO
-export const getUserProfile = async (token) => {
-  // quitamos /api porque el endpoint es /user/profile/
+export const getUserProfile = async () => {
   const API_ROOT = BASE_URL.replace("/api", "");
-  return authFetch(`${API_ROOT}/user/profile/`, { method: "GET" }, token);
+  return authFetch(`${API_ROOT}/user/profile/`, { method: "GET" });
 };
