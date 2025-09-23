@@ -26,6 +26,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import Slider from "react-slick";
 import { useCarrito } from "../context/CarritoContext";
+import { useAuth } from "../context/AuthContext";   // ✅ IMPORTANTE
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
@@ -45,19 +46,15 @@ export default function Home() {
   const [lightbox, setLightbox] = useState(null);
 
   const { agregarAlCarrito } = useCarrito();
+  const { user } = useAuth();           // ✅ para saber si hay sesión
   const navigate = useNavigate();
 
-  // cargar categorías
   useEffect(() => {
     getCategorias()
       .then((data) => setCategorias(data))
-      .catch((err) => {
-        console.error("Error cargando categorías:", err);
-        setCategorias([]);
-      });
+      .catch(() => setCategorias([]));
   }, []);
 
-  // cargar productos (con filtro de categoría)
   useEffect(() => {
     setLoading(true);
     getProductos(categoria ? { categoria } : {})
@@ -69,14 +66,10 @@ export default function Home() {
           : [];
         setProductos(lista);
       })
-      .catch((err) => {
-        console.error("Error cargando productos:", err);
-        setProductos([]);
-      })
+      .catch(() => setProductos([]))
       .finally(() => setLoading(false));
   }, [categoria]);
 
-  // buscador con debounce
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(search.toLowerCase());
@@ -110,6 +103,14 @@ export default function Home() {
     } catch (e) {
       toast.error(e.message);
     }
+  };
+
+  const handleCarritoClick = () => {
+    if (!user) {
+      toast.warning("Debes iniciar sesión para acceder al carrito ⚠️");
+      return;
+    }
+    navigate("/carrito");
   };
 
   if (loading)
@@ -231,7 +232,7 @@ export default function Home() {
         </Stack>
       </Box>
 
-      {/* Grid */}
+      {/* Grid de productos */}
       {filtered.length === 0 ? (
         <Box sx={{ textAlign: "center", mt: 8, color: "text.secondary" }}>
           <ShoppingCartIcon sx={{ fontSize: 60, mb: 2, opacity: 0.6 }} />
@@ -273,7 +274,7 @@ export default function Home() {
         </Grid>
       )}
 
-      {/* Modal Detalle */}
+      {/* Modal de detalle */}
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
@@ -314,7 +315,7 @@ export default function Home() {
               <CloseIcon />
             </IconButton>
             <Grid container spacing={4}>
-              {/* Slider imágenes */}
+              {/* Slider de imágenes */}
               <Grid item xs={12} md={6}>
                 <Slider {...settings}>
                   {(selected.imagenes || [selected.imagen]).map((img, i) => (
@@ -349,7 +350,7 @@ export default function Home() {
                 </Slider>
               </Grid>
 
-              {/* Info producto */}
+              {/* Información del producto */}
               <Grid item xs={12} md={6}>
                 <Stack spacing={3}>
                   <Typography variant="h5" fontWeight="bold">
@@ -449,10 +450,10 @@ export default function Home() {
         />
       </Dialog>
 
-      {/* Botón flotante Carrito */}
+      {/* ✅ Botón flotante Carrito con validación de sesión */}
       <IconButton
         color="primary"
-        onClick={() => navigate("/carrito")}
+        onClick={handleCarritoClick}
         sx={{
           position: "fixed",
           bottom: 24,
@@ -472,4 +473,4 @@ export default function Home() {
       </IconButton>
     </>
   );
-                }
+}
