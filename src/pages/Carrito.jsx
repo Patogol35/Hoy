@@ -24,26 +24,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 
-// Banner de demo
-function DemoBanner() {
-  return (
-    <Box
-      sx={{
-        bgcolor: "#FFF9E6",
-        color: "#8A6D3B",
-        p: 2,
-        borderRadius: 2,
-        mb: 4,
-        border: "1px solid #FFECB3",
-        textAlign: "center",
-        boxShadow: "0 3px 8px rgba(0,0,0,0.1)",
-      }}
-    >
-      ⚠️ Esta es una aplicación demostrativa. Los pedidos no son reales.
-    </Box>
-  );
-}
-
 export default function Carrito() {
   const {
     items,
