@@ -27,6 +27,7 @@ import StorefrontIcon from "@mui/icons-material/Storefront";
 import Slider from "react-slick";
 import { useCarrito } from "../context/CarritoContext";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
   const [productos, setProductos] = useState([]);
@@ -36,16 +37,15 @@ export default function Home() {
   const [sort, setSort] = useState("asc");
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [categoria, setCategoria] = useState(""); // filtro categoría
+  const [categoria, setCategoria] = useState("");
 
-  // Modal
   const [selected, setSelected] = useState(null);
   const [open, setOpen] = useState(false);
 
-  // Lightbox
   const [lightbox, setLightbox] = useState(null);
 
   const { agregarAlCarrito } = useCarrito();
+  const navigate = useNavigate();
 
   // cargar categorías
   useEffect(() => {
@@ -448,6 +448,28 @@ export default function Home() {
           }}
         />
       </Dialog>
+
+      {/* Botón flotante Carrito */}
+      <IconButton
+        color="primary"
+        onClick={() => navigate("/carrito")}
+        sx={{
+          position: "fixed",
+          bottom: 24,
+          right: 24,
+          bgcolor: "primary.main",
+          color: "white",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+          "&:hover": {
+            bgcolor: "primary.dark",
+            transform: "scale(1.05)",
+          },
+          zIndex: 2000,
+          p: 2,
+        }}
+      >
+        <ShoppingCartIcon sx={{ fontSize: 28 }} />
+      </IconButton>
     </>
   );
-              }
+                }
