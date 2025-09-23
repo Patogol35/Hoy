@@ -18,6 +18,7 @@ import {
   IconButton,
   Chip,
   Button,
+  Pagination,   // ✅ IMPORTADO
 } from "@mui/material";
 import { motion } from "framer-motion";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -26,7 +27,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import Slider from "react-slick";
 import { useCarrito } from "../context/CarritoContext";
-import { useAuth } from "../context/AuthContext";   // ✅ IMPORTANTE
+import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
@@ -46,8 +47,12 @@ export default function Home() {
   const [lightbox, setLightbox] = useState(null);
 
   const { agregarAlCarrito } = useCarrito();
-  const { user } = useAuth();           // ✅ para saber si hay sesión
+  const { user } = useAuth();
   const navigate = useNavigate();
+
+  // 🔹 PAGINACIÓN
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     getCategorias()
@@ -65,6 +70,7 @@ export default function Home() {
           ? data.results
           : [];
         setProductos(lista);
+        setPage(1); // 🔹 Reiniciar a página 1 si cambia categoría
       })
       .catch(() => setProductos([]))
       .finally(() => setLoading(false));
@@ -73,6 +79,7 @@ export default function Home() {
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(search.toLowerCase());
+      setPage(1); // 🔹 Reiniciar a página 1 si cambia búsqueda
     }, 400);
     return () => clearTimeout(handler);
   }, [search]);
@@ -86,6 +93,12 @@ export default function Home() {
     .sort((a, b) =>
       sort === "asc" ? a.precio - b.precio : b.precio - a.precio
     );
+
+  // 🔹 Productos de la página actual
+  const paginated = filtered.slice(
+    (page - 1) * itemsPerPage,
+    page * itemsPerPage
+  );
 
   const settings = {
     dots: true,
@@ -233,45 +246,54 @@ export default function Home() {
       </Box>
 
       {/* Grid de productos */}
-      {filtered.length === 0 ? (
+      {paginated.length === 0 ? (
         <Box sx={{ textAlign: "center", mt: 8, color: "text.secondary" }}>
           <ShoppingCartIcon sx={{ fontSize: 60, mb: 2, opacity: 0.6 }} />
           <Typography variant="h6">No se encontraron productos.</Typography>
         </Box>
       ) : (
-        <Grid container spacing={4} justifyContent="center" alignItems="stretch">
-          {filtered.map((prod, i) => (
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              md={4}
-              lg={3}
-              key={prod.id}
-              sx={{ display: "flex", justifyContent: "center" }}
-            >
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: i * 0.05 }}
-                style={{
-                  display: "flex",
-                  width: "100%",
-                  justifyContent: "center",
-                }}
+        <>
+          <Grid container spacing={4} justifyContent="center" alignItems="stretch">
+            {paginated.map((prod, i) => (
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                md={4}
+                lg={3}
+                key={prod.id}
+                sx={{ display: "flex", justifyContent: "center" }}
               >
-                <ProductoCard
-                  producto={prod}
-                  onVerDetalle={() => {
-                    setSelected(prod);
-                    setOpen(true);
-                  }}
-                  onAgregar={handleAdd}
-                />
-              </motion.div>
-            </Grid>
-          ))}
-        </Grid>
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: i * 0.05 }}
+                  style={{ display: "flex", width: "100%", justifyContent: "center" }}
+                >
+                  <ProductoCard
+                    producto={prod}
+                    onVerDetalle={() => {
+                      setSelected(prod);
+                      setOpen(true);
+                    }}
+                    onAgregar={handleAdd}
+                  />
+                </motion.div>
+              </Grid>
+            ))}
+          </Grid>
+
+          {/* 🔹 Paginación */}
+          <Box sx={{ mt: 4, display: "flex", justifyContent: "center" }}>
+            <Pagination
+              count={Math.ceil(filtered.length / itemsPerPage)}
+              page={page}
+              onChange={(e, value) => setPage(value)}
+              color="primary"
+              shape="rounded"
+            />
+          </Box>
+        </>
       )}
 
       {/* Modal de detalle */}
