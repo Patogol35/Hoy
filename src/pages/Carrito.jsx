@@ -75,9 +75,6 @@ export default function Carrito() {
 
   return (
     <Box sx={{ pb: { xs: 14, sm: 6 } }}>
-      {/* Banner de demo */}
-      <DemoBanner />
-
       <Typography variant="h4" gutterBottom fontWeight="bold">
         🛒 Tu Carrito
       </Typography>
@@ -87,7 +84,6 @@ export default function Carrito() {
         <Typography>Tu carrito está vacío.</Typography>
       )}
 
-      {/* Lista de productos */}
       {!loading &&
         items.map((it) => {
           const stock = it.producto?.stock ?? 0;
@@ -105,7 +101,6 @@ export default function Carrito() {
                 "&:hover": { boxShadow: "0 6px 16px rgba(0,0,0,0.2)" },
               }}
             >
-              {/* Imagen ajustada */}
               <CardMedia
                 component="img"
                 image={it.producto?.imagen || undefined}
@@ -113,19 +108,18 @@ export default function Carrito() {
                 sx={{
                   width: { xs: "100%", sm: 160 },
                   height: { xs: 200, sm: 160 },
-                  objectFit: "contain", // 🔹 siempre muestra la imagen completa
+                  objectFit: "contain",
                   borderRadius: { xs: "12px 12px 0 0", sm: "12px 0 0 12px" },
                   bgcolor: "#fafafa",
                   border: "1px solid #eee",
                   p: 1,
                   transition: "transform 0.3s ease",
                   "&:hover": {
-                    transform: "scale(1.05)", // 🔹 efecto zoom suave
+                    transform: "scale(1.05)",
                   },
                 }}
               />
 
-              {/* Contenido */}
               <CardContent
                 sx={{
                   flex: 1,
@@ -170,7 +164,6 @@ export default function Carrito() {
                 </Box>
               </CardContent>
 
-              {/* Controles */}
               <Box
                 sx={{
                   display: "flex",
@@ -181,7 +174,6 @@ export default function Carrito() {
                   gap: 1,
                 }}
               >
-                {/* Botones cantidad */}
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <IconButton
                     onClick={() => decrementar(it)}
@@ -231,7 +223,6 @@ export default function Carrito() {
                   </IconButton>
                 </Box>
 
-                {/* Botón eliminar */}
                 <IconButton
                   onClick={() => eliminarItem(it.id)}
                   sx={{
@@ -246,7 +237,6 @@ export default function Carrito() {
           );
         })}
 
-      {/* Total y comprar */}
       {!loading && items.length > 0 && (
         <Box
           mt={3}
@@ -290,4 +280,4 @@ export default function Carrito() {
       )}
     </Box>
   );
-}
+                  }
