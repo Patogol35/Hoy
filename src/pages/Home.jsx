@@ -52,7 +52,7 @@ export default function Home() {
 
   // 🔹 PAGINACIÓN
   const [page, setPage] = useState(1);
-  const itemsPerPage = 6;
+  const itemsPerPage = 8;
 
   useEffect(() => {
     getCategorias()
