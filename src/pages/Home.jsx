@@ -13,7 +13,6 @@ import {
   CircularProgress,
   Paper,
   Dialog,
-  DialogContent,
   Button,
   Chip,
 } from "@mui/material";
@@ -24,6 +23,7 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import SortIcon from "@mui/icons-material/Sort";
 import CloseIcon from "@mui/icons-material/Close";
 
+import Slider from "react-slick"; // 👈 slider
 import ProductoCard from "../components/ProductoCard";
 import { useProductos } from "../hooks/useProductos";
 import { useCategorias } from "../hooks/useCategorias";
@@ -36,6 +36,7 @@ export default function Home() {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("asc");
   const [productoSeleccionado, setProductoSeleccionado] = useState(null);
+  const [lightbox, setLightbox] = useState(null);
 
   const categorias = useCategorias();
   const { loading, filtered, paginated, page, setPage } = useProductos({
@@ -48,6 +49,15 @@ export default function Home() {
 
   const handleVerDetalle = (producto) => setProductoSeleccionado(producto);
   const handleCerrarDetalle = () => setProductoSeleccionado(null);
+
+  const sliderSettings = {
+    dots: true,
+    infinite: true,
+    speed: 400,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    arrows: true,
+  };
 
   if (loading) {
     return (
@@ -193,9 +203,194 @@ export default function Home() {
       </IconButton>
 
       {/* ================== MODAL DETALLE ================== */}
-      
-    
-      
+      <Dialog
+        open={Boolean(productoSeleccionado)}
+        onClose={handleCerrarDetalle}
+        maxWidth="lg"
+        fullWidth
+        sx={{
+          zIndex: 1600,
+          "& .MuiBackdrop-root": {
+            backgroundColor: "rgba(0,0,0,0.85)",
+            backdropFilter: "blur(5px)",
+          },
+        }}
+        PaperProps={{
+          sx: {
+            borderRadius: { xs: 0, md: 3 },
+            p: 3,
+            bgcolor: "#1e1e1e",
+            color: "white",
+            width: "100%",
+            maxWidth: { xs: "100%", md: 900 },
+            maxHeight: "90vh",
+            overflowY: "auto",
+            position: "relative",
+          },
+        }}
+      >
+        {productoSeleccionado && (
+          <Box>
+            {/* Botón cerrar */}
+            <IconButton
+              onClick={handleCerrarDetalle}
+              sx={{
+                position: "absolute",
+                top: 12,
+                right: 12,
+                bgcolor: "rgba(0,0,0,0.6)",
+                color: "white",
+                "&:hover": { bgcolor: "rgba(255,255,255,0.2)" },
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+
+            <Grid container spacing={4}>
+              {/* Slider imágenes */}
+              <Grid item xs={12} md={6}>
+                <Slider {...sliderSettings}>
+                  {(productoSeleccionado.imagenes ||
+                    [productoSeleccionado.imagen]).map((img, i) => (
+                    <Box
+                      key={i}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: { xs: 300, md: 400 },
+                        cursor: "zoom-in",
+                      }}
+                      onClick={() => setLightbox(img)}
+                    >
+                      <Box
+                        component="img"
+                        src={img}
+                        alt={productoSeleccionado.nombre}
+                        loading="lazy"
+                        sx={{
+                          maxWidth: "100%",
+                          maxHeight: "100%",
+                          objectFit: "contain",
+                          borderRadius: 2,
+                          border: "2px solid rgba(255,255,255,0.2)",
+                          boxShadow: "0 4px 15px rgba(0,0,0,0.5)",
+                          transition: "transform 0.3s ease",
+                          "&:hover": { transform: "scale(1.02)" },
+                        }}
+                      />
+                    </Box>
+                  ))}
+                </Slider>
+              </Grid>
+
+              {/* Información */}
+              <Grid item xs={12} md={6}>
+                <Stack spacing={3}>
+                  <Typography variant="h5" fontWeight="bold">
+                    {productoSeleccionado.nombre}
+                  </Typography>
+
+                  <Box>
+                    <Typography
+                      variant="h6"
+                      fontWeight="bold"
+                      color="primary"
+                      sx={{ mb: 1 }}
+                    >
+                      ${productoSeleccionado.precio}
+                    </Typography>
+
+                    <Chip
+                      label={
+                        productoSeleccionado.stock > 0 ? "En stock" : "Agotado"
+                      }
+                      color={
+                        productoSeleccionado.stock > 0 ? "success" : "error"
+                      }
+                      variant="outlined"
+                      sx={{
+                        color: "white",
+                        borderColor: "white",
+                        fontWeight: "bold",
+                      }}
+                    />
+                  </Box>
+
+                  <Divider sx={{ bgcolor: "rgba(255,255,255,0.3)" }} />
+
+                  <Typography
+                    sx={{ lineHeight: 1.6, color: "rgba(255,255,255,0.85)" }}
+                  >
+                    {productoSeleccionado.descripcion}
+                  </Typography>
+
+                  <Button
+                    variant="contained"
+                    startIcon={<ShoppingCartIcon />}
+                    onClick={() => handleAdd(productoSeleccionado)}
+                    disabled={productoSeleccionado.stock === 0}
+                    sx={{
+                      borderRadius: 3,
+                      py: 1.5,
+                      background: "linear-gradient(135deg, #1976d2, #42a5f5)",
+                      "&:hover": {
+                        transform:
+                          productoSeleccionado.stock > 0
+                            ? "translateY(-2px)"
+                            : "none",
+                      },
+                    }}
+                  >
+                    {productoSeleccionado.stock > 0
+                      ? "Agregar al carrito"
+                      : "Agotado"}
+                  </Button>
+                </Stack>
+              </Grid>
+            </Grid>
+          </Box>
+        )}
+      </Dialog>
+
+      {/* ================== LIGHTBOX ================== */}
+      <Dialog
+        open={!!lightbox}
+        onClose={() => setLightbox(null)}
+        fullScreen
+        sx={{ zIndex: 1700 }}
+        PaperProps={{
+          sx: {
+            bgcolor: "rgba(0,0,0,0.95)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          },
+        }}
+      >
+        <IconButton
+          onClick={() => setLightbox(null)}
+          sx={{
+            position: "absolute",
+            top: 16,
+            right: 16,
+            bgcolor: "rgba(0,0,0,0.6)",
+            color: "white",
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+        <Box
+          component="img"
+          src={lightbox}
+          alt="Zoom"
+          sx={{
+            maxWidth: "95%",
+            maxHeight: "95%",
+            objectFit: "contain",
+          }}
+        />
+      </Dialog>
     </>
   );
-}
+          }
