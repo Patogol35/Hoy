@@ -1,8 +1,7 @@
-import { useState } from "react";
+  import { useState } from "react";
 import {
   Box, Typography, Divider, Stack, TextField, InputAdornment,
-  Select, MenuItem, FormControl, InputLabel, Grid, Pagination,
-  IconButton, CircularProgress
+  MenuItem, Grid, Pagination, IconButton, CircularProgress
 } from "@mui/material";
 import { motion } from "framer-motion";
 import SearchIcon from "@mui/icons-material/Search";
@@ -38,42 +37,108 @@ export default function Home() {
     <>
       {/* Encabezado */}
       <Box sx={{ mb: 4, textAlign: "center" }}>
-        <Typography variant="h4" fontWeight="bold" gutterBottom sx={{ color: "primary.main" }}>
+        <Typography
+          variant="h4"
+          fontWeight="bold"
+          gutterBottom
+          sx={{ color: "primary.main" }}
+        >
           <StorefrontIcon sx={{ fontSize: 32 }} /> Productos
         </Typography>
         <Divider sx={{ width: 80, mx: "auto", borderBottomWidth: 3, mb: 3 }} />
 
         {/* Filtros */}
-<Stack direction={{ xs: "column", sm: "row" }} spacing={2} justifyContent="center">
-  <TextField
-    placeholder="Buscar producto..."
-    size="small"
-    value={search}
-    onChange={(e) => setSearch(e.target.value)}
-    InputProps={{ startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment> }}
-  />
-  <FormControl size="small" sx={{ minWidth: 150 }}>
-    <InputLabel>Categoría</InputLabel>
-    <Select value={categoria} onChange={(e) => setCategoria(e.target.value)}>
-      <MenuItem value="">Todas</MenuItem>
-      {categorias.map((cat) => (
-        <MenuItem key={cat.id} value={cat.id}>{cat.nombre}</MenuItem>
-      ))}
-    </Select>
-  </FormControl>
-  <FormControl size="small" sx={{ minWidth: 150 }}>
-    <InputLabel>Ordenar por</InputLabel>
-    <Select value={sort} onChange={(e) => setSort(e.target.value)}>
-      <MenuItem value="asc">Precio: menor a mayor</MenuItem>
-      <MenuItem value="desc">Precio: mayor a menor</MenuItem>
-    </Select>
-  </FormControl>
-</Stack>
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          spacing={2}
+          justifyContent="center"
+          sx={{ mb: 2 }}
+        >
+          {/* Buscador */}
+          <TextField
+            placeholder="Buscar producto..."
+            size="small"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            variant="outlined"
+            fullWidth
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon color="action" />
+                </InputAdornment>
+              ),
+            }}
+            sx={{
+              maxWidth: 300,
+              bgcolor: "background.paper",
+              borderRadius: 3,
+              boxShadow: 1,
+              "& .MuiOutlinedInput-root": {
+                borderRadius: 3,
+                transition: "0.3s",
+                "&:hover": { boxShadow: 2 },
+              },
+            }}
+          />
+
+          {/* Categoría */}
+          <TextField
+            select
+            label="Categoría"
+            size="small"
+            value={categoria}
+            onChange={(e) => setCategoria(e.target.value)}
+            variant="outlined"
+            sx={{
+              minWidth: 180,
+              bgcolor: "background.paper",
+              borderRadius: 3,
+              boxShadow: 1,
+              "& .MuiOutlinedInput-root": {
+                borderRadius: 3,
+                transition: "0.3s",
+                "&:hover": { boxShadow: 2 },
+              },
+            }}
+          >
+            <MenuItem value="">Todas</MenuItem>
+            {categorias.map((cat) => (
+              <MenuItem key={cat.id} value={cat.id}>
+                {cat.nombre}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          {/* Ordenar */}
+          <TextField
+            select
+            label="Ordenar por"
+            size="small"
+            value={sort}
+            onChange={(e) => setSort(e.target.value)}
+            variant="outlined"
+            sx={{
+              minWidth: 200,
+              bgcolor: "background.paper",
+              borderRadius: 3,
+              boxShadow: 1,
+              "& .MuiOutlinedInput-root": {
+                borderRadius: 3,
+                transition: "0.3s",
+                "&:hover": { boxShadow: 2 },
+              },
+            }}
+          >
+            <MenuItem value="asc">Precio: menor a mayor</MenuItem>
+            <MenuItem value="desc">Precio: mayor a menor</MenuItem>
+          </TextField>
+        </Stack>
       </Box>
 
       {/* Productos */}
       <Grid container spacing={3} justifyContent="center">
-        {paginated.map((prod, i) => (
+        {paginated.map((prod) => (
           <Grid item xs={12} sm={6} md={4} lg={3} key={prod.id}>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
               <ProductoCard producto={prod} onAgregar={handleAdd} />
@@ -95,7 +160,14 @@ export default function Home() {
       {/* Botón Carrito */}
       <IconButton
         onClick={handleCarritoClick}
-        sx={{ position: "fixed", bottom: 24, right: 24, bgcolor: "primary.main", color: "white" }}
+        sx={{
+          position: "fixed",
+          bottom: 24,
+          right: 24,
+          bgcolor: "primary.main",
+          color: "white",
+          "&:hover": { bgcolor: "primary.dark" },
+        }}
       >
         <ShoppingCartIcon />
       </IconButton>
