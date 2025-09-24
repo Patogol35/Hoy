@@ -197,8 +197,8 @@ export default function Home() {
 <Dialog
   open={Boolean(productoSeleccionado)}
   onClose={handleCerrarDetalle}
-  maxWidth="md"
   fullWidth
+  maxWidth="md"
   PaperProps={{
     component: motion.div,
     initial: { opacity: 0, y: 50 },
@@ -206,11 +206,12 @@ export default function Home() {
     exit: { opacity: 0, y: 50 },
     transition: { duration: 0.35 },
     sx: {
-      borderRadius: { xs: 0, sm: 4 }, // en mobile ocupa toda la pantalla
-      overflow: "hidden",
-      backdropFilter: "blur(10px)",
-      bgcolor: "background.paper",
-      boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
+      borderRadius: { xs: 0, sm: 4 },       // fullscreen en móvil, elegante en desktop
+      width: { xs: "100%", sm: "600px" },   // ocupa todo en móvil, ancho fijo en desktop
+      m: { xs: 0, sm: "auto" },             // sin margen en móvil, centrado en desktop
+      maxHeight: "100vh",
+      display: "flex",
+      flexDirection: "column",
     },
   }}
 >
@@ -220,8 +221,8 @@ export default function Home() {
       <Box
         sx={{
           position: "relative",
-          height: { xs: 250, sm: 320 },
-          bgcolor: "linear-gradient(135deg, #f5f7fa, #c3cfe2)",
+          height: { xs: 240, sm: 320 },
+          background: "linear-gradient(135deg, #f5f7fa, #e4ebf7)",
         }}
       >
         <Box
@@ -233,7 +234,7 @@ export default function Home() {
             height: "100%",
             objectFit: "contain",
             transition: "transform 0.6s ease",
-            "&:hover": { transform: "scale(1.08)" },
+            "&:hover": { transform: "scale(1.05)" },
           }}
         />
 
@@ -247,6 +248,7 @@ export default function Home() {
               left: 16,
               fontWeight: "bold",
               px: 1.5,
+              borderRadius: 2,
               boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
             }}
           />
@@ -268,55 +270,72 @@ export default function Home() {
       </Box>
 
       {/* Contenido */}
-      <DialogContent sx={{ p: { xs: 2, sm: 4 } }}>
-        {/* Nombre */}
-        <Typography
-          variant="h5"
-          fontWeight="bold"
-          gutterBottom
-          textAlign={{ xs: "center", sm: "left" }}
-        >
-          {productoSeleccionado.nombre}
-        </Typography>
+      <DialogContent
+        sx={{
+          flex: 1,
+          p: { xs: 2.5, sm: 4 },
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+        }}
+      >
+        <Box>
+          {/* Nombre */}
+          <Typography
+            variant="h5"
+            fontWeight="bold"
+            gutterBottom
+            textAlign={{ xs: "center", sm: "left" }}
+          >
+            {productoSeleccionado.nombre}
+          </Typography>
 
-        {/* Precio */}
-        <Typography
-          variant="h6"
-          color="primary"
-          fontWeight="bold"
-          gutterBottom
-          textAlign={{ xs: "center", sm: "left" }}
-        >
-          ${productoSeleccionado.precio}
-        </Typography>
+          {/* Precio */}
+          <Typography
+            variant="h6"
+            sx={{
+              color: "primary.main",
+              fontWeight: "bold",
+              mb: 1,
+              textAlign: { xs: "center", sm: "left" },
+            }}
+          >
+            ${productoSeleccionado.precio}
+          </Typography>
 
-        {/* Stock */}
-        <Typography
-          variant="body2"
-          color={productoSeleccionado.stock > 0 ? "success.main" : "error.main"}
-          gutterBottom
-        >
-          {productoSeleccionado.stock > 0
-            ? `Disponible (${productoSeleccionado.stock} unidades)`
-            : "Sin stock"}
-        </Typography>
+          {/* Stock */}
+          <Typography
+            variant="body2"
+            sx={{
+              color:
+                productoSeleccionado.stock > 0 ? "success.main" : "error.main",
+              mb: 2,
+              textAlign: { xs: "center", sm: "left" },
+            }}
+          >
+            {productoSeleccionado.stock > 0
+              ? `Disponible (${productoSeleccionado.stock} unidades)`
+              : "Sin stock"}
+          </Typography>
 
-        <Divider sx={{ my: 2 }} />
+          <Divider sx={{ my: 2 }} />
 
-        {/* Descripción */}
-        <Typography
-          variant="body1"
-          sx={{ mb: 3, color: "text.secondary", lineHeight: 1.6 }}
-        >
-          {productoSeleccionado.descripcion ||
-            "Este producto no tiene descripción disponible."}
-        </Typography>
+          {/* Descripción */}
+          <Typography
+            variant="body1"
+            sx={{ color: "text.secondary", lineHeight: 1.6 }}
+          >
+            {productoSeleccionado.descripcion ||
+              "Este producto no tiene descripción disponible."}
+          </Typography>
+        </Box>
 
         {/* Botones */}
         <Stack
           direction={{ xs: "column", sm: "row" }}
           spacing={2}
           justifyContent="flex-end"
+          sx={{ mt: 4 }}
         >
           <motion.div whileHover={{ scale: 1.05 }}>
             <Button
@@ -355,7 +374,6 @@ export default function Home() {
     </>
   )}
 </Dialog>
-
       
     </>
   );
