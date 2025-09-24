@@ -190,24 +190,29 @@ export default function Home() {
 
       {/* ================== MODAL DETALLE PROFESIONAL ================== */}
 
-<Dialog
-  fullScreen
+
+         <Dialog
   open={Boolean(productoSeleccionado)}
   onClose={handleCerrarDetalle}
+  fullScreen
   PaperProps={{
     component: motion.div,
     initial: { opacity: 0 },
     animate: { opacity: 1 },
     transition: { duration: 0.3 },
     sx: {
-      m: 0,
+      position: "fixed",
+      top: 0,
+      left: 0,
       width: "100vw",
       height: "100vh",
+      m: 0,
       borderRadius: 0,
       bgcolor: "background.paper",
-      position: "relative",
+      zIndex: 9999, // mucho más alto que el AppBar
       display: "flex",
       flexDirection: "column",
+      overflowY: "auto",
     },
   }}
 >
@@ -220,7 +225,7 @@ export default function Home() {
           position: "fixed",
           top: 16,
           right: 16,
-          zIndex: 2100,
+          zIndex: 10000, // encima de todo
           bgcolor: "white",
           boxShadow: 3,
           "&:hover": { bgcolor: "#f0f0f0" },
@@ -325,7 +330,7 @@ export default function Home() {
       </Grid>
     </>
   )}
-</Dialog>
+</Dialog>     
       
     </>
   );
