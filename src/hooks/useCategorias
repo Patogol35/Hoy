@@ -1,0 +1,30 @@
+import { useEffect, useState } from "react";
+import { getCategorias } from "../api/api";
+
+export function useCategorias() {
+  const [categorias, setCategorias] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+
+    getCategorias()
+      .then((data) => {
+        const lista = Array.isArray(data)
+          ? data
+          : Array.isArray(data?.results)
+          ? data.results
+          : [];
+        setCategorias(lista);
+      })
+      .catch((e) => {
+        setError(e);
+        setCategorias([]);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  return { categorias, loading, error };
+}
