@@ -214,7 +214,7 @@ export default function Navbar() {
               )}
 
               {/* Items menú */}
-              <Stack spacing={2} sx={{ flex: 1, overflowY: "auto", pb:8, pr:1}}>
+              <Stack spacing={2} sx={{ flex: 1, overflowY: "auto", pb:8, pr:2}}>
                 {menuItems.map((item, i) => (
                   <NavButton key={i} item={item} onClick={() => setOpen(false)} />
                 ))}
