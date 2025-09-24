@@ -188,17 +188,24 @@ export default function Home() {
         <ShoppingCartIcon />
       </IconButton>
 
-      {/* ================== MODAL FULL SCREEN ================== */}
+      {/* ================== MODAL DETALLE PRODUCTO ================== */}
       <Dialog
-        fullScreen
         open={Boolean(productoSeleccionado)}
         onClose={handleCerrarDetalle}
+        maxWidth="lg"
+        fullWidth
         PaperProps={{
           component: motion.div,
-          initial: { opacity: 0 },
-          animate: { opacity: 1 },
+          initial: { opacity: 0, y: 50 },
+          animate: { opacity: 1, y: 0 },
           transition: { duration: 0.3 },
-          sx: { bgcolor: "background.paper", position: "relative" },
+          sx: {
+            borderRadius: 3,
+            overflow: "hidden",
+            position: "relative",
+            bgcolor: "background.paper",
+            maxHeight: "90vh",
+          },
         }}
       >
         {productoSeleccionado && (
@@ -207,7 +214,7 @@ export default function Home() {
             <IconButton
               onClick={handleCerrarDetalle}
               sx={{
-                position: "fixed",
+                position: "absolute",
                 top: 16,
                 right: 16,
                 zIndex: 10,
@@ -222,13 +229,14 @@ export default function Home() {
               container
               spacing={3}
               sx={{
-                height: "100vh",
+                height: { xs: "auto", md: "80vh" },
                 p: { xs: 2, sm: 4 },
                 overflowY: "auto",
+                alignItems: "center",
               }}
             >
               {/* IMAGEN */}
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={5}>
                 <Box
                   sx={{
                     width: "100%",
@@ -270,24 +278,33 @@ export default function Home() {
               </Grid>
 
               {/* DETALLES */}
-              <Grid item xs={12} md={6}>
-                <Stack spacing={3}>
-                  <Typography variant="h4" fontWeight="bold">
+              <Grid item xs={12} md={7}>
+                <Stack
+                  spacing={2}
+                  sx={{
+                    height: "100%",
+                  }}
+                >
+                  <Typography variant="h5" fontWeight="bold">
                     {productoSeleccionado.nombre}
                   </Typography>
-                  <Typography variant="h5" color="primary">
+                  <Typography variant="h6" color="primary">
                     ${productoSeleccionado.precio}
                   </Typography>
                   <Divider />
                   <Typography
                     variant="body1"
-                    sx={{ color: "text.secondary" }}
+                    sx={{ color: "text.secondary", overflowY: "auto" }}
                   >
                     {productoSeleccionado.descripcion ||
                       "Este producto no tiene descripción disponible."}
                   </Typography>
 
-                  <Stack direction="row" spacing={2} justifyContent="flex-start">
+                  <Stack
+                    direction="row"
+                    spacing={2}
+                    justifyContent="flex-start"
+                  >
                     <Button
                       onClick={() => {
                         handleAdd(productoSeleccionado);
