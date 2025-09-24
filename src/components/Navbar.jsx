@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useThemeMode } from "../context/ThemeModeContext";
 import {
   AppBar,
   Toolbar,
@@ -9,7 +10,6 @@ import {
   Box,
   IconButton,
   Stack,
-  useTheme,
 } from "@mui/material";
 import {
   Menu as MenuIcon,
@@ -21,6 +21,8 @@ import {
   PersonAdd as PersonAddIcon,
   Logout as LogoutIcon,
   ShoppingBag as ShoppingBagIcon,
+  Brightness4 as DarkModeIcon,
+  Brightness7 as LightModeIcon,
 } from "@mui/icons-material";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -63,9 +65,10 @@ const getButtonStyle = (item, isActive) => ({
 
 export default function Navbar() {
   const { isAuthenticated, logout, user } = useAuth();
+  const { mode, toggleMode } = useThemeMode(); // <-- hook de modo oscuro
   const navigate = useNavigate();
   const location = useLocation();
-  const theme = useTheme();
+  const theme = mode; // opcional si quieres usar algo del theme de MUI directamente
 
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -103,7 +106,7 @@ export default function Navbar() {
           position="fixed"
           elevation={scrolled ? 6 : 2}
           sx={{
-            backgroundColor: theme.palette.primary.main,
+            backgroundColor: theme.palette?.primary?.main || "#1976d2",
             boxShadow: scrolled ? "0 4px 20px rgba(0,0,0,0.3)" : "none",
             zIndex: 1400,
           }}
@@ -156,6 +159,11 @@ export default function Navbar() {
                   </motion.div>
                 );
               })}
+
+              {/* Botón Modo Oscuro */}
+              <IconButton onClick={toggleMode} sx={{ color: "#fff" }}>
+                {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
+              </IconButton>
 
               {isAuthenticated && user && (
                 <>
@@ -217,7 +225,7 @@ export default function Navbar() {
               exit="exit"
               style={{
                 width: "280px",
-                background: theme.palette.primary.main,
+                background: theme.palette?.primary?.main || "#1976d2",
                 borderRadius: "16px 0 0 16px",
                 padding: "4rem 1.5rem 2rem",
                 boxShadow: "0 6px 20px rgba(0,0,0,0.35)",
@@ -256,7 +264,7 @@ export default function Navbar() {
                     mb: 2,
                     position: "sticky",
                     top: 0,
-                    background: theme.palette.primary.main,
+                    background: theme.palette?.primary?.main || "#1976d2",
                     zIndex: 10,
                     py: 1,
                   }}
@@ -284,6 +292,15 @@ export default function Navbar() {
                       </Button>
                     );
                   })}
+
+                  {/* Botón modo oscuro móvil */}
+                  <Button
+                    onClick={toggleMode}
+                    startIcon={mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
+                    sx={{ ...buttonStyle, background: "linear-gradient(135deg, #555, #888)" }}
+                  >
+                    {mode === "light" ? "Modo Oscuro" : "Modo Claro"}
+                  </Button>
 
                   {isAuthenticated && (
                     <Button
