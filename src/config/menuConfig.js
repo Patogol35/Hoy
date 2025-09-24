@@ -10,7 +10,7 @@ export const authMenu = [
   {
     label: "Inicio",
     path: "/",
-    icon: HomeIcon, // <--- referencia, no JSX
+    icon: HomeIcon,
     color: "linear-gradient(135deg, #0288d1, #26c6da)",
   },
   {
