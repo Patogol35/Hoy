@@ -1,5 +1,5 @@
 // src/pages/Home.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getCategorias } from "../api/api";
 import ProductoCard from "../components/ProductoCard";
 import {
@@ -15,8 +15,6 @@ import {
   Select,
   FormControl,
   InputLabel,
-  Chip,
-  Button,
   Pagination,
 } from "@mui/material";
 import { motion } from "framer-motion";
@@ -24,7 +22,6 @@ import { useCarrito } from "../context/CarritoContext";
 import { toast } from "react-toastify";
 import { useProductos } from "../hooks/useProductos";
 import SearchIcon from "@mui/icons-material/Search";
-import { useEffect } from "react";
 
 export default function Home() {
   const { agregarProducto } = useCarrito();
