@@ -9,7 +9,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { CarritoProvider } from "./context/CarritoContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
-import { ThemeModeProvider } from "./context/ThemeModeContext"; // <- importa tu ThemeModeProvider
+import { ThemeModeProvider } from "./context/ThemeContext"; // 
 
 function App() {
   return (
