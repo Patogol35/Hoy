@@ -44,31 +44,31 @@ export default function Home() {
         <Divider sx={{ width: 80, mx: "auto", borderBottomWidth: 3, mb: 3 }} />
 
         {/* Filtros */}
-        <Stack direction={{ xs: "column", sm: "row" }} spacing={2} justifyContent="center">
-          <TextField
-            placeholder="Buscar producto..."
-            size="small"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            InputProps={{ startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment> }}
-          />
-          <FormControl size="small" sx={{ minWidth: 150 }}>
-            <InputLabel>Categoría</InputLabel>
-            <Select value={categoria} onChange={(e) => setCategoria(e.target.value)}>
-              <MenuItem value="">Todas</MenuItem>
-              {categorias.map((cat) => (
-                <MenuItem key={cat.id} value={cat.id}>{cat.nombre}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <FormControl size="small" sx={{ minWidth: 150 }}>
-            <InputLabel>Ordenar por</InputLabel>
-            <Select value={sort} onChange={(e) => setSort(e.target.value)}>
-              <MenuItem value="asc">Precio: menor a mayor</MenuItem>
-              <MenuItem value="desc">Precio: mayor a menor</MenuItem>
-            </Select>
-          </FormControl>
-        </Stack>
+<Stack direction={{ xs: "column", sm: "row" }} spacing={2} justifyContent="center">
+  <TextField
+    placeholder="Buscar producto..."
+    size="small"
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+    InputProps={{ startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment> }}
+  />
+  <FormControl size="small" sx={{ minWidth: 150 }}>
+    <InputLabel>Categoría</InputLabel>
+    <Select value={categoria} onChange={(e) => setCategoria(e.target.value)}>
+      <MenuItem value="">Todas</MenuItem>
+      {categorias.map((cat) => (
+        <MenuItem key={cat.id} value={cat.id}>{cat.nombre}</MenuItem>
+      ))}
+    </Select>
+  </FormControl>
+  <FormControl size="small" sx={{ minWidth: 150 }}>
+    <InputLabel>Ordenar por</InputLabel>
+    <Select value={sort} onChange={(e) => setSort(e.target.value)}>
+      <MenuItem value="asc">Precio: menor a mayor</MenuItem>
+      <MenuItem value="desc">Precio: mayor a menor</MenuItem>
+    </Select>
+  </FormControl>
+</Stack>
       </Box>
 
       {/* Productos */}
