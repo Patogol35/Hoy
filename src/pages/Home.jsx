@@ -15,6 +15,7 @@ import {
   Dialog,
   Button,
   Chip,
+  useMediaQuery,
 } from "@mui/material";
 import { motion } from "framer-motion";
 import SearchIcon from "@mui/icons-material/Search";
@@ -44,6 +45,7 @@ export default function Home() {
     itemsPerPage: ITEMS_PER_PAGE,
   });
   const { handleAdd, handleCarritoClick } = useCarritoHandler();
+  const isMobile = useMediaQuery("(max-width:900px)");
 
   const handleVerDetalle = (producto) => setProductoSeleccionado(producto);
   const handleCerrarDetalle = () => setProductoSeleccionado(null);
@@ -68,9 +70,7 @@ export default function Home() {
           <StorefrontIcon sx={{ fontSize: 32, mr: 1 }} />
           Productos
         </Typography>
-        <Divider
-          sx={{ width: 80, mx: "auto", borderBottomWidth: 3, mb: 3 }}
-        />
+        <Divider sx={{ width: 80, mx: "auto", borderBottomWidth: 3, mb: 3 }} />
 
         {/* ================== FILTROS ================== */}
         <Paper
@@ -188,11 +188,12 @@ export default function Home() {
         <ShoppingCartIcon />
       </IconButton>
 
-      {/* ================== MODAL DETALLE PRODUCTO ================== */}
+      {/* ================== MODAL DETALLE PROFESIONAL ================== */}
       <Dialog
+        fullScreen={isMobile} // Full screen solo en móvil
         open={Boolean(productoSeleccionado)}
         onClose={handleCerrarDetalle}
-        maxWidth="lg"
+        maxWidth="md"
         fullWidth
         PaperProps={{
           component: motion.div,
@@ -200,7 +201,7 @@ export default function Home() {
           animate: { opacity: 1, y: 0 },
           transition: { duration: 0.3 },
           sx: {
-            borderRadius: 3,
+            borderRadius: { xs: 0, sm: 3 },
             overflow: "hidden",
             position: "relative",
             bgcolor: "background.paper",
@@ -229,14 +230,14 @@ export default function Home() {
               container
               spacing={3}
               sx={{
-                height: { xs: "auto", md: "80vh" },
+                height: { xs: "100%", md: "80vh" },
                 p: { xs: 2, sm: 4 },
                 overflowY: "auto",
                 alignItems: "center",
               }}
             >
               {/* IMAGEN */}
-              <Grid item xs={12} md={5}>
+              <Grid item xs={12} md={6}>
                 <Box
                   sx={{
                     width: "100%",
@@ -278,13 +279,8 @@ export default function Home() {
               </Grid>
 
               {/* DETALLES */}
-              <Grid item xs={12} md={7}>
-                <Stack
-                  spacing={2}
-                  sx={{
-                    height: "100%",
-                  }}
-                >
+              <Grid item xs={12} md={6}>
+                <Stack spacing={2}>
                   <Typography variant="h5" fontWeight="bold">
                     {productoSeleccionado.nombre}
                   </Typography>
