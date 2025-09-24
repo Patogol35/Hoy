@@ -27,7 +27,6 @@ import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 
 export default function Carrito() {
   const theme = useTheme();
-
   const {
     items,
     cargarCarrito,
@@ -113,8 +112,8 @@ export default function Carrito() {
                   height: { xs: 200, sm: 160 },
                   objectFit: "contain",
                   borderRadius: { xs: "12px 12px 0 0", sm: "12px 0 0 12px" },
-                  bgcolor: theme.palette.background.paper,
-                  border: `1px solid ${theme.palette.divider}`,
+                  bgcolor: theme.palette.mode === "dark" ? "#333" : "#fafafa",
+                  border: "1px solid #eee",
                   p: 1,
                   transition: "transform 0.3s ease",
                   "&:hover": {
@@ -181,8 +180,13 @@ export default function Carrito() {
                   <IconButton
                     onClick={() => decrementar(it)}
                     sx={{
-                      bgcolor: "#f5f5f5",
-                      "&:hover": { bgcolor: "#e0e0e0" },
+                      bgcolor:
+                        theme.palette.mode === "dark" ? "#424242" : "#f5f5f5",
+                      color: theme.palette.mode === "dark" ? "#fff" : "inherit",
+                      "&:hover": {
+                        bgcolor:
+                          theme.palette.mode === "dark" ? "#616161" : "#e0e0e0",
+                      },
                     }}
                   >
                     <RemoveIcon />
@@ -216,9 +220,24 @@ export default function Carrito() {
                     onClick={() => incrementar(it)}
                     disabled={it.cantidad >= stock}
                     sx={{
-                      bgcolor: it.cantidad >= stock ? "#eee" : "#f5f5f5",
+                      bgcolor:
+                        it.cantidad >= stock
+                          ? theme.palette.mode === "dark"
+                            ? "#333"
+                            : "#eee"
+                          : theme.palette.mode === "dark"
+                          ? "#424242"
+                          : "#f5f5f5",
+                      color: theme.palette.mode === "dark" ? "#fff" : "inherit",
                       "&:hover": {
-                        bgcolor: it.cantidad >= stock ? "#eee" : "#e0e0e0",
+                        bgcolor:
+                          it.cantidad >= stock
+                            ? theme.palette.mode === "dark"
+                              ? "#333"
+                              : "#eee"
+                            : theme.palette.mode === "dark"
+                            ? "#616161"
+                            : "#e0e0e0",
                       },
                     }}
                   >
@@ -252,8 +271,7 @@ export default function Carrito() {
             bgcolor: { xs: theme.palette.background.paper, sm: "transparent" },
             p: { xs: 2, sm: 0 },
             boxShadow: { xs: "0 -4px 12px rgba(0,0,0,0.15)", sm: "none" },
-            borderTop: { xs: `1px solid ${theme.palette.divider}`, sm: "none" },
-            zIndex: 1200,
+            borderTop: { xs: "1px solid #ddd", sm: "none" },
           }}
         >
           <Divider sx={{ mb: 2, display: { xs: "none", sm: "block" } }} />
@@ -284,4 +302,4 @@ export default function Carrito() {
       )}
     </Box>
   );
-                        }
+}
