@@ -50,7 +50,11 @@ export default function Navbar() {
   return (
     <>
       {/* Navbar Desktop */}
-      <motion.div initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
+      <motion.div
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6 }}
+      >
         <AppBar
           position="fixed"
           elevation={scrolled ? 6 : 2}
@@ -87,12 +91,14 @@ export default function Navbar() {
             </Typography>
 
             {/* Desktop Menu */}
-            <Box sx={{ display: { xs: "none", lg: "flex" }, gap: 2, alignItems: "center" }}>
+            <Box
+              sx={{ display: { xs: "none", lg: "flex" }, gap: 2, alignItems: "center" }}
+            >
               {menuItems.map((item, i) => (
                 <NavButton key={i} item={item} />
               ))}
 
-              {/* Botón Modo Oscuro solo ícono */}
+              {/* Botón Modo Oscuro (desktop) */}
               <IconButton onClick={toggleMode} sx={{ color: "#fff" }}>
                 {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
               </IconButton>
@@ -223,20 +229,23 @@ export default function Navbar() {
                 )}
               </Stack>
 
-              {/* Ícono modo oscuro fijo abajo */}
-              <Box sx={{ display: "flex", justifyContent: "center", mt: "auto" }}>
-                <IconButton
+              {/* Botón modo oscuro fijo abajo */}
+              <Box sx={{ mt: "auto", pt: 2 }}>
+                <Button
                   onClick={toggleMode}
+                  startIcon={
+                    mode === "light" ? <DarkModeIcon /> : <LightModeIcon />
+                  }
                   sx={{
+                    fontWeight: 600,
                     color: "#fff",
-                    background: "rgba(0,0,0,0.4)",
-                    "&:hover": { background: "rgba(0,0,0,0.7)" },
-                    width: 48,
-                    height: 48,
+                    borderRadius: "12px",
+                    background: "linear-gradient(135deg, #555, #888)",
+                    width: "100%",
                   }}
                 >
-                  {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
-                </IconButton>
+                  {mode === "light" ? "Modo Oscuro" : "Modo Claro"}
+                </Button>
               </Box>
             </motion.div>
           </motion.div>
@@ -244,4 +253,4 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-        }
+                    }
