@@ -193,134 +193,177 @@ export default function Home() {
       </IconButton>
 
       {/* ================== MODAL DETALLE ================== */}
-
-import { useTheme, useMediaQuery } from "@mui/material";
-import { motion } from "framer-motion";
-
+      
 <Dialog
-  open={Boolean(productoSeleccionado)}
-  onClose={handleCerrarDetalle}
-  maxWidth="sm"
+  open={open}
+  onClose={() => setOpen(false)}
+  maxWidth="lg"
   fullWidth
-  fullScreen={useMediaQuery(useTheme().breakpoints.down("sm"))} // ✅ fullscreen en móviles
+  sx={{
+    zIndex: 1600,
+    "& .MuiBackdrop-root": {
+      backgroundColor: "rgba(0,0,0,0.85)",
+      backdropFilter: "blur(5px)",
+    },
+  }}
   PaperProps={{
-    component: motion.div,
-    initial: { opacity: 0, y: 50 },
-    animate: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: 50 },
-    transition: { duration: 0.3 },
     sx: {
-      borderRadius: { xs: 0, sm: 4 },         // recto en móvil, redondeado en desktop
-      width: { xs: "100%", sm: "600px" },     // 100% en móvil, fijo en desktop
-      height: { xs: "100%", sm: "auto" },     // ocupa toda la altura en móvil
-      m: { xs: 0, sm: "auto" },               // sin márgenes en móvil, centrado en desktop
-      maxHeight: "100vh",
-      display: "flex",
-      flexDirection: "column",
+      borderRadius: { xs: 0, md: 3 },
+      p: 3,
+      bgcolor: "#1e1e1e",
+      color: "white",
+      maxWidth: { md: 900 },
+      width: "100%",
+      position: "relative",
     },
   }}
 >
-  {productoSeleccionado && (
-    <>
-      {/* Imagen */}
-      <Box sx={{ position: "relative", height: 280, bgcolor: "#f9f9f9" }}>
-        <Box
-          component="img"
-          src={productoSeleccionado.imagen}
-          alt={productoSeleccionado.nombre}
-          sx={{
-            width: "100%",
-            height: "100%",
-            objectFit: "contain",
-            transition: "transform 0.5s ease",
-            "&:hover": { transform: "scale(1.05)" },
-          }}
-        />
-        {productoSeleccionado.nuevo && (
-          <Chip
-            label="Nuevo"
-            color="secondary"
-            sx={{
-              position: "absolute",
-              top: 16,
-              left: 16,
-              fontWeight: "bold",
-              px: 1.5,
-            }}
-          />
-        )}
-        <IconButton
-          onClick={handleCerrarDetalle}
-          sx={{
-            position: "absolute",
-            top: 12,
-            right: 12,
-            bgcolor: "white",
-            "&:hover": { bgcolor: "#f0f0f0" },
-          }}
-        >
-          <CloseIcon />
-        </IconButton>
-      </Box>
+  {selected && (
+    <Box>
+      <IconButton
+        onClick={() => setOpen(false)}
+        sx={{
+          position: "absolute",
+          top: 12,
+          right: 12,
+          bgcolor: "rgba(0,0,0,0.6)",
+          color: "white",
+          "&:hover": { bgcolor: "rgba(255,255,255,0.2)" },
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
+      <Grid container spacing={4}>
+        {/* Slider de imágenes */}
+        <Grid item xs={12} md={6}>
+          <Slider {...settings}>
+            {(selected.imagenes || [selected.imagen]).map((img, i) => (
+              <Box
+                key={i}
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: { xs: 300, md: 400 },
+                  cursor: "zoom-in",
+                }}
+                onClick={() => setLightbox(img)}
+              >
+                <Box
+                  component="img"
+                  src={img}
+                  alt={selected.nombre}
+                  sx={{
+                    maxWidth: "100%",
+                    maxHeight: "100%",
+                    objectFit: "contain",
+                    borderRadius: 2,
+                    border: "2px solid rgba(255,255,255,0.2)",
+                    boxShadow: "0 4px 15px rgba(0,0,0,0.5)",
+                    transition: "transform 0.3s ease",
+                    "&:hover": { transform: "scale(1.02)" },
+                  }}
+                />
+              </Box>
+            ))}
+          </Slider>
+        </Grid>
 
-      {/* Contenido */}
-      <DialogContent sx={{ p: 3, flex: 1, overflowY: "auto" }}>
-        <Typography variant="h5" fontWeight="bold" gutterBottom>
-          {productoSeleccionado.nombre}
-        </Typography>
+        {/* Información del producto */}
+        <Grid item xs={12} md={6}>
+          <Stack spacing={3}>
+            <Typography variant="h5" fontWeight="bold">
+              {selected.nombre}
+            </Typography>
 
-        <Typography variant="subtitle1" color="primary" gutterBottom>
-          ${productoSeleccionado.precio}
-        </Typography>
+            <Box>
+              <Typography
+                variant="h6"
+                fontWeight="bold"
+                color="primary"
+                sx={{ mb: 1 }}
+              >
+                ${selected.precio}
+              </Typography>
 
-        <Divider sx={{ my: 2 }} />
+              <Chip
+                label={selected.stock > 0 ? "En stock" : "Agotado"}
+                color={selected.stock > 0 ? "success" : "error"}
+                variant="outlined"
+                sx={{
+                  color: "white",
+                  borderColor: "white",
+                  fontWeight: "bold",
+                }}
+              />
+            </Box>
 
-        <Typography
-          variant="body1"
-          sx={{ mb: 3, color: "text.secondary" }}
-        >
-          {productoSeleccionado.descripcion ||
-            "Este producto no tiene descripción disponible."}
-        </Typography>
+            <Divider sx={{ bgcolor: "rgba(255,255,255,0.3)" }} />
 
-        {/* Botones */}
-        <Stack
-          direction={{ xs: "column", sm: "row" }}
-          spacing={2}
-          justifyContent="flex-end"
-        >
-          <motion.div whileHover={{ scale: 1.05 }}>
+            <Typography sx={{ lineHeight: 1.6, color: "rgba(255,255,255,0.85)" }}>
+              {selected.descripcion}
+            </Typography>
+
             <Button
-              onClick={handleCerrarDetalle}
-              variant="outlined"
-              color="inherit"
-              sx={{ borderRadius: 3, width: { xs: "100%", sm: "auto" } }}
-            >
-              Cerrar
-            </Button>
-          </motion.div>
-
-          <motion.div whileHover={{ scale: 1.05 }}>
-            <Button
-              onClick={() => {
-                handleAdd(productoSeleccionado);
-                handleCerrarDetalle();
-              }}
               variant="contained"
-              color="primary"
               startIcon={<ShoppingCartIcon />}
-              sx={{ borderRadius: 3, width: { xs: "100%", sm: "auto" } }}
-              disabled={productoSeleccionado.stock === 0}
+              onClick={() => handleAdd(selected)}
+              disabled={selected.stock === 0}
+              sx={{
+                borderRadius: 3,
+                py: 1.5,
+                background: "linear-gradient(135deg, #1976d2, #42a5f5)",
+                "&:hover": {
+                  transform: selected.stock > 0 ? "translateY(-2px)" : "none",
+                },
+              }}
             >
-              {productoSeleccionado.stock > 0
-                ? "Agregar al carrito"
-                : "Agotado"}
+              {selected.stock > 0 ? "Agregar al carrito" : "Agotado"}
             </Button>
-          </motion.div>
-        </Stack>
-      </DialogContent>
-    </>
+          </Stack>
+        </Grid>
+      </Grid>
+    </Box>
   )}
+</Dialog>
+
+{/* Lightbox */}
+<Dialog
+  open={!!lightbox}
+  onClose={() => setLightbox(null)}
+  fullScreen
+  sx={{ zIndex: 1600 }}
+  PaperProps={{
+    sx: {
+      bgcolor: "rgba(0,0,0,0.95)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+  }}
+>
+  <IconButton
+    onClick={() => setLightbox(null)}
+    sx={{
+      position: "absolute",
+      top: 16,
+      right: 16,
+      bgcolor: "rgba(0,0,0,0.6)",
+      color: "white",
+    }}
+  >
+    <CloseIcon />
+  </IconButton>
+  <Box
+    component="img"
+    src={lightbox}
+    alt="Zoom"
+    sx={{
+      maxWidth: "95%",
+      maxHeight: "95%",
+      objectFit: "contain",
+    }}
+  />
 </Dialog>
       
     </>
