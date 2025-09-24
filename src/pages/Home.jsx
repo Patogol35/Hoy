@@ -28,8 +28,6 @@ import { useProductos } from "../hooks/useProductos";
 import { useCategorias } from "../hooks/useCategorias";
 import { useCarritoHandler } from "../hooks/useCarritoHandler";
 
-const ITEMS_PER_PAGE = 8;
-
 export default function Home() {
   const [categoria, setCategoria] = useState("");
   const [search, setSearch] = useState("");
@@ -41,7 +39,7 @@ export default function Home() {
     categoria,
     search,
     sort,
-    itemsPerPage: ITEMS_PER_PAGE,
+    itemsPerPage: 8,
   });
   const { handleAdd, handleCarritoClick } = useCarritoHandler();
 
@@ -59,7 +57,12 @@ export default function Home() {
     <>
       {/* Encabezado */}
       <Box sx={{ mb: 4, textAlign: "center" }}>
-        <Typography variant="h4" fontWeight="bold" sx={{ color: "primary.main" }}>
+        <Typography
+          variant="h4"
+          fontWeight="bold"
+          gutterBottom
+          sx={{ color: "primary.main" }}
+        >
           <StorefrontIcon sx={{ fontSize: 32 }} /> Productos
         </Typography>
         <Divider sx={{ width: 80, mx: "auto", borderBottomWidth: 3, mb: 3 }} />
@@ -161,7 +164,7 @@ export default function Home() {
       {/* Paginación */}
       <Box sx={{ mt: 4, display: "flex", justifyContent: "center" }}>
         <Pagination
-          count={Math.ceil(filtered.length / ITEMS_PER_PAGE)}
+          count={Math.ceil(filtered.length / 8)}
           page={page}
           onChange={(e, value) => setPage(value)}
           color="primary"
@@ -187,24 +190,41 @@ export default function Home() {
       <Dialog
         open={Boolean(productoSeleccionado)}
         onClose={handleCerrarDetalle}
+        fullScreen={{ xs: true, sm: false }}
         maxWidth="sm"
         fullWidth
         PaperProps={{
           component: motion.div,
-          initial: { opacity: 0, y: 50 },
-          animate: { opacity: 1, y: 0 },
-          transition: { duration: 0.3 },
+          initial: { opacity: 0, scale: 0.9 },
+          animate: { opacity: 1, scale: 1 },
+          exit: { opacity: 0, scale: 0.9 },
+          transition: { duration: 0.3, ease: "easeOut" },
           sx: {
-            borderRadius: 4,
+            borderRadius: { xs: 0, sm: 5 },
             overflow: "hidden",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.25)",
+            boxShadow: "0 12px 40px rgba(0,0,0,0.3)",
+            backgroundColor: "#fff",
+            display: "flex",
+            flexDirection: "column",
+            height: { xs: "100%", sm: "auto" },
           },
         }}
       >
         {productoSeleccionado && (
           <>
             {/* Imagen */}
-            <Box sx={{ position: "relative", height: 280, bgcolor: "#f9f9f9" }}>
+            <Box
+              sx={{
+                position: "relative",
+                width: "100%",
+                aspectRatio: "16/9",
+                bgcolor: "#fafafa",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                overflow: "hidden",
+              }}
+            >
               <Box
                 component="img"
                 src={productoSeleccionado.imagen}
@@ -214,9 +234,10 @@ export default function Home() {
                   height: "100%",
                   objectFit: "contain",
                   transition: "transform 0.5s ease",
-                  "&:hover": { transform: "scale(1.05)" },
+                  "&:hover": { transform: "scale(1.08)" },
                 }}
               />
+
               {productoSeleccionado.nuevo && (
                 <Chip
                   label="Nuevo"
@@ -227,17 +248,20 @@ export default function Home() {
                     left: 16,
                     fontWeight: "bold",
                     px: 1.5,
+                    borderRadius: 2,
                   }}
                 />
               )}
+
               <IconButton
                 onClick={handleCerrarDetalle}
                 sx={{
                   position: "absolute",
                   top: 12,
                   right: 12,
-                  bgcolor: "white",
-                  "&:hover": { bgcolor: "#f0f0f0" },
+                  backdropFilter: "blur(6px)",
+                  bgcolor: "rgba(255,255,255,0.7)",
+                  "&:hover": { bgcolor: "rgba(255,255,255,0.9)" },
                 }}
               >
                 <CloseIcon />
@@ -245,24 +269,37 @@ export default function Home() {
             </Box>
 
             {/* Contenido */}
-            <DialogContent sx={{ p: 3 }}>
+            <DialogContent sx={{ p: { xs: 2, sm: 4 }, flexGrow: 1 }}>
               <Typography variant="h5" fontWeight="bold" gutterBottom>
                 {productoSeleccionado.nombre}
               </Typography>
 
-              <Typography variant="subtitle1" color="primary" gutterBottom>
+              <Typography
+                variant="h6"
+                color="primary"
+                gutterBottom
+                sx={{ fontWeight: "bold" }}
+              >
                 ${productoSeleccionado.precio}
               </Typography>
 
               <Divider sx={{ my: 2 }} />
 
-              <Typography variant="body1" sx={{ mb: 3, color: "text.secondary" }}>
+              <Typography
+                variant="body1"
+                sx={{ mb: 3, color: "text.secondary", lineHeight: 1.6 }}
+              >
                 {productoSeleccionado.descripcion ||
                   "Este producto no tiene descripción disponible."}
               </Typography>
 
               {/* Botones */}
-              <Stack direction="row" spacing={2} justifyContent="flex-end">
+              <Stack
+                direction="row"
+                spacing={2}
+                justifyContent="flex-end"
+                sx={{ mt: "auto" }}
+              >
                 <motion.div whileHover={{ scale: 1.05 }}>
                   <Button
                     onClick={handleCerrarDetalle}
@@ -298,4 +335,4 @@ export default function Home() {
       </Dialog>
     </>
   );
-            }
+      }
