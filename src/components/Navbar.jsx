@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { useThemeMode } from "../context/ThemeModeContext";
+import { useThemeMode } from "../context/ThemeContext";
 import {
   AppBar,
   Toolbar,
