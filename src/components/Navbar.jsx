@@ -1,102 +1,51 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useThemeMode } from "../context/ThemeContext";
+import { useScrollTrigger } from "../hooks/useScrollTrigger";
+import { authMenu, guestMenu } from "../config/menuConfig";
+import NavButton from "./NavButton";
+
 import {
   AppBar,
   Toolbar,
-  Button,
   Typography,
-  Box,
   IconButton,
+  Box,
   Stack,
+  Button,
 } from "@mui/material";
 import {
   Menu as MenuIcon,
   Close as CloseIcon,
-  Home as HomeIcon,
-  ShoppingCart as ShoppingCartIcon,
-  ListAlt as ListAltIcon,
-  Login as LoginIcon,
-  PersonAdd as PersonAddIcon,
-  Logout as LogoutIcon,
   ShoppingBag as ShoppingBagIcon,
+  Logout as LogoutIcon,
   Brightness4 as DarkModeIcon,
   Brightness7 as LightModeIcon,
 } from "@mui/icons-material";
 import { motion, AnimatePresence } from "framer-motion";
 
-/* Animación drawer */
 const menuVariants = {
   hidden: { x: "100%", opacity: 0 },
   visible: { x: 0, opacity: 1, transition: { duration: 0.25, ease: "easeOut" } },
   exit: { x: "100%", opacity: 0, transition: { duration: 0.2, ease: "easeIn" } },
 };
 
-/* Hook para bloquear scroll */
-function useLockBodyScroll(isLocked) {
-  useEffect(() => {
-    document.body.style.overflow = isLocked ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isLocked]);
-}
-
-/* Estilo base para botones */
-const buttonStyle = {
-  fontSize: "1.1rem",
-  fontWeight: 600,
-  color: "#fff",
-  borderRadius: "12px",
-  textTransform: "none",
-  width: "100%",
-  py: 1.2,
-  transition: "all 0.2s ease",
-  "&:hover": { boxShadow: "0 0 15px rgba(0,0,0,0.35)" },
-};
-
-const getButtonStyle = (item, isActive) => ({
-  ...buttonStyle,
-  background: item.color,
-  boxShadow: isActive ? "0 0 15px rgba(255,255,255,0.6)" : "none",
-  transform: isActive ? "scale(1.05)" : "scale(1)",
-});
-
 export default function Navbar() {
   const { isAuthenticated, logout, user } = useAuth();
-  const { mode, toggleMode } = useThemeMode(); // <-- hook de modo oscuro
+  const { mode, toggleMode } = useThemeMode();
   const navigate = useNavigate();
-  const location = useLocation();
-  const theme = mode; // opcional si quieres usar algo del theme de MUI directamente
 
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const scrolled = useScrollTrigger(50);
 
-  useLockBodyScroll(open);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  const menuItems = isAuthenticated ? authMenu : guestMenu;
 
   const handleLogout = () => {
     logout();
     navigate("/login");
     setOpen(false);
   };
-
-  const menuItems = isAuthenticated
-    ? [
-        { label: "Inicio", path: "/", icon: <HomeIcon />, color: "linear-gradient(135deg, #0288d1, #26c6da)" },
-        { label: "Carrito", path: "/carrito", icon: <ShoppingCartIcon />, color: "linear-gradient(135deg, #2e7d32, #66bb6a)" },
-        { label: "Mis pedidos", path: "/pedidos", icon: <ListAltIcon />, color: "linear-gradient(135deg, #f57c00, #ffb74d)" },
-      ]
-    : [
-        { label: "Iniciar sesión", path: "/login", icon: <LoginIcon />, color: "linear-gradient(135deg, #0288d1, #26c6da)" },
-        { label: "Registrarse", path: "/register", icon: <PersonAddIcon />, color: "linear-gradient(135deg, #6a1b9a, #ab47bc)" },
-      ];
 
   return (
     <>
@@ -106,76 +55,61 @@ export default function Navbar() {
           position="fixed"
           elevation={scrolled ? 6 : 2}
           sx={{
-            backgroundColor: theme.palette?.primary?.main || "#1976d2",
+            backgroundColor: "#1976d2",
             boxShadow: scrolled ? "0 4px 20px rgba(0,0,0,0.3)" : "none",
             zIndex: 1400,
           }}
         >
           <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
             {/* Logo */}
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Typography
-                variant="h6"
-                component={Link}
-                to="/"
+            <Typography
+              variant="h6"
+              component={Link}
+              to="/"
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                fontWeight: "bold",
+                color: "#fff",
+                textDecoration: "none",
+              }}
+            >
+              <ShoppingBagIcon
                 sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1,
-                  fontWeight: "bold",
-                  color: "#fff",
-                  cursor: "pointer",
-                  lineHeight: 1.2,
-                  textDecoration: "none",
+                  fontSize: 28,
+                  background: "linear-gradient(135deg, #FF5722, #FFC107)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
                 }}
-              >
-                <ShoppingBagIcon
-                  sx={{
-                    fontSize: 28,
-                    background: "linear-gradient(135deg, #FF5722, #FFC107)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                  }}
-                />
-                Tienda Patricio
-              </Typography>
-            </motion.div>
+              />
+              Tienda Patricio
+            </Typography>
 
             {/* Desktop Menu */}
             <Box sx={{ display: { xs: "none", lg: "flex" }, gap: 2, alignItems: "center" }}>
-              {menuItems.map((item, i) => {
-                const isActive = location.pathname === item.path;
-                return (
-                  <motion.div key={i} whileHover={{ y: -2, scale: 1.08 }} whileTap={{ scale: 0.95 }}>
-                    <Button
-                      component={Link}
-                      to={item.path}
-                      startIcon={item.icon}
-                      sx={getButtonStyle(item, isActive)}
-                      aria-current={isActive ? "page" : undefined}
-                    >
-                      {item.label}
-                    </Button>
-                  </motion.div>
-                );
-              })}
+              {menuItems.map((item, i) => (
+                <NavButton key={i} item={item} />
+              ))}
 
               {/* Botón Modo Oscuro */}
               <IconButton onClick={toggleMode} sx={{ color: "#fff" }}>
                 {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
               </IconButton>
 
-              {isAuthenticated && user && (
+              {isAuthenticated && (
                 <>
                   <Typography sx={{ color: "#fff", fontWeight: 600, mx: 2 }}>
-                    👤 {user.username}
+                    👤 {user?.username}
                   </Typography>
                   <Button
                     onClick={handleLogout}
                     startIcon={<LogoutIcon />}
                     sx={{
-                      ...buttonStyle,
+                      fontWeight: 600,
+                      color: "#fff",
                       background: "linear-gradient(135deg, #d32f2f, #f44336)",
+                      borderRadius: "12px",
                       px: 2.5,
                       py: 1,
                     }}
@@ -191,6 +125,7 @@ export default function Navbar() {
               sx={{ display: { xs: "block", lg: "none" }, color: "#fff" }}
               onClick={() => setOpen(true)}
               aria-label="Abrir menú"
+              aria-expanded={open}
             >
               <MenuIcon fontSize="large" />
             </IconButton>
@@ -225,14 +160,12 @@ export default function Navbar() {
               exit="exit"
               style={{
                 width: "280px",
-                background: theme.palette?.primary?.main || "#1976d2",
+                background: "#1976d2",
                 borderRadius: "16px 0 0 16px",
                 padding: "4rem 1.5rem 2rem",
-                boxShadow: "0 6px 20px rgba(0,0,0,0.35)",
                 display: "flex",
                 flexDirection: "column",
                 height: "100vh",
-                position: "relative",
               }}
               onClick={(e) => e.stopPropagation()}
             >
@@ -253,8 +186,8 @@ export default function Navbar() {
                 <CloseIcon sx={{ fontSize: 26 }} />
               </IconButton>
 
-              {/* Nombre de usuario fijo */}
-              {isAuthenticated && user && (
+              {/* Usuario */}
+              {isAuthenticated && (
                 <Typography
                   variant="h6"
                   sx={{
@@ -262,60 +195,47 @@ export default function Navbar() {
                     fontWeight: 700,
                     textAlign: "center",
                     mb: 2,
-                    position: "sticky",
-                    top: 0,
-                    background: theme.palette?.primary?.main || "#1976d2",
-                    zIndex: 10,
-                    py: 1,
                   }}
                 >
-                  👤 {user.username}
+                  👤 {user?.username}
                 </Typography>
               )}
 
-              {/* Contenedor scrolleable */}
-              <Box sx={{ flex: 1, overflowY: "auto", pb: 6 }}>
-                <Stack spacing={2} sx={{ width: "100%" }}>
-                  {menuItems.map((item, i) => {
-                    const isActive = location.pathname === item.path;
-                    return (
-                      <Button
-                        key={i}
-                        component={Link}
-                        to={item.path}
-                        onClick={() => setOpen(false)}
-                        startIcon={item.icon}
-                        sx={getButtonStyle(item, isActive)}
-                        aria-current={isActive ? "page" : undefined}
-                      >
-                        {item.label}
-                      </Button>
-                    );
-                  })}
+              {/* Items menú */}
+              <Stack spacing={2} sx={{ flex: 1, overflowY: "auto" }}>
+                {menuItems.map((item, i) => (
+                  <NavButton key={i} item={item} onClick={() => setOpen(false)} />
+                ))}
 
-                  {/* Botón modo oscuro móvil */}
+                {/* Modo oscuro */}
+                <Button
+                  onClick={toggleMode}
+                  startIcon={mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
+                  sx={{
+                    fontWeight: 600,
+                    color: "#fff",
+                    borderRadius: "12px",
+                    background: "linear-gradient(135deg, #555, #888)",
+                  }}
+                >
+                  {mode === "light" ? "Modo Oscuro" : "Modo Claro"}
+                </Button>
+
+                {isAuthenticated && (
                   <Button
-                    onClick={toggleMode}
-                    startIcon={mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
-                    sx={{ ...buttonStyle, background: "linear-gradient(135deg, #555, #888)" }}
+                    onClick={handleLogout}
+                    startIcon={<LogoutIcon />}
+                    sx={{
+                      fontWeight: 600,
+                      color: "#fff",
+                      borderRadius: "12px",
+                      background: "linear-gradient(135deg, #d32f2f, #f44336)",
+                    }}
                   >
-                    {mode === "light" ? "Modo Oscuro" : "Modo Claro"}
+                    Cerrar sesión
                   </Button>
-
-                  {isAuthenticated && (
-                    <Button
-                      onClick={handleLogout}
-                      startIcon={<LogoutIcon />}
-                      sx={{
-                        ...buttonStyle,
-                        background: "linear-gradient(135deg, #d32f2f, #f44336)",
-                      }}
-                    >
-                      Cerrar sesión
-                    </Button>
-                  )}
-                </Stack>
-              </Box>
+                )}
+              </Stack>
             </motion.div>
           </motion.div>
         )}
