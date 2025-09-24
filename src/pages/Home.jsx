@@ -28,6 +28,8 @@ import { useProductos } from "../hooks/useProductos";
 import { useCategorias } from "../hooks/useCategorias";
 import { useCarritoHandler } from "../hooks/useCarritoHandler";
 
+const ITEMS_PER_PAGE = 8;
+
 export default function Home() {
   const [categoria, setCategoria] = useState("");
   const [search, setSearch] = useState("");
@@ -39,7 +41,7 @@ export default function Home() {
     categoria,
     search,
     sort,
-    itemsPerPage: 8,
+    itemsPerPage: ITEMS_PER_PAGE,
   });
   const { handleAdd, handleCarritoClick } = useCarritoHandler();
 
@@ -57,12 +59,7 @@ export default function Home() {
     <>
       {/* Encabezado */}
       <Box sx={{ mb: 4, textAlign: "center" }}>
-        <Typography
-          variant="h4"
-          fontWeight="bold"
-          gutterBottom
-          sx={{ color: "primary.main" }}
-        >
+        <Typography variant="h4" fontWeight="bold" sx={{ color: "primary.main" }}>
           <StorefrontIcon sx={{ fontSize: 32 }} /> Productos
         </Typography>
         <Divider sx={{ width: 80, mx: "auto", borderBottomWidth: 3, mb: 3 }} />
@@ -164,7 +161,7 @@ export default function Home() {
       {/* Paginación */}
       <Box sx={{ mt: 4, display: "flex", justifyContent: "center" }}>
         <Pagination
-          count={Math.ceil(filtered.length / 8)}
+          count={Math.ceil(filtered.length / ITEMS_PER_PAGE)}
           page={page}
           onChange={(e, value) => setPage(value)}
           color="primary"
@@ -186,7 +183,7 @@ export default function Home() {
         <ShoppingCartIcon />
       </IconButton>
 
-      {/* Modal premium detalle producto */}
+      {/* Modal Detalle Producto */}
       <Dialog
         open={Boolean(productoSeleccionado)}
         onClose={handleCerrarDetalle}
@@ -206,7 +203,7 @@ export default function Home() {
       >
         {productoSeleccionado && (
           <>
-            {/* Imagen con chip "Nuevo" */}
+            {/* Imagen */}
             <Box sx={{ position: "relative", height: 280, bgcolor: "#f9f9f9" }}>
               <Box
                 component="img"
@@ -264,25 +261,14 @@ export default function Home() {
                   "Este producto no tiene descripción disponible."}
               </Typography>
 
-              {/* Botones mejorados */}
+              {/* Botones */}
               <Stack direction="row" spacing={2} justifyContent="flex-end">
                 <motion.div whileHover={{ scale: 1.05 }}>
                   <Button
                     onClick={handleCerrarDetalle}
                     variant="outlined"
                     color="inherit"
-                    sx={{
-                      borderRadius: 3,
-                      textTransform: "none",
-                      px: 4,
-                      py: 1,
-                      fontWeight: 500,
-                      boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
-                      "&:hover": {
-                        bgcolor: "#f0f0f0",
-                        boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
-                      },
-                    }}
+                    sx={{ borderRadius: 3 }}
                   >
                     Cerrar
                   </Button>
@@ -297,21 +283,12 @@ export default function Home() {
                     variant="contained"
                     color="primary"
                     startIcon={<ShoppingCartIcon />}
-                    sx={{
-                      borderRadius: 3,
-                      textTransform: "none",
-                      px: 4,
-                      py: 1,
-                      fontWeight: "bold",
-                      boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-                      "&:hover": {
-                        bgcolor: "primary.dark",
-                        boxShadow: "0 6px 18px rgba(0,0,0,0.2)",
-                      },
-                    }}
+                    sx={{ borderRadius: 3 }}
                     disabled={productoSeleccionado.stock === 0}
                   >
-                    {productoSeleccionado.stock > 0 ? "Agregar al carrito" : "Agotado"}
+                    {productoSeleccionado.stock > 0
+                      ? "Agregar al carrito"
+                      : "Agotado"}
                   </Button>
                 </motion.div>
               </Stack>
@@ -321,4 +298,4 @@ export default function Home() {
       </Dialog>
     </>
   );
-}
+            }
