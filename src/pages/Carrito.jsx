@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useCarrito } from "../context/CarritoContext";
 import { useAuth } from "../context/AuthContext";
 import { crearPedido } from "../api/api";
@@ -87,7 +87,6 @@ export default function Carrito() {
       {!loading &&
         items.map((it) => {
           const stock = it.producto?.stock ?? 0;
-          const [tempCantidad, setTempCantidad] = useState(it.cantidad);
 
           return (
             <Card
@@ -185,38 +184,24 @@ export default function Carrito() {
                   >
                     <RemoveIcon />
                   </IconButton>
-
                   <TextField
                     type="number"
                     size="small"
-                    value={tempCantidad}
-                    inputProps={{
-                      min: 1,
-                      max: stock,
-                      inputMode: "numeric",
-                      pattern: "[0-9]*",
-                    }}
-                    error={tempCantidad >= stock}
-                    helperText={
-                      tempCantidad >= stock ? "Stock máximo alcanzado" : ""
-                    }
+                    value={it.cantidad}
+                    inputProps={{ min: 1, max: stock }}
                     onChange={(e) => {
-                      setTempCantidad(e.target.value); // deja escribir libre
-                    }}
-                    onBlur={() => {
-                      let nuevaCantidad = Number(tempCantidad) || 1;
-                      if (nuevaCantidad < 1) nuevaCantidad = 1;
-                      if (nuevaCantidad > stock) {
+                      const nuevaCantidad = Number(e.target.value);
+                      if (nuevaCantidad >= 1 && nuevaCantidad <= stock) {
+                        setCantidad(it.id, nuevaCantidad);
+                      } else if (nuevaCantidad > stock) {
                         toast.warning(
                           `No puedes pedir más de ${stock} unidades`
                         );
-                        nuevaCantidad = stock;
+                        setCantidad(it.id, stock);
                       }
-                      setTempCantidad(nuevaCantidad);
-                      setCantidad(it.id, nuevaCantidad); // actualiza carrito real
                     }}
                     sx={{
-                      width: 70,
+                      width: 60,
                       "& input": {
                         textAlign: "center",
                         fontWeight: "bold",
@@ -224,7 +209,6 @@ export default function Carrito() {
                       },
                     }}
                   />
-
                   <IconButton
                     onClick={() => incrementar(it)}
                     disabled={it.cantidad >= stock}
@@ -296,4 +280,4 @@ export default function Carrito() {
       )}
     </Box>
   );
-}
+                      }
