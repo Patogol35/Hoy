@@ -182,7 +182,7 @@ export default function Home() {
         <ShoppingCartIcon />
       </IconButton>
 
-      {/* Modal Detalle Producto (Mejorado) */}
+      {/* Modal Detalle Producto (Optimizado para vertical y horizontal) */}
       <Dialog
         open={Boolean(productoSeleccionado)}
         onClose={handleCerrarDetalle}
@@ -196,31 +196,32 @@ export default function Home() {
           sx: {
             borderRadius: { xs: 2, sm: 4 },
             overflow: "hidden",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.25)",
-            bgcolor: "background.paper",
+            maxHeight: "90vh", // altura máxima para landscape
+            display: "flex",
+            flexDirection: "column",
           },
         }}
       >
         {productoSeleccionado && (
-          <Grid
-            container
+          <Box
             sx={{
+              display: "flex",
               flexDirection: { xs: "column", md: "row" },
-              height: { xs: "auto", md: 500 },
+              flex: 1,
+              minHeight: 0, // para permitir scroll interno
             }}
           >
             {/* Imagen */}
-            <Grid
-              item
-              xs={12}
-              md={6}
+            <Box
               sx={{
-                position: "relative",
+                flex: { xs: "0 0 auto", md: "1 1 50%" },
                 bgcolor: "#f9f9f9",
+                position: "relative",
                 display: "flex",
-                justifyContent: "center",
                 alignItems: "center",
-                p: { xs: 2, md: 3 },
+                justifyContent: "center",
+                p: 2,
+                minHeight: { xs: 200, md: "100%" },
               }}
             >
               <Box
@@ -231,7 +232,6 @@ export default function Home() {
                   maxWidth: "100%",
                   maxHeight: "100%",
                   objectFit: "contain",
-                  borderRadius: 2,
                 }}
               />
               {productoSeleccionado.nuevo && (
@@ -259,63 +259,57 @@ export default function Home() {
               >
                 <CloseIcon />
               </IconButton>
-            </Grid>
+            </Box>
 
             {/* Contenido */}
-            <Grid
-              item
-              xs={12}
-              md={6}
+            <Box
               sx={{
-                p: { xs: 3, md: 4 },
+                flex: { xs: "1 1 auto", md: "1 1 50%" },
                 display: "flex",
                 flexDirection: "column",
-                justifyContent: "space-between",
+                p: { xs: 3, md: 4 },
+                overflowY: "auto", // scroll interno
               }}
             >
-              <Box>
-                <Typography
-                  variant="h5"
-                  fontWeight="bold"
-                  gutterBottom
-                  sx={{ textAlign: { xs: "center", md: "left" } }}
-                >
-                  {productoSeleccionado.nombre}
-                </Typography>
+              <Typography
+                variant="h5"
+                fontWeight="bold"
+                gutterBottom
+                sx={{ textAlign: { xs: "center", md: "left" } }}
+              >
+                {productoSeleccionado.nombre}
+              </Typography>
 
-                <Typography
-                  variant="h6"
-                  color="primary"
-                  fontWeight="bold"
-                  gutterBottom
-                  sx={{ textAlign: { xs: "center", md: "left" } }}
-                >
-                  ${productoSeleccionado.precio}
-                </Typography>
+              <Typography
+                variant="h6"
+                color="primary"
+                fontWeight="bold"
+                gutterBottom
+                sx={{ textAlign: { xs: "center", md: "left" } }}
+              >
+                ${productoSeleccionado.precio}
+              </Typography>
 
-                <Divider sx={{ my: 2 }} />
+              <Divider sx={{ my: 2 }} />
 
-                <Typography
-                  variant="body1"
-                  sx={{
-                    color: "text.secondary",
-                    textAlign: "justify",
-                    maxHeight: { xs: 180, md: 250 },
-                    overflowY: "auto",
-                    pr: 1,
-                  }}
-                >
-                  {productoSeleccionado.descripcion ||
-                    "Este producto no tiene descripción disponible."}
-                </Typography>
-              </Box>
+              <Typography
+                variant="body1"
+                sx={{
+                  color: "text.secondary",
+                  textAlign: "justify",
+                  mb: 3,
+                }}
+              >
+                {productoSeleccionado.descripcion ||
+                  "Este producto no tiene descripción disponible."}
+              </Typography>
 
               {/* Botones */}
               <Stack
                 direction={{ xs: "column", sm: "row" }}
                 spacing={2}
                 justifyContent="flex-end"
-                sx={{ mt: 3 }}
+                sx={{ mt: "auto" }}
               >
                 <motion.div whileHover={{ scale: 1.05 }}>
                   <Button
@@ -346,10 +340,10 @@ export default function Home() {
                   </Button>
                 </motion.div>
               </Stack>
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
         )}
       </Dialog>
     </>
   );
-                    }
+              }
