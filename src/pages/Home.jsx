@@ -196,20 +196,18 @@ export default function Home() {
   onClose={handleCerrarDetalle}
   PaperProps={{
     component: motion.div,
-    initial: { opacity: 0, y: 50 },
-    animate: { opacity: 1, y: 0 },
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
     transition: { duration: 0.3 },
     sx: {
       m: 0,
-      height: "100vh",
       width: "100vw",
+      height: "100vh",
       borderRadius: 0,
-      overflowY: "auto",
       bgcolor: "background.paper",
-      zIndex: 2000, // más alto que el menú
+      position: "relative",
       display: "flex",
       flexDirection: "column",
-      position: "relative",
     },
   }}
 >
@@ -222,9 +220,9 @@ export default function Home() {
           position: "fixed",
           top: 16,
           right: 16,
-          zIndex: 2100, // encima de todo
+          zIndex: 2100,
           bgcolor: "white",
-          boxShadow: 2,
+          boxShadow: 3,
           "&:hover": { bgcolor: "#f0f0f0" },
           width: 48,
           height: 48,
@@ -237,7 +235,8 @@ export default function Home() {
         container
         spacing={3}
         sx={{
-          p: { xs: 2, sm: 4 },
+          height: "100%",
+          p: 3,
           overflowY: "auto",
           alignItems: "flex-start",
         }}
@@ -247,7 +246,7 @@ export default function Home() {
           <Box
             sx={{
               width: "100%",
-              height: { xs: 300, md: "70vh" },
+              height: { xs: 300, md: "80vh" },
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -296,7 +295,11 @@ export default function Home() {
             <Divider />
             <Typography
               variant="body1"
-              sx={{ color: "text.secondary", maxHeight: "50vh", overflowY: "auto" }}
+              sx={{
+                color: "text.secondary",
+                maxHeight: "50vh",
+                overflowY: "auto",
+              }}
             >
               {productoSeleccionado.descripcion ||
                 "Este producto no tiene descripción disponible."}
@@ -323,7 +326,6 @@ export default function Home() {
     </>
   )}
 </Dialog>
-
       
     </>
   );
