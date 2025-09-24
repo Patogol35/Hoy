@@ -192,11 +192,11 @@ export default function Home() {
         <ShoppingCartIcon />
       </IconButton>
 
-      {/* ================== MODAL DETALLE PRODUCTO ================== */}
+      {/* ================== MODAL DETALLE PROFESIONAL ================== */}
       <Dialog
         open={Boolean(productoSeleccionado)}
         onClose={handleCerrarDetalle}
-        maxWidth="md"
+        maxWidth="lg"
         fullWidth
         PaperProps={{
           component: motion.div,
@@ -206,20 +206,26 @@ export default function Home() {
           sx: {
             borderRadius: 4,
             overflow: "hidden",
-            boxShadow: "0 15px 40px rgba(0,0,0,0.3)",
-            p: { xs: 2, sm: 3 },
+            boxShadow: "0 20px 50px rgba(0,0,0,0.35)",
           },
         }}
       >
         {productoSeleccionado && (
-          <Grid container spacing={2}>
+          <Grid
+            container
+            spacing={2}
+            sx={{
+              p: { xs: 2, sm: 3 },
+              flexDirection: { xs: "column", md: "row" },
+            }}
+          >
             {/* IMAGEN */}
-            <Grid item xs={12} sm={5}>
+            <Grid item xs={12} md={5}>
               <Box
                 sx={{
                   position: "relative",
                   width: "100%",
-                  height: { xs: 250, sm: 350 },
+                  height: { xs: 300, md: 400 },
                   bgcolor: "#f9f9f9",
                   borderRadius: 3,
                   overflow: "hidden",
@@ -269,8 +275,15 @@ export default function Home() {
             </Grid>
 
             {/* DETALLES */}
-            <Grid item xs={12} sm={7}>
-              <Stack spacing={2} sx={{ height: "100%" }}>
+            <Grid item xs={12} md={7}>
+              <Stack
+                spacing={2}
+                sx={{
+                  height: "100%",
+                  maxHeight: { xs: "auto", md: 400 },
+                  overflowY: "auto",
+                }}
+              >
                 <Typography variant="h5" fontWeight="bold">
                   {productoSeleccionado.nombre}
                 </Typography>
@@ -327,4 +340,4 @@ export default function Home() {
       </Dialog>
     </>
   );
-            }
+                }
