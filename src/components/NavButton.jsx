@@ -18,13 +18,14 @@ const baseStyle = {
 function NavButton({ item, onClick }) {
   const location = useLocation();
   const isActive = location.pathname === item.path;
+  const Icon = item.icon; // referencia al componente
 
   return (
     <motion.div whileHover={{ y: -2, scale: 1.08 }} whileTap={{ scale: 0.95 }}>
       <Button
         component={Link}
         to={item.path}
-        startIcon={item.icon}
+        startIcon={<Icon />} // render del icono aquí
         onClick={onClick}
         aria-current={isActive ? "page" : undefined}
         sx={{
