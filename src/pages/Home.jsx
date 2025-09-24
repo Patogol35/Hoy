@@ -190,27 +190,26 @@ export default function Home() {
 
       {/* ================== MODAL DETALLE PROFESIONAL ================== */}
 
-
-
-      <Dialog
-  fullScreen={isMobile}
+<Dialog
+  fullScreen
   open={Boolean(productoSeleccionado)}
   onClose={handleCerrarDetalle}
-  maxWidth="md"
-  fullWidth
   PaperProps={{
     component: motion.div,
     initial: { opacity: 0, y: 50 },
     animate: { opacity: 1, y: 0 },
     transition: { duration: 0.3 },
     sx: {
-      borderRadius: { xs: 0, sm: 3 },
-      overflow: "hidden",
-      position: "relative",
+      m: 0,
+      height: "100vh",
+      width: "100vw",
+      borderRadius: 0,
+      overflowY: "auto",
       bgcolor: "background.paper",
-      maxHeight: "90vh",
-      mt: isMobile ? 0 : 8, // espacio superior para que no lo tape el menu
-      zIndex: 1400, // siempre sobre el AppBar
+      zIndex: 2000, // más alto que el menú
+      display: "flex",
+      flexDirection: "column",
+      position: "relative",
     },
   }}
 >
@@ -220,10 +219,10 @@ export default function Home() {
       <IconButton
         onClick={handleCerrarDetalle}
         sx={{
-          position: "fixed", // fijo para que siempre se vea
-          top: isMobile ? 16 : 32,
+          position: "fixed",
+          top: 16,
           right: 16,
-          zIndex: 1500, // más alto que cualquier elemento
+          zIndex: 2100, // encima de todo
           bgcolor: "white",
           boxShadow: 2,
           "&:hover": { bgcolor: "#f0f0f0" },
@@ -238,10 +237,9 @@ export default function Home() {
         container
         spacing={3}
         sx={{
-          height: { xs: "100%", md: "80vh" },
           p: { xs: 2, sm: 4 },
           overflowY: "auto",
-          alignItems: "center",
+          alignItems: "flex-start",
         }}
       >
         {/* IMAGEN */}
@@ -249,7 +247,7 @@ export default function Home() {
           <Box
             sx={{
               width: "100%",
-              height: { xs: 300, md: "100%" },
+              height: { xs: 300, md: "70vh" },
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -298,17 +296,13 @@ export default function Home() {
             <Divider />
             <Typography
               variant="body1"
-              sx={{ color: "text.secondary", overflowY: "auto" }}
+              sx={{ color: "text.secondary", maxHeight: "50vh", overflowY: "auto" }}
             >
               {productoSeleccionado.descripcion ||
                 "Este producto no tiene descripción disponible."}
             </Typography>
 
-            <Stack
-              direction="row"
-              spacing={2}
-              justifyContent="flex-start"
-            >
+            <Stack direction="row" spacing={2} justifyContent="flex-start">
               <Button
                 onClick={() => {
                   handleAdd(productoSeleccionado);
@@ -320,9 +314,7 @@ export default function Home() {
                 sx={{ borderRadius: 3 }}
                 disabled={productoSeleccionado.stock === 0}
               >
-                {productoSeleccionado.stock > 0
-                  ? "Agregar al carrito"
-                  : "Agotado"}
+                {productoSeleccionado.stock > 0 ? "Agregar al carrito" : "Agotado"}
               </Button>
             </Stack>
           </Stack>
@@ -331,6 +323,8 @@ export default function Home() {
     </>
   )}
 </Dialog>
+
+      
     </>
   );
 }
