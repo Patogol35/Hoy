@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Box,
   Typography,
@@ -12,9 +12,6 @@ import {
   IconButton,
   CircularProgress,
   Paper,
-  Dialog,
-  Button,
-  Chip,
 } from "@mui/material";
 import { motion } from "framer-motion";
 import SearchIcon from "@mui/icons-material/Search";
@@ -23,13 +20,25 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import SortIcon from "@mui/icons-material/Sort";
 import CloseIcon from "@mui/icons-material/Close";
 
-import Slider from "react-slick"; // 👈 slider
 import ProductoCard from "../components/ProductoCard";
 import { useProductos } from "../hooks/useProductos";
 import { useCategorias } from "../hooks/useCategorias";
 import { useCarritoHandler } from "../hooks/useCarritoHandler";
 
+import DetalleModal from "../components/DetalleModal";
+import LightboxModal from "../components/LightboxModal";
+
 const ITEMS_PER_PAGE = 8;
+
+// ================== Estilos reutilizables ==================
+const botonCerrarSx = {
+  position: "absolute",
+  top: 12,
+  right: 12,
+  bgcolor: "rgba(0,0,0,0.6)",
+  color: "white",
+  "&:hover": { bgcolor: "rgba(255,255,255,0.2)" },
+};
 
 export default function Home() {
   const [categoria, setCategoria] = useState("");
@@ -39,7 +48,7 @@ export default function Home() {
   const [lightbox, setLightbox] = useState(null);
 
   const categorias = useCategorias();
-  const { loading, filtered, paginated, page, setPage } = useProductos({
+  const { loading, filtered, page, setPage } = useProductos({
     categoria,
     search,
     sort,
@@ -50,14 +59,11 @@ export default function Home() {
   const handleVerDetalle = (producto) => setProductoSeleccionado(producto);
   const handleCerrarDetalle = () => setProductoSeleccionado(null);
 
-  const sliderSettings = {
-    dots: true,
-    infinite: true,
-    speed: 400,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    arrows: true,
-  };
+  // ================== Productos paginados con useMemo ==================
+  const productosPag = useMemo(() => {
+    const start = (page - 1) * ITEMS_PER_PAGE;
+    return filtered.slice(start, start + ITEMS_PER_PAGE);
+  }, [filtered, page]);
 
   if (loading) {
     return (
@@ -71,17 +77,11 @@ export default function Home() {
     <>
       {/* ================== ENCABEZADO ================== */}
       <Box sx={{ mb: 4, textAlign: "center" }}>
-        <Typography
-          variant="h4"
-          fontWeight="bold"
-          sx={{ color: "primary.main" }}
-        >
+        <Typography variant="h4" fontWeight="bold" sx={{ color: "primary.main" }}>
           <StorefrontIcon sx={{ fontSize: 32, mr: 1 }} />
           Productos
         </Typography>
-        <Divider
-          sx={{ width: 80, mx: "auto", borderBottomWidth: 3, mb: 3 }}
-        />
+        <Divider sx={{ width: 80, mx: "auto", borderBottomWidth: 3, mb: 3 }} />
 
         {/* ================== FILTROS ================== */}
         <Paper
@@ -164,7 +164,7 @@ export default function Home() {
 
       {/* ================== PRODUCTOS ================== */}
       <Grid container spacing={3} justifyContent="center">
-        {paginated.map((prod) => (
+        {productosPag.map((prod) => (
           <Grid item xs={12} sm={6} md={4} lg={3} key={prod.id}>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
               <ProductoCard
@@ -198,199 +198,22 @@ export default function Home() {
           color: "white",
           "&:hover": { bgcolor: "primary.dark" },
         }}
+        aria-label="Abrir carrito"
       >
         <ShoppingCartIcon />
       </IconButton>
 
       {/* ================== MODAL DETALLE ================== */}
-      <Dialog
+      <DetalleModal
+        producto={productoSeleccionado}
         open={Boolean(productoSeleccionado)}
         onClose={handleCerrarDetalle}
-        maxWidth="lg"
-        fullWidth
-        sx={{
-          zIndex: 1600,
-          "& .MuiBackdrop-root": {
-            backgroundColor: "rgba(0,0,0,0.85)",
-            backdropFilter: "blur(5px)",
-          },
-        }}
-        PaperProps={{
-          sx: {
-            borderRadius: { xs: 0, md: 3 },
-            p: 3,
-            bgcolor: "#1e1e1e",
-            color: "white",
-            width: "100%",
-            maxWidth: { xs: "100%", md: 900 },
-            maxHeight: "90vh",
-            overflowY: "auto",
-            position: "relative",
-          },
-        }}
-      >
-        {productoSeleccionado && (
-          <Box>
-            {/* Botón cerrar */}
-            <IconButton
-              onClick={handleCerrarDetalle}
-              sx={{
-                position: "absolute",
-                top: 12,
-                right: 12,
-                bgcolor: "rgba(0,0,0,0.6)",
-                color: "white",
-                "&:hover": { bgcolor: "rgba(255,255,255,0.2)" },
-              }}
-            >
-              <CloseIcon />
-            </IconButton>
-
-            <Grid container spacing={4}>
-              {/* Slider imágenes */}
-              <Grid item xs={12} md={6}>
-                <Slider {...sliderSettings}>
-                  {(productoSeleccionado.imagenes ||
-                    [productoSeleccionado.imagen]).map((img, i) => (
-                    <Box
-                      key={i}
-                      sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        height: { xs: 300, md: 400 },
-                        cursor: "zoom-in",
-                      }}
-                      onClick={() => setLightbox(img)}
-                    >
-                      <Box
-                        component="img"
-                        src={img}
-                        alt={productoSeleccionado.nombre}
-                        loading="lazy"
-                        sx={{
-                          maxWidth: "100%",
-                          maxHeight: "100%",
-                          objectFit: "contain",
-                          borderRadius: 2,
-                          border: "2px solid rgba(255,255,255,0.2)",
-                          boxShadow: "0 4px 15px rgba(0,0,0,0.5)",
-                          transition: "transform 0.3s ease",
-                          "&:hover": { transform: "scale(1.02)" },
-                        }}
-                      />
-                    </Box>
-                  ))}
-                </Slider>
-              </Grid>
-
-              {/* Información */}
-              <Grid item xs={12} md={6}>
-                <Stack spacing={3}>
-                  <Typography variant="h5" fontWeight="bold">
-                    {productoSeleccionado.nombre}
-                  </Typography>
-
-                  <Box>
-                    <Typography
-                      variant="h6"
-                      fontWeight="bold"
-                      color="primary"
-                      sx={{ mb: 1 }}
-                    >
-                      ${productoSeleccionado.precio}
-                    </Typography>
-
-                    <Chip
-                      label={
-                        productoSeleccionado.stock > 0 ? "En stock" : "Agotado"
-                      }
-                      color={
-                        productoSeleccionado.stock > 0 ? "success" : "error"
-                      }
-                      variant="outlined"
-                      sx={{
-                        color: "white",
-                        borderColor: "white",
-                        fontWeight: "bold",
-                      }}
-                    />
-                  </Box>
-
-                  <Divider sx={{ bgcolor: "rgba(255,255,255,0.3)" }} />
-
-                  <Typography
-                    sx={{ lineHeight: 1.6, color: "rgba(255,255,255,0.85)" }}
-                  >
-                    {productoSeleccionado.descripcion}
-                  </Typography>
-
-                  <Button
-                    variant="contained"
-                    startIcon={<ShoppingCartIcon />}
-                    onClick={() => handleAdd(productoSeleccionado)}
-                    disabled={productoSeleccionado.stock === 0}
-                    sx={{
-                      borderRadius: 3,
-                      py: 1.5,
-                      background: "linear-gradient(135deg, #1976d2, #42a5f5)",
-                      "&:hover": {
-                        transform:
-                          productoSeleccionado.stock > 0
-                            ? "translateY(-2px)"
-                            : "none",
-                      },
-                    }}
-                  >
-                    {productoSeleccionado.stock > 0
-                      ? "Agregar al carrito"
-                      : "Agotado"}
-                  </Button>
-                </Stack>
-              </Grid>
-            </Grid>
-          </Box>
-        )}
-      </Dialog>
+        onAdd={handleAdd}
+        setLightbox={setLightbox}
+      />
 
       {/* ================== LIGHTBOX ================== */}
-      <Dialog
-        open={!!lightbox}
-        onClose={() => setLightbox(null)}
-        fullScreen
-        sx={{ zIndex: 1700 }}
-        PaperProps={{
-          sx: {
-            bgcolor: "rgba(0,0,0,0.95)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          },
-        }}
-      >
-        <IconButton
-          onClick={() => setLightbox(null)}
-          sx={{
-            position: "absolute",
-            top: 16,
-            right: 16,
-            bgcolor: "rgba(0,0,0,0.6)",
-            color: "white",
-          }}
-        >
-          <CloseIcon />
-        </IconButton>
-        <Box
-          component="img"
-          src={lightbox}
-          alt="Zoom"
-          sx={{
-            maxWidth: "95%",
-            maxHeight: "95%",
-            objectFit: "contain",
-          }}
-        />
-      </Dialog>
+      <LightboxModal open={!!lightbox} onClose={() => setLightbox(null)} src={lightbox} />
     </>
   );
           }
