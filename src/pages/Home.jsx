@@ -193,121 +193,170 @@ export default function Home() {
       </IconButton>
 
       {/* ================== MODAL DETALLE ================== */}
-      <Dialog
-        open={Boolean(productoSeleccionado)}
-        onClose={handleCerrarDetalle}
-        maxWidth="sm"
-        fullWidth
-        PaperProps={{
-          component: motion.div,
-          initial: { opacity: 0, y: 50 },
-          animate: { opacity: 1, y: 0 },
-          transition: { duration: 0.3 },
-          sx: {
-            borderRadius: 4,
-            overflow: "hidden",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.25)",
-          },
+
+<Dialog
+  open={Boolean(productoSeleccionado)}
+  onClose={handleCerrarDetalle}
+  maxWidth="md"
+  fullWidth
+  PaperProps={{
+    component: motion.div,
+    initial: { opacity: 0, y: 50 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: 50 },
+    transition: { duration: 0.35 },
+    sx: {
+      borderRadius: { xs: 0, sm: 4 }, // en mobile ocupa toda la pantalla
+      overflow: "hidden",
+      backdropFilter: "blur(10px)",
+      bgcolor: "background.paper",
+      boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
+    },
+  }}
+>
+  {productoSeleccionado && (
+    <>
+      {/* Imagen */}
+      <Box
+        sx={{
+          position: "relative",
+          height: { xs: 250, sm: 320 },
+          bgcolor: "linear-gradient(135deg, #f5f7fa, #c3cfe2)",
         }}
       >
-        {productoSeleccionado && (
-          <>
-            {/* Imagen */}
-            <Box sx={{ position: "relative", height: 280, bgcolor: "#f9f9f9" }}>
-              <Box
-                component="img"
-                src={productoSeleccionado.imagen}
-                alt={productoSeleccionado.nombre}
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "contain",
-                  transition: "transform 0.5s ease",
-                  "&:hover": { transform: "scale(1.05)" },
-                }}
-              />
-              {productoSeleccionado.nuevo && (
-                <Chip
-                  label="Nuevo"
-                  color="secondary"
-                  sx={{
-                    position: "absolute",
-                    top: 16,
-                    left: 16,
-                    fontWeight: "bold",
-                    px: 1.5,
-                  }}
-                />
-              )}
-              <IconButton
-                onClick={handleCerrarDetalle}
-                sx={{
-                  position: "absolute",
-                  top: 12,
-                  right: 12,
-                  bgcolor: "white",
-                  "&:hover": { bgcolor: "#f0f0f0" },
-                }}
-              >
-                <CloseIcon />
-              </IconButton>
-            </Box>
+        <Box
+          component="img"
+          src={productoSeleccionado.imagen}
+          alt={productoSeleccionado.nombre}
+          sx={{
+            width: "100%",
+            height: "100%",
+            objectFit: "contain",
+            transition: "transform 0.6s ease",
+            "&:hover": { transform: "scale(1.08)" },
+          }}
+        />
 
-            {/* Contenido */}
-            <DialogContent sx={{ p: 3 }}>
-              <Typography variant="h5" fontWeight="bold" gutterBottom>
-                {productoSeleccionado.nombre}
-              </Typography>
-
-              <Typography variant="subtitle1" color="primary" gutterBottom>
-                ${productoSeleccionado.precio}
-              </Typography>
-
-              <Divider sx={{ my: 2 }} />
-
-              <Typography
-                variant="body1"
-                sx={{ mb: 3, color: "text.secondary" }}
-              >
-                {productoSeleccionado.descripcion ||
-                  "Este producto no tiene descripción disponible."}
-              </Typography>
-
-              {/* Botones */}
-              <Stack direction="row" spacing={2} justifyContent="flex-end">
-                <motion.div whileHover={{ scale: 1.05 }}>
-                  <Button
-                    onClick={handleCerrarDetalle}
-                    variant="outlined"
-                    color="inherit"
-                    sx={{ borderRadius: 3 }}
-                  >
-                    Cerrar
-                  </Button>
-                </motion.div>
-
-                <motion.div whileHover={{ scale: 1.05 }}>
-                  <Button
-                    onClick={() => {
-                      handleAdd(productoSeleccionado);
-                      handleCerrarDetalle();
-                    }}
-                    variant="contained"
-                    color="primary"
-                    startIcon={<ShoppingCartIcon />}
-                    sx={{ borderRadius: 3 }}
-                    disabled={productoSeleccionado.stock === 0}
-                  >
-                    {productoSeleccionado.stock > 0
-                      ? "Agregar al carrito"
-                      : "Agotado"}
-                  </Button>
-                </motion.div>
-              </Stack>
-            </DialogContent>
-          </>
+        {productoSeleccionado.nuevo && (
+          <Chip
+            label="Nuevo"
+            color="secondary"
+            sx={{
+              position: "absolute",
+              top: 16,
+              left: 16,
+              fontWeight: "bold",
+              px: 1.5,
+              boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+            }}
+          />
         )}
-      </Dialog>
+
+        <IconButton
+          onClick={handleCerrarDetalle}
+          sx={{
+            position: "absolute",
+            top: 12,
+            right: 12,
+            bgcolor: "white",
+            boxShadow: 2,
+            "&:hover": { bgcolor: "#f5f5f5" },
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+      </Box>
+
+      {/* Contenido */}
+      <DialogContent sx={{ p: { xs: 2, sm: 4 } }}>
+        {/* Nombre */}
+        <Typography
+          variant="h5"
+          fontWeight="bold"
+          gutterBottom
+          textAlign={{ xs: "center", sm: "left" }}
+        >
+          {productoSeleccionado.nombre}
+        </Typography>
+
+        {/* Precio */}
+        <Typography
+          variant="h6"
+          color="primary"
+          fontWeight="bold"
+          gutterBottom
+          textAlign={{ xs: "center", sm: "left" }}
+        >
+          ${productoSeleccionado.precio}
+        </Typography>
+
+        {/* Stock */}
+        <Typography
+          variant="body2"
+          color={productoSeleccionado.stock > 0 ? "success.main" : "error.main"}
+          gutterBottom
+        >
+          {productoSeleccionado.stock > 0
+            ? `Disponible (${productoSeleccionado.stock} unidades)`
+            : "Sin stock"}
+        </Typography>
+
+        <Divider sx={{ my: 2 }} />
+
+        {/* Descripción */}
+        <Typography
+          variant="body1"
+          sx={{ mb: 3, color: "text.secondary", lineHeight: 1.6 }}
+        >
+          {productoSeleccionado.descripcion ||
+            "Este producto no tiene descripción disponible."}
+        </Typography>
+
+        {/* Botones */}
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          spacing={2}
+          justifyContent="flex-end"
+        >
+          <motion.div whileHover={{ scale: 1.05 }}>
+            <Button
+              onClick={handleCerrarDetalle}
+              variant="outlined"
+              color="inherit"
+              sx={{ borderRadius: 3, width: { xs: "100%", sm: "auto" } }}
+            >
+              Cerrar
+            </Button>
+          </motion.div>
+
+          <motion.div whileHover={{ scale: 1.05 }}>
+            <Button
+              onClick={() => {
+                handleAdd(productoSeleccionado);
+                handleCerrarDetalle();
+              }}
+              variant="contained"
+              color="primary"
+              startIcon={<ShoppingCartIcon />}
+              sx={{
+                borderRadius: 3,
+                px: 3,
+                width: { xs: "100%", sm: "auto" },
+              }}
+              disabled={productoSeleccionado.stock === 0}
+            >
+              {productoSeleccionado.stock > 0
+                ? "Agregar al carrito"
+                : "Agotado"}
+            </Button>
+          </motion.div>
+        </Stack>
+      </DialogContent>
+    </>
+  )}
+</Dialog>
+
+      
     </>
   );
 }
