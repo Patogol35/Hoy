@@ -13,9 +13,9 @@ import {
   CircularProgress,
   Paper,
   Dialog,
+  DialogContent,
   Button,
   Chip,
-  useMediaQuery,
 } from "@mui/material";
 import { motion } from "framer-motion";
 import SearchIcon from "@mui/icons-material/Search";
@@ -45,7 +45,6 @@ export default function Home() {
     itemsPerPage: ITEMS_PER_PAGE,
   });
   const { handleAdd, handleCarritoClick } = useCarritoHandler();
-  const isMobile = useMediaQuery("(max-width:900px)");
 
   const handleVerDetalle = (producto) => setProductoSeleccionado(producto);
   const handleCerrarDetalle = () => setProductoSeleccionado(null);
@@ -70,7 +69,9 @@ export default function Home() {
           <StorefrontIcon sx={{ fontSize: 32, mr: 1 }} />
           Productos
         </Typography>
-        <Divider sx={{ width: 80, mx: "auto", borderBottomWidth: 3, mb: 3 }} />
+        <Divider
+          sx={{ width: 80, mx: "auto", borderBottomWidth: 3, mb: 3 }}
+        />
 
         {/* ================== FILTROS ================== */}
         <Paper
@@ -86,6 +87,7 @@ export default function Home() {
             mb: 2,
           }}
         >
+          {/* Buscar */}
           <TextField
             label="Buscar producto"
             size="small"
@@ -102,6 +104,7 @@ export default function Home() {
             sx={{ minWidth: 250 }}
           />
 
+          {/* Categoría */}
           <TextField
             select
             label="Categoría"
@@ -126,6 +129,7 @@ export default function Home() {
             ))}
           </TextField>
 
+          {/* Ordenar */}
           <TextField
             select
             label="Ordenar por"
@@ -188,135 +192,122 @@ export default function Home() {
         <ShoppingCartIcon />
       </IconButton>
 
-      {/* ================== MODAL DETALLE PROFESIONAL ================== */}
-
-
+      {/* ================== MODAL DETALLE ================== */}
       <Dialog
-  open={Boolean(productoSeleccionado)}
-  onClose={handleCerrarDetalle}
-  maxWidth="lg"
-  fullWidth
-  PaperProps={{
-    component: motion.div,
-    initial: { opacity: 0, y: 50 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.3 },
-    sx: {
-      borderRadius: 4,
-      overflow: "hidden",
-      position: "relative",
-      bgcolor: "background.paper",
-      display: "flex",
-      flexDirection: { xs: "column", md: "row" },
-      maxHeight: "90vh",
-    },
-  }}
->
-  {productoSeleccionado && (
-    <>
-      {/* BOTÓN CERRAR */}
-      <IconButton
-        onClick={handleCerrarDetalle}
-        sx={{
-          position: "absolute",
-          top: 16,
-          right: 16,
-          zIndex: 10,
-          bgcolor: "white",
-          boxShadow: 3,
-          "&:hover": { bgcolor: "#f0f0f0" },
-          width: 40,
-          height: 40,
+        open={Boolean(productoSeleccionado)}
+        onClose={handleCerrarDetalle}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          component: motion.div,
+          initial: { opacity: 0, y: 50 },
+          animate: { opacity: 1, y: 0 },
+          transition: { duration: 0.3 },
+          sx: {
+            borderRadius: 4,
+            overflow: "hidden",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.25)",
+          },
         }}
       >
-        <CloseIcon />
-      </IconButton>
+        {productoSeleccionado && (
+          <>
+            {/* Imagen */}
+            <Box sx={{ position: "relative", height: 280, bgcolor: "#f9f9f9" }}>
+              <Box
+                component="img"
+                src={productoSeleccionado.imagen}
+                alt={productoSeleccionado.nombre}
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "contain",
+                  transition: "transform 0.5s ease",
+                  "&:hover": { transform: "scale(1.05)" },
+                }}
+              />
+              {productoSeleccionado.nuevo && (
+                <Chip
+                  label="Nuevo"
+                  color="secondary"
+                  sx={{
+                    position: "absolute",
+                    top: 16,
+                    left: 16,
+                    fontWeight: "bold",
+                    px: 1.5,
+                  }}
+                />
+              )}
+              <IconButton
+                onClick={handleCerrarDetalle}
+                sx={{
+                  position: "absolute",
+                  top: 12,
+                  right: 12,
+                  bgcolor: "white",
+                  "&:hover": { bgcolor: "#f0f0f0" },
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
+            </Box>
 
-      {/* IMAGEN */}
-      <Box
-        sx={{
-          flex: 1,
-          minHeight: { xs: 250, md: "auto" },
-          bgcolor: "#f9f9f9",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          p: 2,
-          position: "relative",
-        }}
-      >
-        <Box
-          component="img"
-          src={productoSeleccionado.imagen}
-          alt={productoSeleccionado.nombre}
-          sx={{
-            maxWidth: "100%",
-            maxHeight: "100%",
-            objectFit: "contain",
-            transition: "transform 0.5s ease",
-            "&:hover": { transform: "scale(1.05)" },
-          }}
-        />
-        {productoSeleccionado.nuevo && (
-          <Chip
-            label="Nuevo"
-            color="secondary"
-            sx={{ position: "absolute", top: 16, left: 16, fontWeight: "bold" }}
-          />
+            {/* Contenido */}
+            <DialogContent sx={{ p: 3 }}>
+              <Typography variant="h5" fontWeight="bold" gutterBottom>
+                {productoSeleccionado.nombre}
+              </Typography>
+
+              <Typography variant="subtitle1" color="primary" gutterBottom>
+                ${productoSeleccionado.precio}
+              </Typography>
+
+              <Divider sx={{ my: 2 }} />
+
+              <Typography
+                variant="body1"
+                sx={{ mb: 3, color: "text.secondary" }}
+              >
+                {productoSeleccionado.descripcion ||
+                  "Este producto no tiene descripción disponible."}
+              </Typography>
+
+              {/* Botones */}
+              <Stack direction="row" spacing={2} justifyContent="flex-end">
+                <motion.div whileHover={{ scale: 1.05 }}>
+                  <Button
+                    onClick={handleCerrarDetalle}
+                    variant="outlined"
+                    color="inherit"
+                    sx={{ borderRadius: 3 }}
+                  >
+                    Cerrar
+                  </Button>
+                </motion.div>
+
+                <motion.div whileHover={{ scale: 1.05 }}>
+                  <Button
+                    onClick={() => {
+                      handleAdd(productoSeleccionado);
+                      handleCerrarDetalle();
+                    }}
+                    variant="contained"
+                    color="primary"
+                    startIcon={<ShoppingCartIcon />}
+                    sx={{ borderRadius: 3 }}
+                    disabled={productoSeleccionado.stock === 0}
+                  >
+                    {productoSeleccionado.stock > 0
+                      ? "Agregar al carrito"
+                      : "Agotado"}
+                  </Button>
+                </motion.div>
+              </Stack>
+            </DialogContent>
+          </>
         )}
-      </Box>
-
-      {/* DETALLES */}
-      <Box
-        sx={{
-          flex: 1,
-          p: 3,
-          overflowY: "auto",
-          maxHeight: { xs: "50vh", md: "80vh" },
-        }}
-      >
-        <Typography variant="h5" fontWeight="bold" gutterBottom>
-          {productoSeleccionado.nombre}
-        </Typography>
-        <Typography variant="h6" color="primary" gutterBottom>
-          ${productoSeleccionado.precio}
-        </Typography>
-        <Divider sx={{ my: 2 }} />
-        <Typography
-          variant="body1"
-          sx={{ mb: 3, color: "text.secondary" }}
-        >
-          {productoSeleccionado.descripcion || "Este producto no tiene descripción disponible."}
-        </Typography>
-
-        <Stack direction="row" spacing={2}>
-          <Button
-            onClick={() => {
-              handleAdd(productoSeleccionado);
-              handleCerrarDetalle();
-            }}
-            variant="contained"
-            color="primary"
-            startIcon={<ShoppingCartIcon />}
-            sx={{ borderRadius: 3 }}
-            disabled={productoSeleccionado.stock === 0}
-          >
-            {productoSeleccionado.stock > 0 ? "Agregar al carrito" : "Agotado"}
-          </Button>
-          <Button
-            onClick={handleCerrarDetalle}
-            variant="outlined"
-            color="inherit"
-            sx={{ borderRadius: 3 }}
-          >
-            Cerrar
-          </Button>
-        </Stack>
-      </Box>
-    </>
-  )}
-</Dialog>
-      
+      </Dialog>
     </>
   );
 }
