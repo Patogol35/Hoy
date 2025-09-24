@@ -1,13 +1,28 @@
 import { useState } from "react";
 import {
-  Box, Typography, Divider, Stack, TextField, InputAdornment,
-  MenuItem, Grid, Pagination, IconButton, CircularProgress, Paper
+  Box,
+  Typography,
+  Divider,
+  Stack,
+  TextField,
+  InputAdornment,
+  MenuItem,
+  Grid,
+  Pagination,
+  IconButton,
+  CircularProgress,
+  Paper,
+  Dialog,
+  DialogContent,
+  Button,
+  Chip,
 } from "@mui/material";
 import { motion } from "framer-motion";
 import SearchIcon from "@mui/icons-material/Search";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import SortIcon from "@mui/icons-material/Sort";
+import CloseIcon from "@mui/icons-material/Close";
 import ProductoCard from "../components/ProductoCard";
 import { useProductos } from "../hooks/useProductos";
 import { useCategorias } from "../hooks/useCategorias";
@@ -17,6 +32,7 @@ export default function Home() {
   const [categoria, setCategoria] = useState("");
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("asc");
+  const [productoSeleccionado, setProductoSeleccionado] = useState(null);
 
   const categorias = useCategorias();
   const { loading, filtered, paginated, page, setPage } = useProductos({
@@ -26,6 +42,9 @@ export default function Home() {
     itemsPerPage: 8,
   });
   const { handleAdd, handleCarritoClick } = useCarritoHandler();
+
+  const handleVerDetalle = (producto) => setProductoSeleccionado(producto);
+  const handleCerrarDetalle = () => setProductoSeleccionado(null);
 
   if (loading)
     return (
@@ -48,7 +67,7 @@ export default function Home() {
         </Typography>
         <Divider sx={{ width: 80, mx: "auto", borderBottomWidth: 3, mb: 3 }} />
 
-        {/* Filtros estilo login */}
+        {/* Filtros */}
         <Paper
           elevation={4}
           sx={{
@@ -132,7 +151,11 @@ export default function Home() {
         {paginated.map((prod) => (
           <Grid item xs={12} sm={6} md={4} lg={3} key={prod.id}>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <ProductoCard producto={prod} onAgregar={handleAdd} />
+              <ProductoCard
+                producto={prod}
+                onAgregar={handleAdd}
+                onVerDetalle={() => handleVerDetalle(prod)}
+              />
             </motion.div>
           </Grid>
         ))}
@@ -162,6 +185,112 @@ export default function Home() {
       >
         <ShoppingCartIcon />
       </IconButton>
+
+      {/* Modal premium detalle producto */}
+      <Dialog
+        open={Boolean(productoSeleccionado)}
+        onClose={handleCerrarDetalle}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          component: motion.div,
+          initial: { opacity: 0, y: 50 },
+          animate: { opacity: 1, y: 0 },
+          transition: { duration: 0.3 },
+          sx: {
+            borderRadius: 4,
+            overflow: "hidden",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.25)",
+          },
+        }}
+      >
+        {productoSeleccionado && (
+          <>
+            {/* Imagen con chip "Nuevo" */}
+            <Box sx={{ position: "relative", height: 280, bgcolor: "#f9f9f9" }}>
+              <Box
+                component="img"
+                src={productoSeleccionado.imagen}
+                alt={productoSeleccionado.nombre}
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "contain",
+                  transition: "transform 0.5s ease",
+                  "&:hover": { transform: "scale(1.05)" },
+                }}
+              />
+              {productoSeleccionado.nuevo && (
+                <Chip
+                  label="Nuevo"
+                  color="secondary"
+                  sx={{
+                    position: "absolute",
+                    top: 16,
+                    left: 16,
+                    fontWeight: "bold",
+                    px: 1.5,
+                  }}
+                />
+              )}
+              <IconButton
+                onClick={handleCerrarDetalle}
+                sx={{
+                  position: "absolute",
+                  top: 12,
+                  right: 12,
+                  bgcolor: "white",
+                  "&:hover": { bgcolor: "#f0f0f0" },
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
+            </Box>
+
+            {/* Contenido */}
+            <DialogContent sx={{ p: 3 }}>
+              <Typography variant="h5" fontWeight="bold" gutterBottom>
+                {productoSeleccionado.nombre}
+              </Typography>
+
+              <Typography variant="subtitle1" color="primary" gutterBottom>
+                ${productoSeleccionado.precio}
+              </Typography>
+
+              <Divider sx={{ my: 2 }} />
+
+              <Typography variant="body1" sx={{ mb: 3, color: "text.secondary" }}>
+                {productoSeleccionado.descripcion ||
+                  "Este producto no tiene descripción disponible."}
+              </Typography>
+
+              <Stack direction="row" spacing={2} justifyContent="flex-end">
+                <Button
+                  onClick={handleCerrarDetalle}
+                  variant="outlined"
+                  color="inherit"
+                  sx={{ borderRadius: 3, textTransform: "none", px: 3 }}
+                >
+                  Cerrar
+                </Button>
+                <Button
+                  onClick={() => {
+                    handleAdd(productoSeleccionado);
+                    handleCerrarDetalle();
+                  }}
+                  variant="contained"
+                  color="primary"
+                  startIcon={<ShoppingCartIcon />}
+                  sx={{ borderRadius: 3, textTransform: "none", px: 3, fontWeight: "bold" }}
+                  disabled={productoSeleccionado.stock === 0}
+                >
+                  {productoSeleccionado.stock > 0 ? "Agregar al carrito" : "Agotado"}
+                </Button>
+              </Stack>
+            </DialogContent>
+          </>
+        )}
+      </Dialog>
     </>
   );
 }
