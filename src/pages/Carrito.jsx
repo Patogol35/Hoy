@@ -184,13 +184,23 @@ export default function Carrito() {
                   >
                     <RemoveIcon />
                   </IconButton>
+
                   <TextField
                     type="number"
                     size="small"
                     value={it.cantidad}
-                    inputProps={{ min: 1, max: stock }}
+                    inputProps={{
+                      min: 1,
+                      max: stock,
+                      inputMode: "numeric",
+                      pattern: "[0-9]*",
+                    }}
+                    error={it.cantidad >= stock}
+                    helperText={
+                      it.cantidad >= stock ? "Stock máximo alcanzado" : ""
+                    }
                     onChange={(e) => {
-                      const nuevaCantidad = Number(e.target.value);
+                      const nuevaCantidad = Number(e.target.value) || 1;
                       if (nuevaCantidad >= 1 && nuevaCantidad <= stock) {
                         setCantidad(it.id, nuevaCantidad);
                       } else if (nuevaCantidad > stock) {
@@ -201,7 +211,7 @@ export default function Carrito() {
                       }
                     }}
                     sx={{
-                      width: 60,
+                      width: 70,
                       "& input": {
                         textAlign: "center",
                         fontWeight: "bold",
@@ -209,6 +219,7 @@ export default function Carrito() {
                       },
                     }}
                   />
+
                   <IconButton
                     onClick={() => incrementar(it)}
                     disabled={it.cantidad >= stock}
@@ -280,4 +291,4 @@ export default function Carrito() {
       )}
     </Box>
   );
-                  }
+}
