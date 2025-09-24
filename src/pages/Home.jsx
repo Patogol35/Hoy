@@ -1,12 +1,13 @@
-  import { useState } from "react";
+import { useState } from "react";
 import {
   Box, Typography, Divider, Stack, TextField, InputAdornment,
-  MenuItem, Grid, Pagination, IconButton, CircularProgress
+  MenuItem, Grid, Pagination, IconButton, CircularProgress, Paper
 } from "@mui/material";
 import { motion } from "framer-motion";
 import SearchIcon from "@mui/icons-material/Search";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import SortIcon from "@mui/icons-material/Sort";
 import ProductoCard from "../components/ProductoCard";
 import { useProductos } from "../hooks/useProductos";
 import { useCategorias } from "../hooks/useCategorias";
@@ -47,21 +48,27 @@ export default function Home() {
         </Typography>
         <Divider sx={{ width: 80, mx: "auto", borderBottomWidth: 3, mb: 3 }} />
 
-        {/* Filtros */}
-        <Stack
-          direction={{ xs: "column", sm: "row" }}
-          spacing={2}
-          justifyContent="center"
-          sx={{ mb: 2 }}
+        {/* Filtros estilo login */}
+        <Paper
+          elevation={4}
+          sx={{
+            p: 3,
+            borderRadius: 3,
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            gap: 2,
+            justifyContent: "center",
+            alignItems: "center",
+            mb: 2,
+          }}
         >
           {/* Buscador */}
           <TextField
-            placeholder="Buscar producto..."
+            label="Buscar producto"
             size="small"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             variant="outlined"
-            fullWidth
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -69,17 +76,7 @@ export default function Home() {
                 </InputAdornment>
               ),
             }}
-            sx={{
-              maxWidth: 300,
-              bgcolor: "background.paper",
-              borderRadius: 3,
-              boxShadow: 1,
-              "& .MuiOutlinedInput-root": {
-                borderRadius: 3,
-                transition: "0.3s",
-                "&:hover": { boxShadow: 2 },
-              },
-            }}
+            sx={{ minWidth: 250 }}
           />
 
           {/* Categoría */}
@@ -90,17 +87,14 @@ export default function Home() {
             value={categoria}
             onChange={(e) => setCategoria(e.target.value)}
             variant="outlined"
-            sx={{
-              minWidth: 180,
-              bgcolor: "background.paper",
-              borderRadius: 3,
-              boxShadow: 1,
-              "& .MuiOutlinedInput-root": {
-                borderRadius: 3,
-                transition: "0.3s",
-                "&:hover": { boxShadow: 2 },
-              },
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <StorefrontIcon color="action" />
+                </InputAdornment>
+              ),
             }}
+            sx={{ minWidth: 200 }}
           >
             <MenuItem value="">Todas</MenuItem>
             {categorias.map((cat) => (
@@ -118,22 +112,19 @@ export default function Home() {
             value={sort}
             onChange={(e) => setSort(e.target.value)}
             variant="outlined"
-            sx={{
-              minWidth: 200,
-              bgcolor: "background.paper",
-              borderRadius: 3,
-              boxShadow: 1,
-              "& .MuiOutlinedInput-root": {
-                borderRadius: 3,
-                transition: "0.3s",
-                "&:hover": { boxShadow: 2 },
-              },
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SortIcon color="action" />
+                </InputAdornment>
+              ),
             }}
+            sx={{ minWidth: 220 }}
           >
             <MenuItem value="asc">Precio: menor a mayor</MenuItem>
             <MenuItem value="desc">Precio: mayor a menor</MenuItem>
           </TextField>
-        </Stack>
+        </Paper>
       </Box>
 
       {/* Productos */}
