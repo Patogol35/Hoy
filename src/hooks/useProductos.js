@@ -1,15 +1,24 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { getProductos } from "../api/api";
 
-export function useProductos({ categoria, search, sort }) {
+export function useProductos({ categoria, search, sort, itemsPerPage }) {
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
+  // 🔹 Debounce búsqueda
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search.toLowerCase());
+      setPage(1);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  // 🔹 Fetch productos
   useEffect(() => {
     setLoading(true);
-    setError(null);
-
     getProductos(categoria ? { categoria } : {})
       .then((data) => {
         const lista = Array.isArray(data)
@@ -18,31 +27,28 @@ export function useProductos({ categoria, search, sort }) {
           ? data.results
           : [];
         setProductos(lista);
+        setPage(1);
       })
-      .catch((e) => {
-        setError(e);
-        setProductos([]);
-      })
+      .catch(() => setProductos([]))
       .finally(() => setLoading(false));
   }, [categoria]);
 
-  const filtered = useMemo(() => {
-    let result = productos;
+  // 🔹 Filtrar y ordenar
+  const filtered = (productos || [])
+    .filter((p) =>
+      debouncedSearch === ""
+        ? true
+        : p.nombre?.toLowerCase().includes(debouncedSearch)
+    )
+    .sort((a, b) =>
+      sort === "asc" ? a.precio - b.precio : b.precio - a.precio
+    );
 
-    if (search) {
-      result = result.filter((p) =>
-        p.nombre?.toLowerCase().includes(search.toLowerCase())
-      );
-    }
+  // 🔹 Paginación
+  const paginated = filtered.slice(
+    (page - 1) * itemsPerPage,
+    page * itemsPerPage
+  );
 
-    if (sort === "asc") {
-      result = [...result].sort((a, b) => a.precio - b.precio);
-    } else if (sort === "desc") {
-      result = [...result].sort((a, b) => b.precio - a.precio);
-    }
-
-    return result;
-  }, [productos, search, sort]);
-
-  return { productos: filtered, loading, error };
+  return { loading, filtered, paginated, page, setPage };
 }
