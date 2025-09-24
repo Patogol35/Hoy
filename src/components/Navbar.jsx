@@ -92,7 +92,7 @@ export default function Navbar() {
                 <NavButton key={i} item={item} />
               ))}
 
-              {/* Botón Modo Oscuro */}
+              {/* Botón Modo Oscuro solo ícono */}
               <IconButton onClick={toggleMode} sx={{ color: "#fff" }}>
                 {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
               </IconButton>
@@ -207,20 +207,6 @@ export default function Navbar() {
                   <NavButton key={i} item={item} onClick={() => setOpen(false)} />
                 ))}
 
-                {/* Modo oscuro */}
-                <Button
-                  onClick={toggleMode}
-                  startIcon={mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
-                  sx={{
-                    fontWeight: 600,
-                    color: "#fff",
-                    borderRadius: "12px",
-                    background: "linear-gradient(135deg, #555, #888)",
-                  }}
-                >
-                  {mode === "light" ? "Modo Oscuro" : "Modo Claro"}
-                </Button>
-
                 {isAuthenticated && (
                   <Button
                     onClick={handleLogout}
@@ -236,10 +222,26 @@ export default function Navbar() {
                   </Button>
                 )}
               </Stack>
+
+              {/* Ícono modo oscuro fijo abajo */}
+              <Box sx={{ display: "flex", justifyContent: "center", mt: "auto" }}>
+                <IconButton
+                  onClick={toggleMode}
+                  sx={{
+                    color: "#fff",
+                    background: "rgba(0,0,0,0.4)",
+                    "&:hover": { background: "rgba(0,0,0,0.7)" },
+                    width: 48,
+                    height: 48,
+                  }}
+                >
+                  {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
+                </IconButton>
+              </Box>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
     </>
   );
-}
+        }
