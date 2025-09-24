@@ -50,11 +50,7 @@ export default function Navbar() {
   return (
     <>
       {/* Navbar Desktop */}
-      <motion.div
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6 }}
-      >
+      <motion.div initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
         <AppBar
           position="fixed"
           elevation={scrolled ? 6 : 2}
@@ -91,14 +87,12 @@ export default function Navbar() {
             </Typography>
 
             {/* Desktop Menu */}
-            <Box
-              sx={{ display: { xs: "none", lg: "flex" }, gap: 2, alignItems: "center" }}
-            >
+            <Box sx={{ display: { xs: "none", lg: "flex" }, gap: 2, alignItems: "center" }}>
               {menuItems.map((item, i) => (
                 <NavButton key={i} item={item} />
               ))}
 
-              {/* Botón Modo Oscuro (desktop) */}
+              {/* Botón Modo Oscuro solo ícono */}
               <IconButton onClick={toggleMode} sx={{ color: "#fff" }}>
                 {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
               </IconButton>
@@ -213,6 +207,21 @@ export default function Navbar() {
                   <NavButton key={i} item={item} onClick={() => setOpen(false)} />
                 ))}
 
+                {/* Ícono modo oscuro justo después de las opciones */}
+                <IconButton
+                  onClick={toggleMode}
+                  sx={{
+                    color: "#fff",
+                    background: "rgba(0,0,0,0.4)",
+                    "&:hover": { background: "rgba(0,0,0,0.7)" },
+                    width: 48,
+                    height: 48,
+                    alignSelf: "center",
+                  }}
+                >
+                  {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
+                </IconButton>
+
                 {isAuthenticated && (
                   <Button
                     onClick={handleLogout}
@@ -228,29 +237,10 @@ export default function Navbar() {
                   </Button>
                 )}
               </Stack>
-
-              {/* Botón modo oscuro fijo abajo */}
-              <Box sx={{ mt: "auto", pt: 2 }}>
-                <Button
-                  onClick={toggleMode}
-                  startIcon={
-                    mode === "light" ? <DarkModeIcon /> : <LightModeIcon />
-                  }
-                  sx={{
-                    fontWeight: 600,
-                    color: "#fff",
-                    borderRadius: "12px",
-                    background: "linear-gradient(135deg, #555, #888)",
-                    width: "100%",
-                  }}
-                >
-                  {mode === "light" ? "Modo Oscuro" : "Modo Claro"}
-                </Button>
-              </Box>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
     </>
   );
-                    }
+}
