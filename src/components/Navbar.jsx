@@ -22,6 +22,7 @@ import {
   Logout as LogoutIcon,
   Brightness4 as DarkModeIcon,
   Brightness7 as LightModeIcon,
+  AccountCircle as AccountCircleIcon, // 👈 ícono usuario
 } from "@mui/icons-material";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -99,9 +100,12 @@ export default function Navbar() {
 
               {isAuthenticated && (
                 <>
-                  <Typography sx={{ color: "#fff", fontWeight: 600, mx: 2 }}>
-                    👤 {user?.username}
-                  </Typography>
+                  <Stack direction="row" spacing={1} alignItems="center" sx={{ mx: 2 }}>
+                    <AccountCircleIcon sx={{ color: "#fff" }} />
+                    <Typography sx={{ color: "#fff", fontWeight: 600 }}>
+                      {user?.username}
+                    </Typography>
+                  </Stack>
                   <Button
                     onClick={handleLogout}
                     startIcon={<LogoutIcon />}
@@ -188,17 +192,25 @@ export default function Navbar() {
 
               {/* Usuario */}
               {isAuthenticated && (
-                <Typography
-                  variant="h6"
-                  sx={{
-                    color: "#fff",
-                    fontWeight: 700,
-                    textAlign: "center",
-                    mb: 2,
-                  }}
+                <Stack
+                  direction="row"
+                  spacing={1}
+                  alignItems="center"
+                  justifyContent="center"
+                  sx={{ mb: 2 }}
                 >
-                  👤 {user?.username}
-                </Typography>
+                  <AccountCircleIcon sx={{ color: "#fff" }} />
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      color: "#fff",
+                      fontWeight: 700,
+                      textAlign: "center",
+                    }}
+                  >
+                    {user?.username}
+                  </Typography>
+                </Stack>
               )}
 
               {/* Items menú */}
