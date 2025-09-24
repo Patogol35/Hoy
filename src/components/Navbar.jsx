@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
@@ -41,6 +41,26 @@ function useLockBodyScroll(isLocked) {
   }, [isLocked]);
 }
 
+/* Estilo base para botones */
+const buttonStyle = {
+  fontSize: "1.1rem",
+  fontWeight: 600,
+  color: "#fff",
+  borderRadius: "12px",
+  textTransform: "none",
+  width: "100%",
+  py: 1.2,
+  transition: "all 0.2s ease",
+  "&:hover": { boxShadow: "0 0 15px rgba(0,0,0,0.35)" },
+};
+
+const getButtonStyle = (item, isActive) => ({
+  ...buttonStyle,
+  background: item.color,
+  boxShadow: isActive ? "0 0 15px rgba(255,255,255,0.6)" : "none",
+  transform: isActive ? "scale(1.05)" : "scale(1)",
+});
+
 export default function Navbar() {
   const { isAuthenticated, logout, user } = useAuth();
   const navigate = useNavigate();
@@ -66,60 +86,19 @@ export default function Navbar() {
 
   const menuItems = isAuthenticated
     ? [
-        {
-          label: "Inicio",
-          path: "/",
-          icon: <HomeIcon />,
-          color: "linear-gradient(135deg, #0288d1, #26c6da)",
-        },
-        {
-          label: "Carrito",
-          path: "/carrito",
-          icon: <ShoppingCartIcon />,
-          color: "linear-gradient(135deg, #2e7d32, #66bb6a)",
-        },
-        {
-          label: "Mis pedidos",
-          path: "/pedidos",
-          icon: <ListAltIcon />,
-          color: "linear-gradient(135deg, #f57c00, #ffb74d)",
-        },
+        { label: "Inicio", path: "/", icon: <HomeIcon />, color: "linear-gradient(135deg, #0288d1, #26c6da)" },
+        { label: "Carrito", path: "/carrito", icon: <ShoppingCartIcon />, color: "linear-gradient(135deg, #2e7d32, #66bb6a)" },
+        { label: "Mis pedidos", path: "/pedidos", icon: <ListAltIcon />, color: "linear-gradient(135deg, #f57c00, #ffb74d)" },
       ]
     : [
-        {
-          label: "Iniciar sesión",
-          path: "/login",
-          icon: <LoginIcon />,
-          color: "linear-gradient(135deg, #0288d1, #26c6da)",
-        },
-        {
-          label: "Registrarse",
-          path: "/register",
-          icon: <PersonAddIcon />,
-          color: "linear-gradient(135deg, #6a1b9a, #ab47bc)",
-        },
+        { label: "Iniciar sesión", path: "/login", icon: <LoginIcon />, color: "linear-gradient(135deg, #0288d1, #26c6da)" },
+        { label: "Registrarse", path: "/register", icon: <PersonAddIcon />, color: "linear-gradient(135deg, #6a1b9a, #ab47bc)" },
       ];
-
-  const buttonStyle = {
-    fontSize: "1.1rem",
-    fontWeight: 600,
-    color: "#fff",
-    borderRadius: "12px",
-    textTransform: "none",
-    width: "100%",
-    py: 1.2,
-    transition: "all 0.2s ease",
-    "&:hover": { boxShadow: "0 0 15px rgba(0,0,0,0.35)" },
-  };
 
   return (
     <>
       {/* Navbar Desktop */}
-      <motion.div
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6 }}
-      >
+      <motion.div initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
         <AppBar
           position="fixed"
           elevation={scrolled ? 6 : 2}
@@ -160,30 +139,17 @@ export default function Navbar() {
             </motion.div>
 
             {/* Desktop Menu */}
-            <Box
-              sx={{ display: { xs: "none", lg: "flex" }, gap: 2, alignItems: "center" }}
-            >
+            <Box sx={{ display: { xs: "none", lg: "flex" }, gap: 2, alignItems: "center" }}>
               {menuItems.map((item, i) => {
                 const isActive = location.pathname === item.path;
                 return (
-                  <motion.div
-                    key={i}
-                    whileHover={{ y: -2, scale: 1.08 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
+                  <motion.div key={i} whileHover={{ y: -2, scale: 1.08 }} whileTap={{ scale: 0.95 }}>
                     <Button
                       component={Link}
                       to={item.path}
                       startIcon={item.icon}
-                      sx={{
-                        ...buttonStyle,
-                        background: item.color,
-                        // 🔹 Realce sutil si está activo
-                        boxShadow: isActive
-                          ? "0 0 15px rgba(255,255,255,0.6)"
-                          : "none",
-                        transform: isActive ? "scale(1.05)" : "scale(1)",
-                      }}
+                      sx={getButtonStyle(item, isActive)}
+                      aria-current={isActive ? "page" : undefined}
                     >
                       {item.label}
                     </Button>
@@ -200,14 +166,10 @@ export default function Navbar() {
                     onClick={handleLogout}
                     startIcon={<LogoutIcon />}
                     sx={{
+                      ...buttonStyle,
                       background: "linear-gradient(135deg, #d32f2f, #f44336)",
-                      color: "#fff",
-                      fontWeight: 600,
-                      borderRadius: "12px",
-                      textTransform: "none",
                       px: 2.5,
                       py: 1,
-                      "&:hover": { boxShadow: "0 0 15px rgba(0,0,0,0.35)" },
                     }}
                   >
                     Cerrar sesión
@@ -315,14 +277,8 @@ export default function Navbar() {
                         to={item.path}
                         onClick={() => setOpen(false)}
                         startIcon={item.icon}
-                        sx={{
-                          ...buttonStyle,
-                          background: item.color,
-                          boxShadow: isActive
-                            ? "0 0 15px rgba(255,255,255,0.6)"
-                            : "none",
-                          transform: isActive ? "scale(1.03)" : "scale(1)",
-                        }}
+                        sx={getButtonStyle(item, isActive)}
+                        aria-current={isActive ? "page" : undefined}
                       >
                         {item.label}
                       </Button>
@@ -335,8 +291,7 @@ export default function Navbar() {
                       startIcon={<LogoutIcon />}
                       sx={{
                         ...buttonStyle,
-                        background:
-                          "linear-gradient(135deg, #d32f2f, #f44336)",
+                        background: "linear-gradient(135deg, #d32f2f, #f44336)",
                       }}
                     >
                       Cerrar sesión
