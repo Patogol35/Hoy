@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { crearPedido } from "../api/api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useTheme } from "@mui/material";
+
 // MUI
 import {
   Typography,
@@ -17,6 +17,7 @@ import {
   IconButton,
   Divider,
   Chip,
+  useTheme,
 } from "@mui/material";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
@@ -25,6 +26,8 @@ import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 
 export default function Carrito() {
+  const theme = useTheme();
+
   const {
     items,
     cargarCarrito,
@@ -110,8 +113,8 @@ export default function Carrito() {
                   height: { xs: 200, sm: 160 },
                   objectFit: "contain",
                   borderRadius: { xs: "12px 12px 0 0", sm: "12px 0 0 12px" },
-                  bgcolor: "#fafafa",
-                  border: "1px solid #eee",
+                  bgcolor: theme.palette.background.paper,
+                  border: `1px solid ${theme.palette.divider}`,
                   p: 1,
                   transition: "transform 0.3s ease",
                   "&:hover": {
@@ -237,52 +240,48 @@ export default function Carrito() {
           );
         })}
 
-      
-
-const theme = useTheme();
-
-{!loading && items.length > 0 && (
-  <Box
-    mt={3}
-    sx={{
-      textAlign: "right",
-      position: { xs: "fixed", sm: "static" },
-      bottom: { xs: 0, sm: "auto" },
-      left: 0,
-      right: 0,
-      bgcolor: { xs: theme.palette.background.paper, sm: "transparent" },
-      p: { xs: 2, sm: 0 },
-      boxShadow: { xs: "0 -4px 12px rgba(0,0,0,0.15)", sm: "none" },
-      borderTop: { xs: `1px solid ${theme.palette.divider}`, sm: "none" },
-      zIndex: 1200, // para que quede encima en mobile
-    }}
-  >
-    <Divider sx={{ mb: 2, display: { xs: "none", sm: "block" } }} />
-    <Typography variant="h6" gutterBottom>
-      Total:{" "}
-      <strong>
-        ${total.toFixed(2)} <MonetizationOnIcon fontSize="small" />
-      </strong>
-    </Typography>
-    <Button
-      variant="contained"
-      color="primary"
-      size="large"
-      startIcon={<ShoppingCartCheckoutIcon />}
-      sx={{
-        width: { xs: "100%", sm: "auto" },
-        transition: "all 0.3s",
-        fontWeight: "bold",
-        borderRadius: 3,
-        py: 1.2,
-        "&:hover": { transform: "scale(1.05)", boxShadow: 6 },
-      }}
-      onClick={comprar}
-    >
-      Finalizar compra
-    </Button>
-  </Box>
-)}
+      {!loading && items.length > 0 && (
+        <Box
+          mt={3}
+          sx={{
+            textAlign: "right",
+            position: { xs: "fixed", sm: "static" },
+            bottom: { xs: 0, sm: "auto" },
+            left: 0,
+            right: 0,
+            bgcolor: { xs: theme.palette.background.paper, sm: "transparent" },
+            p: { xs: 2, sm: 0 },
+            boxShadow: { xs: "0 -4px 12px rgba(0,0,0,0.15)", sm: "none" },
+            borderTop: { xs: `1px solid ${theme.palette.divider}`, sm: "none" },
+            zIndex: 1200,
+          }}
+        >
+          <Divider sx={{ mb: 2, display: { xs: "none", sm: "block" } }} />
+          <Typography variant="h6" gutterBottom>
+            Total:{" "}
+            <strong>
+              ${total.toFixed(2)} <MonetizationOnIcon fontSize="small" />
+            </strong>
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            startIcon={<ShoppingCartCheckoutIcon />}
+            sx={{
+              width: { xs: "100%", sm: "auto" },
+              transition: "all 0.3s",
+              fontWeight: "bold",
+              borderRadius: 3,
+              py: 1.2,
+              "&:hover": { transform: "scale(1.05)", boxShadow: 6 },
+            }}
+            onClick={comprar}
+          >
+            Finalizar compra
+          </Button>
+        </Box>
+      )}
     </Box>
   );
-                      }
+                        }
