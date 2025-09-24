@@ -13,7 +13,6 @@ import {
   CircularProgress,
   Paper,
   Dialog,
-  DialogContent,
   Button,
   Chip,
 } from "@mui/material";
@@ -87,7 +86,6 @@ export default function Home() {
             mb: 2,
           }}
         >
-          {/* Buscar */}
           <TextField
             label="Buscar producto"
             size="small"
@@ -104,7 +102,6 @@ export default function Home() {
             sx={{ minWidth: 250 }}
           />
 
-          {/* Categoría */}
           <TextField
             select
             label="Categoría"
@@ -129,7 +126,6 @@ export default function Home() {
             ))}
           </TextField>
 
-          {/* Ordenar */}
           <TextField
             select
             label="Ordenar por"
@@ -192,130 +188,106 @@ export default function Home() {
         <ShoppingCartIcon />
       </IconButton>
 
-      {/* ================== MODAL DETALLE PROFESIONAL ================== */}
+      {/* ================== MODAL FULL SCREEN ================== */}
       <Dialog
+        fullScreen
         open={Boolean(productoSeleccionado)}
         onClose={handleCerrarDetalle}
-        maxWidth="lg"
-        fullWidth
         PaperProps={{
           component: motion.div,
-          initial: { opacity: 0, y: 50 },
-          animate: { opacity: 1, y: 0 },
+          initial: { opacity: 0 },
+          animate: { opacity: 1 },
           transition: { duration: 0.3 },
-          sx: {
-            borderRadius: 4,
-            overflow: "hidden",
-            boxShadow: "0 20px 50px rgba(0,0,0,0.35)",
-          },
+          sx: { bgcolor: "background.paper", position: "relative" },
         }}
       >
         {productoSeleccionado && (
-          <Grid
-            container
-            spacing={2}
-            sx={{
-              p: { xs: 2, sm: 3 },
-              flexDirection: { xs: "column", md: "row" },
-            }}
-          >
-            {/* IMAGEN */}
-            <Grid item xs={12} md={5}>
-              <Box
-                sx={{
-                  position: "relative",
-                  width: "100%",
-                  height: { xs: 300, md: 400 },
-                  bgcolor: "#f9f9f9",
-                  borderRadius: 3,
-                  overflow: "hidden",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
+          <>
+            {/* BOTÓN CERRAR */}
+            <IconButton
+              onClick={handleCerrarDetalle}
+              sx={{
+                position: "fixed",
+                top: 16,
+                right: 16,
+                zIndex: 10,
+                bgcolor: "white",
+                "&:hover": { bgcolor: "#f0f0f0" },
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+
+            <Grid
+              container
+              spacing={3}
+              sx={{
+                height: "100vh",
+                p: { xs: 2, sm: 4 },
+                overflowY: "auto",
+              }}
+            >
+              {/* IMAGEN */}
+              <Grid item xs={12} md={6}>
                 <Box
-                  component="img"
-                  src={productoSeleccionado.imagen}
-                  alt={productoSeleccionado.nombre}
                   sx={{
-                    maxWidth: "100%",
-                    maxHeight: "100%",
-                    objectFit: "contain",
-                    transition: "transform 0.5s ease",
-                    "&:hover": { transform: "scale(1.05)" },
+                    width: "100%",
+                    height: { xs: 300, md: "100%" },
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    bgcolor: "#f9f9f9",
+                    borderRadius: 3,
+                    overflow: "hidden",
                   }}
-                />
-                {productoSeleccionado.nuevo && (
-                  <Chip
-                    label="Nuevo"
-                    color="secondary"
+                >
+                  <Box
+                    component="img"
+                    src={productoSeleccionado.imagen}
+                    alt={productoSeleccionado.nombre}
                     sx={{
-                      position: "absolute",
-                      top: 16,
-                      left: 16,
-                      fontWeight: "bold",
-                      px: 1.5,
+                      maxWidth: "100%",
+                      maxHeight: "100%",
+                      objectFit: "contain",
+                      transition: "transform 0.5s ease",
+                      "&:hover": { transform: "scale(1.05)" },
                     }}
                   />
-                )}
-                <IconButton
-                  onClick={handleCerrarDetalle}
-                  sx={{
-                    position: "absolute",
-                    top: 12,
-                    right: 12,
-                    bgcolor: "white",
-                    "&:hover": { bgcolor: "#f0f0f0" },
-                  }}
-                >
-                  <CloseIcon />
-                </IconButton>
-              </Box>
-            </Grid>
+                  {productoSeleccionado.nuevo && (
+                    <Chip
+                      label="Nuevo"
+                      color="secondary"
+                      sx={{
+                        position: "absolute",
+                        top: 16,
+                        left: 16,
+                        fontWeight: "bold",
+                        px: 1.5,
+                      }}
+                    />
+                  )}
+                </Box>
+              </Grid>
 
-            {/* DETALLES */}
-            <Grid item xs={12} md={7}>
-              <Stack
-                spacing={2}
-                sx={{
-                  height: "100%",
-                  maxHeight: { xs: "auto", md: 400 },
-                  overflowY: "auto",
-                }}
-              >
-                <Typography variant="h5" fontWeight="bold">
-                  {productoSeleccionado.nombre}
-                </Typography>
+              {/* DETALLES */}
+              <Grid item xs={12} md={6}>
+                <Stack spacing={3}>
+                  <Typography variant="h4" fontWeight="bold">
+                    {productoSeleccionado.nombre}
+                  </Typography>
+                  <Typography variant="h5" color="primary">
+                    ${productoSeleccionado.precio}
+                  </Typography>
+                  <Divider />
+                  <Typography
+                    variant="body1"
+                    sx={{ color: "text.secondary" }}
+                  >
+                    {productoSeleccionado.descripcion ||
+                      "Este producto no tiene descripción disponible."}
+                  </Typography>
 
-                <Typography variant="h6" color="primary">
-                  ${productoSeleccionado.precio}
-                </Typography>
-
-                <Divider />
-
-                <Typography
-                  variant="body1"
-                  sx={{ color: "text.secondary", flexGrow: 1 }}
-                >
-                  {productoSeleccionado.descripcion ||
-                    "Este producto no tiene descripción disponible."}
-                </Typography>
-
-                {/* BOTONES */}
-                <Stack direction="row" spacing={2} justifyContent="flex-end">
-                  <motion.div whileHover={{ scale: 1.05 }}>
-                    <Button
-                      onClick={handleCerrarDetalle}
-                      variant="outlined"
-                      color="inherit"
-                      sx={{ borderRadius: 3 }}
-                    >
-                      Cerrar
-                    </Button>
-                  </motion.div>
-
-                  <motion.div whileHover={{ scale: 1.05 }}>
+                  <Stack direction="row" spacing={2} justifyContent="flex-start">
                     <Button
                       onClick={() => {
                         handleAdd(productoSeleccionado);
@@ -331,13 +303,13 @@ export default function Home() {
                         ? "Agregar al carrito"
                         : "Agotado"}
                     </Button>
-                  </motion.div>
+                  </Stack>
                 </Stack>
-              </Stack>
+              </Grid>
             </Grid>
-          </Grid>
+          </>
         )}
       </Dialog>
     </>
   );
-                }
+}
