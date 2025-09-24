@@ -194,21 +194,26 @@ export default function Home() {
 
       {/* ================== MODAL DETALLE ================== */}
 
+import { useTheme, useMediaQuery } from "@mui/material";
+import { motion } from "framer-motion";
+
 <Dialog
   open={Boolean(productoSeleccionado)}
   onClose={handleCerrarDetalle}
+  maxWidth="sm"
   fullWidth
-  maxWidth="md"
+  fullScreen={useMediaQuery(useTheme().breakpoints.down("sm"))} // ✅ fullscreen en móviles
   PaperProps={{
     component: motion.div,
     initial: { opacity: 0, y: 50 },
     animate: { opacity: 1, y: 0 },
     exit: { opacity: 0, y: 50 },
-    transition: { duration: 0.35 },
+    transition: { duration: 0.3 },
     sx: {
-      borderRadius: { xs: 0, sm: 4 },       // fullscreen en móvil, elegante en desktop
-      width: { xs: "100%", sm: "600px" },   // ocupa todo en móvil, ancho fijo en desktop
-      m: { xs: 0, sm: "auto" },             // sin margen en móvil, centrado en desktop
+      borderRadius: { xs: 0, sm: 4 },         // recto en móvil, redondeado en desktop
+      width: { xs: "100%", sm: "600px" },     // 100% en móvil, fijo en desktop
+      height: { xs: "100%", sm: "auto" },     // ocupa toda la altura en móvil
+      m: { xs: 0, sm: "auto" },               // sin márgenes en móvil, centrado en desktop
       maxHeight: "100vh",
       display: "flex",
       flexDirection: "column",
@@ -218,13 +223,7 @@ export default function Home() {
   {productoSeleccionado && (
     <>
       {/* Imagen */}
-      <Box
-        sx={{
-          position: "relative",
-          height: { xs: 240, sm: 320 },
-          background: "linear-gradient(135deg, #f5f7fa, #e4ebf7)",
-        }}
-      >
+      <Box sx={{ position: "relative", height: 280, bgcolor: "#f9f9f9" }}>
         <Box
           component="img"
           src={productoSeleccionado.imagen}
@@ -233,11 +232,10 @@ export default function Home() {
             width: "100%",
             height: "100%",
             objectFit: "contain",
-            transition: "transform 0.6s ease",
+            transition: "transform 0.5s ease",
             "&:hover": { transform: "scale(1.05)" },
           }}
         />
-
         {productoSeleccionado.nuevo && (
           <Chip
             label="Nuevo"
@@ -248,12 +246,9 @@ export default function Home() {
               left: 16,
               fontWeight: "bold",
               px: 1.5,
-              borderRadius: 2,
-              boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
             }}
           />
         )}
-
         <IconButton
           onClick={handleCerrarDetalle}
           sx={{
@@ -261,8 +256,7 @@ export default function Home() {
             top: 12,
             right: 12,
             bgcolor: "white",
-            boxShadow: 2,
-            "&:hover": { bgcolor: "#f5f5f5" },
+            "&:hover": { bgcolor: "#f0f0f0" },
           }}
         >
           <CloseIcon />
@@ -270,72 +264,30 @@ export default function Home() {
       </Box>
 
       {/* Contenido */}
-      <DialogContent
-        sx={{
-          flex: 1,
-          p: { xs: 2.5, sm: 4 },
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-        }}
-      >
-        <Box>
-          {/* Nombre */}
-          <Typography
-            variant="h5"
-            fontWeight="bold"
-            gutterBottom
-            textAlign={{ xs: "center", sm: "left" }}
-          >
-            {productoSeleccionado.nombre}
-          </Typography>
+      <DialogContent sx={{ p: 3, flex: 1, overflowY: "auto" }}>
+        <Typography variant="h5" fontWeight="bold" gutterBottom>
+          {productoSeleccionado.nombre}
+        </Typography>
 
-          {/* Precio */}
-          <Typography
-            variant="h6"
-            sx={{
-              color: "primary.main",
-              fontWeight: "bold",
-              mb: 1,
-              textAlign: { xs: "center", sm: "left" },
-            }}
-          >
-            ${productoSeleccionado.precio}
-          </Typography>
+        <Typography variant="subtitle1" color="primary" gutterBottom>
+          ${productoSeleccionado.precio}
+        </Typography>
 
-          {/* Stock */}
-          <Typography
-            variant="body2"
-            sx={{
-              color:
-                productoSeleccionado.stock > 0 ? "success.main" : "error.main",
-              mb: 2,
-              textAlign: { xs: "center", sm: "left" },
-            }}
-          >
-            {productoSeleccionado.stock > 0
-              ? `Disponible (${productoSeleccionado.stock} unidades)`
-              : "Sin stock"}
-          </Typography>
+        <Divider sx={{ my: 2 }} />
 
-          <Divider sx={{ my: 2 }} />
-
-          {/* Descripción */}
-          <Typography
-            variant="body1"
-            sx={{ color: "text.secondary", lineHeight: 1.6 }}
-          >
-            {productoSeleccionado.descripcion ||
-              "Este producto no tiene descripción disponible."}
-          </Typography>
-        </Box>
+        <Typography
+          variant="body1"
+          sx={{ mb: 3, color: "text.secondary" }}
+        >
+          {productoSeleccionado.descripcion ||
+            "Este producto no tiene descripción disponible."}
+        </Typography>
 
         {/* Botones */}
         <Stack
           direction={{ xs: "column", sm: "row" }}
           spacing={2}
           justifyContent="flex-end"
-          sx={{ mt: 4 }}
         >
           <motion.div whileHover={{ scale: 1.05 }}>
             <Button
@@ -357,11 +309,7 @@ export default function Home() {
               variant="contained"
               color="primary"
               startIcon={<ShoppingCartIcon />}
-              sx={{
-                borderRadius: 3,
-                px: 3,
-                width: { xs: "100%", sm: "auto" },
-              }}
+              sx={{ borderRadius: 3, width: { xs: "100%", sm: "auto" } }}
               disabled={productoSeleccionado.stock === 0}
             >
               {productoSeleccionado.stock > 0
