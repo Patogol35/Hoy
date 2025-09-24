@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { crearPedido } from "../api/api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
+import { useTheme } from "@mui/material";
 // MUI
 import {
   Typography,
@@ -237,47 +237,52 @@ export default function Carrito() {
           );
         })}
 
-      {!loading && items.length > 0 && (
-        <Box
-          mt={3}
-          sx={{
-            textAlign: "right",
-            position: { xs: "fixed", sm: "static" },
-            bottom: { xs: 0, sm: "auto" },
-            left: 0,
-            right: 0,
-            bgcolor: { xs: "white", sm: "transparent" },
-            p: { xs: 2, sm: 0 },
-            boxShadow: { xs: "0 -4px 12px rgba(0,0,0,0.15)", sm: "none" },
-            borderTop: { xs: "1px solid #ddd", sm: "none" },
-          }}
-        >
-          <Divider sx={{ mb: 2, display: { xs: "none", sm: "block" } }} />
-          <Typography variant="h6" gutterBottom>
-            Total:{" "}
-            <strong>
-              ${total.toFixed(2)} <MonetizationOnIcon fontSize="small" />
-            </strong>
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            size="large"
-            startIcon={<ShoppingCartCheckoutIcon />}
-            sx={{
-              width: { xs: "100%", sm: "auto" },
-              transition: "all 0.3s",
-              fontWeight: "bold",
-              borderRadius: 3,
-              py: 1.2,
-              "&:hover": { transform: "scale(1.05)", boxShadow: 6 },
-            }}
-            onClick={comprar}
-          >
-            Finalizar compra
-          </Button>
-        </Box>
-      )}
+      
+
+const theme = useTheme();
+
+{!loading && items.length > 0 && (
+  <Box
+    mt={3}
+    sx={{
+      textAlign: "right",
+      position: { xs: "fixed", sm: "static" },
+      bottom: { xs: 0, sm: "auto" },
+      left: 0,
+      right: 0,
+      bgcolor: { xs: theme.palette.background.paper, sm: "transparent" },
+      p: { xs: 2, sm: 0 },
+      boxShadow: { xs: "0 -4px 12px rgba(0,0,0,0.15)", sm: "none" },
+      borderTop: { xs: `1px solid ${theme.palette.divider}`, sm: "none" },
+      zIndex: 1200, // para que quede encima en mobile
+    }}
+  >
+    <Divider sx={{ mb: 2, display: { xs: "none", sm: "block" } }} />
+    <Typography variant="h6" gutterBottom>
+      Total:{" "}
+      <strong>
+        ${total.toFixed(2)} <MonetizationOnIcon fontSize="small" />
+      </strong>
+    </Typography>
+    <Button
+      variant="contained"
+      color="primary"
+      size="large"
+      startIcon={<ShoppingCartCheckoutIcon />}
+      sx={{
+        width: { xs: "100%", sm: "auto" },
+        transition: "all 0.3s",
+        fontWeight: "bold",
+        borderRadius: 3,
+        py: 1.2,
+        "&:hover": { transform: "scale(1.05)", boxShadow: 6 },
+      }}
+      onClick={comprar}
+    >
+      Finalizar compra
+    </Button>
+  </Box>
+)}
     </Box>
   );
                       }
