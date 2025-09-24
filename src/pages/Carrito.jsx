@@ -16,17 +16,14 @@ import {
   CardContent,
   Button,
   Box,
-  TextField,
-  IconButton,
   Divider,
   Chip,
   Skeleton,
 } from "@mui/material";
-import RemoveIcon from "@mui/icons-material/Remove";
-import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
+import { MobileStepper } from "@mui/material";
 
 export default function Carrito() {
   const {
@@ -64,18 +61,6 @@ export default function Carrito() {
       toast.error(e.message || "Ocurrió un error en la compra");
     }
   };
-
-  const incrementar = (it) => {
-    const stock = it.producto?.stock ?? 0;
-    if (it.cantidad < stock) {
-      setCantidad(it.id, it.cantidad + 1);
-    } else {
-      toast.warning(`Solo hay ${stock} unidades disponibles`);
-    }
-  };
-
-  const decrementar = (it) =>
-    it.cantidad > 1 && setCantidad(it.id, it.cantidad - 1);
 
   return (
     <Box sx={{ pb: { xs: 14, sm: 6 } }}>
@@ -189,9 +174,6 @@ export default function Carrito() {
                         color={stock > 0 ? "info" : "default"}
                         sx={{ fontWeight: "bold" }}
                       />
-                      {it.cantidad >= stock && (
-                        <Chip label="Stock máximo" color="error" size="small" />
-                      )}
                     </Box>
                   </CardContent>
 
@@ -205,73 +187,55 @@ export default function Carrito() {
                       gap: 1,
                     }}
                   >
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <IconButton
-                        onClick={() => decrementar(it)}
-                        sx={{
-                          bgcolor: "#f5f5f5",
-                          "&:hover": { bgcolor: "#e0e0e0" },
-                        }}
-                      >
-                        <RemoveIcon />
-                      </IconButton>
-
-                      <TextField
-                        type="number"
-                        size="small"
-                        value={it.cantidad}
-                        inputProps={{ min: 1, max: stock }}
-                        onChange={(e) => {
-                          const nuevaCantidad = Number(e.target.value);
-                          if (
-                            nuevaCantidad >= 1 &&
-                            nuevaCantidad <= stock
-                          ) {
-                            setCantidad(it.id, nuevaCantidad);
-                          } else if (nuevaCantidad > stock) {
-                            toast.warning(
-                              `No puedes pedir más de ${stock} unidades`
-                            );
-                            setCantidad(it.id, stock);
+                    {/* Stepper de cantidad */}
+                    <MobileStepper
+                      variant="dots"
+                      steps={stock}
+                      position="static"
+                      activeStep={it.cantidad - 1}
+                      nextButton={
+                        <Button
+                          size="small"
+                          onClick={() =>
+                            it.cantidad < stock &&
+                            setCantidad(it.id, it.cantidad + 1)
                           }
-                        }}
-                        sx={{
-                          width: 60,
-                          "& input": {
-                            textAlign: "center",
-                            fontWeight: "bold",
-                            fontSize: "1rem",
-                          },
-                        }}
-                      />
+                          disabled={it.cantidad >= stock}
+                        >
+                          +
+                        </Button>
+                      }
+                      backButton={
+                        <Button
+                          size="small"
+                          onClick={() =>
+                            it.cantidad > 1 &&
+                            setCantidad(it.id, it.cantidad - 1)
+                          }
+                          disabled={it.cantidad <= 1}
+                        >
+                          -
+                        </Button>
+                      }
+                      sx={{
+                        maxWidth: 200,
+                        flexGrow: 1,
+                        bgcolor: "transparent",
+                        "& .MuiMobileStepper-dots": { gap: "2px" },
+                      }}
+                    />
 
-                      <IconButton
-                        onClick={() => incrementar(it)}
-                        disabled={it.cantidad >= stock}
-                        sx={{
-                          bgcolor: it.cantidad >= stock ? "#eee" : "#f5f5f5",
-                          "&:hover": {
-                            bgcolor:
-                              it.cantidad >= stock ? "#eee" : "#e0e0e0",
-                          },
-                        }}
-                      >
-                        <AddIcon />
-                      </IconButton>
-                    </Box>
-
-                    <IconButton
+                    {/* Eliminar */}
+                    <Button
                       onClick={() => {
                         eliminarItem(it.id);
                         toast.info("Producto eliminado 🗑️");
                       }}
-                      sx={{
-                        color: "error.main",
-                        "&:hover": { bgcolor: "rgba(211,47,47,0.1)" },
-                      }}
+                      color="error"
+                      startIcon={<DeleteIcon />}
                     >
-                      <DeleteIcon />
-                    </IconButton>
+                      Eliminar
+                    </Button>
                   </Box>
                 </Card>
               </motion.div>
@@ -324,4 +288,4 @@ export default function Carrito() {
       )}
     </Box>
   );
-            }
+      }
