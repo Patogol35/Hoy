@@ -13,6 +13,7 @@ import {
   CircularProgress,
   Paper,
   Dialog,
+  DialogContent,
   Button,
   Chip,
 } from "@mui/material";
@@ -182,23 +183,21 @@ export default function Home() {
         <ShoppingCartIcon />
       </IconButton>
 
-      {/* Modal Detalle Producto (Optimizado para vertical y horizontal) */}
+      {/* Modal Detalle Producto - NUEVO DISEÑO */}
       <Dialog
         open={Boolean(productoSeleccionado)}
         onClose={handleCerrarDetalle}
-        fullWidth
         maxWidth="md"
+        fullWidth
         PaperProps={{
           component: motion.div,
           initial: { opacity: 0, y: 40 },
           animate: { opacity: 1, y: 0 },
           transition: { duration: 0.3 },
           sx: {
-            borderRadius: { xs: 2, sm: 4 },
+            borderRadius: 3,
             overflow: "hidden",
-            maxHeight: "90vh", // altura máxima para landscape
-            display: "flex",
-            flexDirection: "column",
+            maxHeight: "90vh", // ✅ limita la altura para horizontal
           },
         }}
       >
@@ -207,21 +206,19 @@ export default function Home() {
             sx={{
               display: "flex",
               flexDirection: { xs: "column", md: "row" },
-              flex: 1,
-              minHeight: 0, // para permitir scroll interno
+              height: "100%",
             }}
           >
             {/* Imagen */}
             <Box
               sx={{
-                flex: { xs: "0 0 auto", md: "1 1 50%" },
+                flex: { xs: "0 0 auto", md: "1 1 45%" },
                 bgcolor: "#f9f9f9",
-                position: "relative",
                 display: "flex",
-                alignItems: "center",
                 justifyContent: "center",
+                alignItems: "center",
+                position: "relative",
                 p: 2,
-                minHeight: { xs: 200, md: "100%" },
               }}
             >
               <Box
@@ -230,7 +227,7 @@ export default function Home() {
                 alt={productoSeleccionado.nombre}
                 sx={{
                   maxWidth: "100%",
-                  maxHeight: "100%",
+                  maxHeight: { xs: 300, md: "100%" },
                   objectFit: "contain",
                 }}
               />
@@ -243,7 +240,6 @@ export default function Home() {
                     top: 16,
                     left: 16,
                     fontWeight: "bold",
-                    px: 1.5,
                   }}
                 />
               )}
@@ -262,21 +258,14 @@ export default function Home() {
             </Box>
 
             {/* Contenido */}
-            <Box
+            <DialogContent
               sx={{
-                flex: { xs: "1 1 auto", md: "1 1 50%" },
-                display: "flex",
-                flexDirection: "column",
-                p: { xs: 3, md: 4 },
-                overflowY: "auto", // scroll interno
+                flex: 1,
+                p: 3,
+                overflowY: "auto", // ✅ scroll interno si hay mucho texto
               }}
             >
-              <Typography
-                variant="h5"
-                fontWeight="bold"
-                gutterBottom
-                sx={{ textAlign: { xs: "center", md: "left" } }}
-              >
+              <Typography variant="h5" fontWeight="bold" gutterBottom>
                 {productoSeleccionado.nombre}
               </Typography>
 
@@ -285,7 +274,6 @@ export default function Home() {
                 color="primary"
                 fontWeight="bold"
                 gutterBottom
-                sx={{ textAlign: { xs: "center", md: "left" } }}
               >
                 ${productoSeleccionado.precio}
               </Typography>
@@ -294,23 +282,13 @@ export default function Home() {
 
               <Typography
                 variant="body1"
-                sx={{
-                  color: "text.secondary",
-                  textAlign: "justify",
-                  mb: 3,
-                }}
+                sx={{ mb: 3, color: "text.secondary" }}
               >
                 {productoSeleccionado.descripcion ||
                   "Este producto no tiene descripción disponible."}
               </Typography>
 
-              {/* Botones */}
-              <Stack
-                direction={{ xs: "column", sm: "row" }}
-                spacing={2}
-                justifyContent="flex-end"
-                sx={{ mt: "auto" }}
-              >
+              <Stack direction="row" spacing={2} justifyContent="flex-end">
                 <motion.div whileHover={{ scale: 1.05 }}>
                   <Button
                     onClick={handleCerrarDetalle}
@@ -340,10 +318,10 @@ export default function Home() {
                   </Button>
                 </motion.div>
               </Stack>
-            </Box>
+            </DialogContent>
           </Box>
         )}
       </Dialog>
     </>
   );
-              }
+      }
