@@ -138,6 +138,8 @@ export default function Navbar() {
       </motion.div>
 
       {/* Drawer móvil */}
+
+      {/* Drawer móvil */}
 <AnimatePresence>
   {open && (
     <motion.div
@@ -166,7 +168,7 @@ export default function Navbar() {
           width: "280px",
           background: "#1976d2",
           borderRadius: "16px 0 0 16px",
-          padding: "4rem 1.5rem 2rem",
+          padding: "5rem 1.5rem 2rem", // 👈 un poquito más abajo
           display: "flex",
           flexDirection: "column",
           height: "100vh",
@@ -180,7 +182,7 @@ export default function Navbar() {
             spacing={1}
             alignItems="center"
             justifyContent="center"
-            sx={{ mb: 2 }}
+            sx={{ mb: 3 }}
           >
             <AccountCircleIcon sx={{ color: "#fff" }} />
             <Typography
@@ -202,21 +204,6 @@ export default function Navbar() {
             <NavButton key={i} item={item} onClick={() => setOpen(false)} />
           ))}
 
-          {/* Botón modo oscuro */}
-          <IconButton
-            onClick={toggleMode}
-            sx={{
-              color: "#fff",
-              background: "rgba(0,0,0,0.4)",
-              "&:hover": { background: "rgba(0,0,0,0.7)" },
-              width: 48,
-              height: 48,
-              alignSelf: "center",
-            }}
-          >
-            {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
-          </IconButton>
-
           {isAuthenticated && (
             <Button
               onClick={handleLogout}
@@ -231,16 +218,31 @@ export default function Navbar() {
               Cerrar sesión
             </Button>
           )}
+        </Stack>
 
-          {/* Botón X al final 👇 */}
+        {/* Abajo de todo: botones modo oscuro y cerrar menú */}
+        <Stack spacing={2} alignItems="center">
+          {/* Botón modo oscuro */}
+          <IconButton
+            onClick={toggleMode}
+            sx={{
+              color: "#fff",
+              background: "rgba(0,0,0,0.4)",
+              "&:hover": { background: "rgba(0,0,0,0.7)" },
+              width: 48,
+              height: 48,
+            }}
+          >
+            {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
+          </IconButton>
+
+          {/* Botón cerrar */}
           <IconButton
             onClick={() => setOpen(false)}
             sx={{
-              mt: 2,
               color: "#fff",
               background: "rgba(0,0,0,0.6)",
               "&:hover": { background: "rgba(0,0,0,0.9)" },
-              alignSelf: "center",
               width: 42,
               height: 42,
             }}
