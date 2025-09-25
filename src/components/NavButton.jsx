@@ -13,7 +13,7 @@ const baseStyle = {
   py: 1.2,
   transition: "all 0.3s ease",
   "& .MuiButton-startIcon": {
-    color: "#fff", // fuerza el color blanco del icono
+    color: "#fff",
   },
 };
 
@@ -30,9 +30,17 @@ function NavButton({ item, onClick }) {
         startIcon={<Icon />}
         onClick={onClick}
         aria-current={isActive ? "page" : undefined}
-        sx={{
+        sx={(theme) => ({
           ...baseStyle,
-          background: isActive ? item.color : "transparent", // solo activo tiene fondo
+
+          // ===== Estilo móvil (sm para abajo) =====
+          background: item.color,
+
+          // ===== Sobrescribe en desktop (md en adelante) =====
+          [theme.breakpoints.up("md")]: {
+            background: isActive ? item.color : "transparent",
+          },
+
           boxShadow: isActive
             ? "0 0 20px rgba(255,255,255,0.6)"
             : "none",
@@ -41,9 +49,9 @@ function NavButton({ item, onClick }) {
             boxShadow: isActive
               ? "0 0 20px rgba(0,0,0,0.4)"
               : "0 0 12px rgba(0,0,0,0.25)",
-            filter: "brightness(1.1)", // efecto de brillo en hover
+            filter: "brightness(1.1)",
           },
-        }}
+        })}
       >
         {item.label}
       </Button>
