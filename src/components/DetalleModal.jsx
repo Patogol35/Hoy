@@ -1,6 +1,6 @@
 import { Box, Typography, Grid, Stack, Divider, Chip, Button, IconButton, Dialog } from "@mui/material";
 import Slider from "react-slick";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart"; // 👈 cambiado
 import CloseIcon from "@mui/icons-material/Close";
 
 const sliderSettings = {
@@ -130,7 +130,7 @@ export default function DetalleModal({ producto, open, onClose, onAdd, setLightb
 
             <Button
               variant="contained"
-              startIcon={<ShoppingCartIcon />}
+              startIcon={<AddShoppingCartIcon />}  // 👈 icono cambiado
               onClick={() => onAdd(producto)}
               disabled={producto.stock === 0}
               sx={{
@@ -147,4 +147,4 @@ export default function DetalleModal({ producto, open, onClose, onAdd, setLightb
       </Grid>
     </Dialog>
   );
-        }
+}
