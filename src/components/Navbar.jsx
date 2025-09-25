@@ -139,7 +139,7 @@ export default function Navbar() {
 
       {/* Drawer móvil */}
 
-      {/* Drawer móvil */}
+    {/* Drawer móvil */}
 <AnimatePresence>
   {open && (
     <motion.div
@@ -168,7 +168,7 @@ export default function Navbar() {
           width: "280px",
           background: "#1976d2",
           borderRadius: "16px 0 0 16px",
-          padding: "5rem 1.5rem 2rem", // 👈 un poquito más abajo
+          padding: "5rem 1.5rem 2rem",
           display: "flex",
           flexDirection: "column",
           height: "100vh",
@@ -198,7 +198,7 @@ export default function Navbar() {
           </Stack>
         )}
 
-        {/* Items menú */}
+        {/* Items menú + botones extra */}
         <Stack spacing={2} sx={{ flex: 1, overflowY: "auto", pb: 4, pr: 2 }}>
           {menuItems.map((item, i) => (
             <NavButton key={i} item={item} onClick={() => setOpen(false)} />
@@ -218,38 +218,38 @@ export default function Navbar() {
               Cerrar sesión
             </Button>
           )}
-        </Stack>
 
-        {/* Abajo de todo: botones modo oscuro y cerrar menú */}
-        <Stack spacing={2} alignItems="center">
-          {/* Botón modo oscuro */}
-          <IconButton
-            onClick={toggleMode}
-            sx={{
-              color: "#fff",
-              background: "rgba(0,0,0,0.4)",
-              "&:hover": { background: "rgba(0,0,0,0.7)" },
-              width: 48,
-              height: 48,
-            }}
-          >
-            {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
-          </IconButton>
+          {/* 👇 Botones justo después de las opciones */}
+          <Stack spacing={2} alignItems="center" sx={{ mt: 2 }}>
+            {/* Botón modo oscuro */}
+            <IconButton
+              onClick={toggleMode}
+              sx={{
+                color: "#fff",
+                background: "rgba(0,0,0,0.4)",
+                "&:hover": { background: "rgba(0,0,0,0.7)" },
+                width: 48,
+                height: 48,
+              }}
+            >
+              {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
+            </IconButton>
 
-          {/* Botón cerrar */}
-          <IconButton
-            onClick={() => setOpen(false)}
-            sx={{
-              color: "#fff",
-              background: "rgba(0,0,0,0.6)",
-              "&:hover": { background: "rgba(0,0,0,0.9)" },
-              width: 42,
-              height: 42,
-            }}
-            aria-label="Cerrar menú"
-          >
-            <CloseIcon sx={{ fontSize: 26 }} />
-          </IconButton>
+            {/* Botón cerrar */}
+            <IconButton
+              onClick={() => setOpen(false)}
+              sx={{
+                color: "#fff",
+                background: "rgba(0,0,0,0.6)",
+                "&:hover": { background: "rgba(0,0,0,0.9)" },
+                width: 42,
+                height: 42,
+              }}
+              aria-label="Cerrar menú"
+            >
+              <CloseIcon sx={{ fontSize: 26 }} />
+            </IconButton>
+          </Stack>
         </Stack>
       </motion.div>
     </motion.div>
