@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import ListAltIcon from "@mui/icons-material/ListAlt";
 import { getPedidos } from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import {
@@ -60,9 +61,23 @@ export default function Pedidos() {
 
   return (
     <Container sx={{ mt: 4, mb: 6 }}>
-      <Typography variant="h5" gutterBottom>
-        Mis pedidos
-      </Typography>
+
+<Typography
+  variant="h4"
+  gutterBottom
+  fontWeight="bold"
+  align="center"
+  sx={{
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 1,
+    color: "primary.main",
+  }}
+>
+  <ListAltIcon color="primary" sx={{ fontSize: 36 }} />
+  Tus Pedidos
+</Typography>
 
       {pedidos.map((p) => (
         <Card
