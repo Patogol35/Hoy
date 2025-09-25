@@ -14,7 +14,7 @@ import {
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import InfoIcon from "@mui/icons-material/Info";
 import StarIcon from "@mui/icons-material/Star";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn"; // 👈 cambio aquí
 
 export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
   const { isAuthenticated } = useAuth();
@@ -110,7 +110,7 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
 
         {/* Precio */}
         <Stack direction="row" alignItems="center" spacing={0.5} sx={{ mb: 2 }}>
-          <AttachMoneyIcon color="primary" />
+          <MonetizationOnIcon color="primary" /> {/* 👈 ícono actualizado */}
           <Typography variant="h6" color="primary" fontWeight="bold">
             {producto.precio}
           </Typography>
@@ -171,4 +171,4 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
       </Box>
     </Card>
   );
-}
+          }
