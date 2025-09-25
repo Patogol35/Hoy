@@ -138,121 +138,121 @@ export default function Navbar() {
       </motion.div>
 
       {/* Drawer móvil */}
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
-            animate={{ opacity: 1, backdropFilter: "blur(6px)" }}
-            exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
-            transition={{ duration: 0.25 }}
-            style={{
-              position: "fixed",
-              inset: 0,
-              background: "rgba(0,0,0,0.45)",
-              zIndex: 1300,
-              display: "flex",
-              justifyContent: "flex-end",
-            }}
-            onClick={() => setOpen(false)}
-            role="dialog"
-            aria-modal="true"
+<AnimatePresence>
+  {open && (
+    <motion.div
+      initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
+      animate={{ opacity: 1, backdropFilter: "blur(6px)" }}
+      exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
+      transition={{ duration: 0.25 }}
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(0,0,0,0.45)",
+        zIndex: 1300,
+        display: "flex",
+        justifyContent: "flex-end",
+      }}
+      onClick={() => setOpen(false)}
+      role="dialog"
+      aria-modal="true"
+    >
+      <motion.div
+        variants={menuVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        style={{
+          width: "280px",
+          background: "#1976d2",
+          borderRadius: "16px 0 0 16px",
+          padding: "4rem 1.5rem 2rem",
+          display: "flex",
+          flexDirection: "column",
+          height: "100vh",
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Usuario */}
+        {isAuthenticated && (
+          <Stack
+            direction="row"
+            spacing={1}
+            alignItems="center"
+            justifyContent="center"
+            sx={{ mb: 2 }}
           >
-            <motion.div
-              variants={menuVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              style={{
-                width: "280px",
-                background: "#1976d2",
-                borderRadius: "16px 0 0 16px",
-                padding: "4rem 1.5rem 2rem",
-                display: "flex",
-                flexDirection: "column",
-                height: "100vh",
+            <AccountCircleIcon sx={{ color: "#fff" }} />
+            <Typography
+              variant="h6"
+              sx={{
+                color: "#fff",
+                fontWeight: 700,
+                textAlign: "center",
               }}
-              onClick={(e) => e.stopPropagation()}
             >
-              {/* Botón X */}
-              <IconButton
-                onClick={() => setOpen(false)}
-                sx={{
-                  mb: 2,
-                  color: "#fff",
-                  background: "rgba(0,0,0,0.6)",
-                  "&:hover": { background: "rgba(0,0,0,0.9)" },
-                  alignSelf: "center",
-                  width: 42,
-                  height: 42,
-                }}
-                aria-label="Cerrar menú"
-              >
-                <CloseIcon sx={{ fontSize: 26 }} />
-              </IconButton>
-
-              {/* Usuario */}
-              {isAuthenticated && (
-                <Stack
-                  direction="row"
-                  spacing={1}
-                  alignItems="center"
-                  justifyContent="center"
-                  sx={{ mb: 2 }}
-                >
-                  <AccountCircleIcon sx={{ color: "#fff" }} />
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      color: "#fff",
-                      fontWeight: 700,
-                      textAlign: "center",
-                    }}
-                  >
-                    {user?.username}
-                  </Typography>
-                </Stack>
-              )}
-
-              {/* Items menú */}
-              <Stack spacing={2} sx={{ flex: 1, overflowY: "auto", pb:4, pr:2}}>
-                {menuItems.map((item, i) => (
-                  <NavButton key={i} item={item} onClick={() => setOpen(false)} />
-                ))}
-
-                {/* Ícono modo oscuro justo después de las opciones */}
-                <IconButton
-                  onClick={toggleMode}
-                  sx={{
-                    color: "#fff",
-                    background: "rgba(0,0,0,0.4)",
-                    "&:hover": { background: "rgba(0,0,0,0.7)" },
-                    width: 48,
-                    height: 48,
-                    alignSelf: "center",
-                  }}
-                >
-                  {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
-                </IconButton>
-
-                {isAuthenticated && (
-                  <Button
-                    onClick={handleLogout}
-                    startIcon={<LogoutIcon />}
-                    sx={{
-                      fontWeight: 600,
-                      color: "#fff",
-                      borderRadius: "12px",
-                      background: "linear-gradient(135deg, #d32f2f, #f44336)",
-                    }}
-                  >
-                    Cerrar sesión
-                  </Button>
-                )}
-              </Stack>
-            </motion.div>
-          </motion.div>
+              {user?.username}
+            </Typography>
+          </Stack>
         )}
-      </AnimatePresence>
+
+        {/* Items menú */}
+        <Stack spacing={2} sx={{ flex: 1, overflowY: "auto", pb: 4, pr: 2 }}>
+          {menuItems.map((item, i) => (
+            <NavButton key={i} item={item} onClick={() => setOpen(false)} />
+          ))}
+
+          {/* Botón modo oscuro */}
+          <IconButton
+            onClick={toggleMode}
+            sx={{
+              color: "#fff",
+              background: "rgba(0,0,0,0.4)",
+              "&:hover": { background: "rgba(0,0,0,0.7)" },
+              width: 48,
+              height: 48,
+              alignSelf: "center",
+            }}
+          >
+            {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
+          </IconButton>
+
+          {isAuthenticated && (
+            <Button
+              onClick={handleLogout}
+              startIcon={<LogoutIcon />}
+              sx={{
+                fontWeight: 600,
+                color: "#fff",
+                borderRadius: "12px",
+                background: "linear-gradient(135deg, #d32f2f, #f44336)",
+              }}
+            >
+              Cerrar sesión
+            </Button>
+          )}
+
+          {/* Botón X al final 👇 */}
+          <IconButton
+            onClick={() => setOpen(false)}
+            sx={{
+              mt: 2,
+              color: "#fff",
+              background: "rgba(0,0,0,0.6)",
+              "&:hover": { background: "rgba(0,0,0,0.9)" },
+              alignSelf: "center",
+              width: 42,
+              height: 42,
+            }}
+            aria-label="Cerrar menú"
+          >
+            <CloseIcon sx={{ fontSize: 26 }} />
+          </IconButton>
+        </Stack>
+      </motion.div>
+    </motion.div>
+  )}
+</AnimatePresence>
     </>
   );
 }
