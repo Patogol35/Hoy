@@ -32,13 +32,15 @@ function NavButton({ item, onClick }) {
         aria-current={isActive ? "page" : undefined}
         sx={{
           ...baseStyle,
-          background: item.color,
+          background: isActive ? item.color : "transparent", // solo activo tiene fondo
           boxShadow: isActive
             ? "0 0 20px rgba(255,255,255,0.6)"
-            : "0 0 12px rgba(0,0,0,0.25)",
+            : "none",
           transform: isActive ? "scale(1.05)" : "scale(1)",
           "&:hover": {
-            boxShadow: "0 0 20px rgba(0,0,0,0.4)",
+            boxShadow: isActive
+              ? "0 0 20px rgba(0,0,0,0.4)"
+              : "0 0 12px rgba(0,0,0,0.25)",
             filter: "brightness(1.1)", // efecto de brillo en hover
           },
         }}
