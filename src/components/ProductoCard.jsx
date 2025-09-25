@@ -11,7 +11,7 @@ import {
   Divider,
   Stack,
 } from "@mui/material";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart"; // 👈 cambiado
 import InfoIcon from "@mui/icons-material/Info";
 import StarIcon from "@mui/icons-material/Star";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
@@ -125,7 +125,7 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
             variant="contained"
             color="primary"
             fullWidth
-            startIcon={<ShoppingCartIcon />}
+            startIcon={<AddShoppingCartIcon />}  {/* 👈 icono cambiado */}
             sx={{
               borderRadius: 2,
               textTransform: "none",
@@ -172,4 +172,4 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
       </Box>
     </Card>
   );
-          }
+}
