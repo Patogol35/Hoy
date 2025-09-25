@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { crearPedido } from "../api/api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 // MUI
 import {
@@ -71,9 +72,15 @@ export default function Carrito() {
 
   return (
     <Box sx={{ pb: { xs: 14, sm: 6 } }}>
-      <Typography variant="h4" gutterBottom fontWeight="bold">
-        🛒 Tu Carrito
-      </Typography>
+      <Typography 
+  variant="h4" 
+  gutterBottom 
+  fontWeight="bold" 
+  sx={{ display: "flex", alignItems: "center", gap: 1 }}
+>
+  <ShoppingCartIcon color="primary" sx={{ fontSize: 36 }} />
+  Tu Carrito
+</Typography>
 
       {loading && <Typography>Cargando carrito...</Typography>}
       {!loading && items.length === 0 && (
