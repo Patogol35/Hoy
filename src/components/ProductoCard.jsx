@@ -11,7 +11,7 @@ import {
   Divider,
   Stack,
 } from "@mui/material";
-import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart"; // 👈 cambiado
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import InfoIcon from "@mui/icons-material/Info";
 import StarIcon from "@mui/icons-material/Star";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
@@ -28,7 +28,6 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
       return;
     }
 
-    // Si se pasó la función desde Home, usarla
     if (onAgregar) {
       onAgregar(producto);
       return;
@@ -125,7 +124,7 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
             variant="contained"
             color="primary"
             fullWidth
-            startIcon={<AddShoppingCartIcon />}  {/* 👈 icono cambiado */}
+            startIcon={<AddShoppingCartIcon />}
             sx={{
               borderRadius: 2,
               textTransform: "none",
