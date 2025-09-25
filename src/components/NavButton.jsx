@@ -13,7 +13,7 @@ const baseStyle = {
   py: 1.2,
   transition: "all 0.3s ease",
   "& .MuiButton-startIcon": {
-    color: "#fff", // fuerza el color blanco del icono
+    color: "#fff",
   },
 };
 
@@ -23,7 +23,10 @@ function NavButton({ item, onClick }) {
   const Icon = item.icon;
 
   return (
-    <motion.div whileHover={{ y: -2, scale: 1.08 }} whileTap={{ scale: 0.95 }}>
+    <motion.div
+      whileHover={isActive ? { y: -2, scale: 1.08 } : {}}
+      whileTap={{ scale: 0.95 }}
+    >
       <Button
         component={Link}
         to={item.path}
@@ -37,10 +40,12 @@ function NavButton({ item, onClick }) {
             ? "0 0 20px rgba(255,255,255,0.6)"
             : "0 0 12px rgba(0,0,0,0.25)",
           transform: isActive ? "scale(1.05)" : "scale(1)",
-          "&:hover": {
-            boxShadow: "0 0 20px rgba(0,0,0,0.4)",
-            filter: "brightness(1.1)", // efecto de brillo en hover
-          },
+          "&:hover": isActive
+            ? {
+                boxShadow: "0 0 20px rgba(0,0,0,0.4)",
+                filter: "brightness(1.1)",
+              }
+            : {}, // hover solo si está activo
         }}
       >
         {item.label}
