@@ -77,7 +77,7 @@ export default function Home() {
     <>
       {/* ================== ENCABEZADO ================== */}
       <Box sx={{ mb: 4, textAlign: "center" }}>
-        <Typography variant="h4" fontWeight="bold" sx={{ color: "primary.main", mt: 4 }}>
+        <Typography variant="h4" fontWeight="bold" sx={{ color: "primary.main", mt: 4, mb: 4 }}>
           <StorefrontIcon sx={{ fontSize: 32, mr: 1 }} />
           Catálogo 
         </Typography>
