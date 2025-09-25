@@ -72,11 +72,12 @@ export default function Carrito() {
 
   return (
     <Box sx={{ pb: { xs: 14, sm: 6 } }}>
-      <Typography 
-  variant="h4" 
-  gutterBottom 
-  fontWeight="bold" 
-  sx={{ display: "flex", alignItems: "center", gap: 1 }}
+      <Typography
+  variant="h4"
+  gutterBottom
+  fontWeight="bold"
+  align="center"   // 👈 centra el texto
+  sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 1 }}
 >
   <ShoppingCartIcon color="primary" sx={{ fontSize: 36 }} />
   Tu Carrito
