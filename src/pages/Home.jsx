@@ -79,9 +79,14 @@ export default function Home() {
       <Box sx={{ mb: 4, textAlign: "center" }}>
         <Typography variant="h4" fontWeight="bold" sx={{ color: "primary.main" }}>
           <StorefrontIcon sx={{ fontSize: 32, mr: 1 }} />
-          Productos
+          Catálogo 
         </Typography>
-        <Divider sx={{ width: 80, mx: "auto", borderBottomWidth: 3, mb: 3 }} />
+
+        <Divider
+  sx={{ width: 80, mx: "auto", borderBottomWidth: 3, mb: 3,
+    borderColor: "primary.main"
+  }}
+/>
 
         {/* ================== FILTROS ================== */}
         <Paper
