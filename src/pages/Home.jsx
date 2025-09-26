@@ -93,7 +93,7 @@ export default function Home() {
       </Box>
 
       {/* ================== FILTROS ================== */}
-      <Paper
+      
         elevation={4}
         sx={{
           p: 3,
@@ -168,7 +168,7 @@ export default function Home() {
           <MenuItem value="asc">Precio: menor a mayor</MenuItem>
           <MenuItem value="desc">Precio: mayor a menor</MenuItem>
         </TextField>
-      </Paper>
+      
 
       {/* ================== PRODUCTOS ================== */}
       <Grid container spacing={3} justifyContent="center">
