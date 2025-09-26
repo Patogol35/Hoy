@@ -103,7 +103,7 @@ export default function Home() {
     gap: 2,
     justifyContent: "center",
     alignItems: "center",
-    mb: 4,
+    mb: 2,
     backgroundColor: "transparent", // 🔑 sin fondo
     boxShadow: "none", // opcional: elimina la sombra
     border: "none", // opcional: elimina borde
