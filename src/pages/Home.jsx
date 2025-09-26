@@ -3,7 +3,6 @@ import {
   Box,
   Typography,
   Divider,
-  Stack,
   TextField,
   InputAdornment,
   MenuItem,
@@ -14,12 +13,12 @@ import {
   Paper,
 } from "@mui/material";
 import { motion } from "framer-motion";
-import StorefrontIcon from "@mui/icons-material/Storefront";
 import SearchIcon from "@mui/icons-material/Search";
 import HomeIcon from "@mui/icons-material/Home";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import SortIcon from "@mui/icons-material/Sort";
 import CloseIcon from "@mui/icons-material/Close";
+import StorefrontIcon from "@mui/icons-material/Storefront"; // ⚠️ te faltaba este import
 
 import ProductoCard from "../components/ProductoCard";
 import { useProductos } from "../hooks/useProductos";
@@ -31,7 +30,6 @@ import LightboxModal from "../components/LightboxModal";
 
 const ITEMS_PER_PAGE = 8;
 
-// ================== Estilos reutilizables ==================
 const botonCerrarSx = {
   position: "absolute",
   top: 12,
@@ -60,7 +58,6 @@ export default function Home() {
   const handleVerDetalle = (producto) => setProductoSeleccionado(producto);
   const handleCerrarDetalle = () => setProductoSeleccionado(null);
 
-  // ================== Productos paginados con useMemo ==================
   const productosPag = useMemo(() => {
     const start = (page - 1) * ITEMS_PER_PAGE;
     return filtered.slice(start, start + ITEMS_PER_PAGE);
@@ -77,106 +74,110 @@ export default function Home() {
   return (
     <>
       {/* ================== ENCABEZADO ================== */}
-    
-<Box sx={{ mb: 4, textAlign: "center" }}>
-  <Typography
-    variant="h4"
-    fontWeight="bold"
-    sx={{ color: "primary.main", mt: 4, display: "flex", alignItems: "center", justifyContent: "center" }}
-  >
-    <HomeIcon sx={{ fontSize: 32, mr: 1 }} />
-    Inicio
-  </Typography>
-
-  <Divider
-    sx={{
-      width: 80,
-      mx: "auto",
-      borderBottomWidth: 3,
-      mb: 4,
-      borderColor: "primary.main",
-    }}
-  />
-
-
-        {/* ================== FILTROS ================== */}
-        <Paper
-          elevation={4}
+      <Box sx={{ mb: 4, textAlign: "center" }}>
+        <Typography
+          variant="h4"
+          fontWeight="bold"
           sx={{
-            p: 3,
-            borderRadius: 3,
+            color: "primary.main",
+            mt: 4,
             display: "flex",
-            flexDirection: { xs: "column", sm: "row" },
-            gap: 2,
-            justifyContent: "center",
             alignItems: "center",
-            mb: 2,
+            justifyContent: "center",
           }}
         >
-          {/* Buscar */}
-          <TextField
-            label="Buscar producto"
-            size="small"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            variant="outlined"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon color="action" />
-                </InputAdornment>
-              ),
-            }}
-            sx={{ minWidth: 250 }}
-          />
+          <HomeIcon sx={{ fontSize: 32, mr: 1 }} />
+          Inicio
+        </Typography>
 
-          {/* Categoría */}
-          <TextField
-            select
-            label="Categoría"
-            size="small"
-            value={categoria}
-            onChange={(e) => setCategoria(e.target.value)}
-            variant="outlined"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <StorefrontIcon color="action" />
-                </InputAdornment>
-              ),
-            }}
-            sx={{ minWidth: 200 }}
-          >
-            <MenuItem value="">Todas</MenuItem>
-            {categorias.map((cat) => (
-              <MenuItem key={cat.id} value={cat.id}>
-                {cat.nombre}
-              </MenuItem>
-            ))}
-          </TextField>
-
-          {/* Ordenar */}
-          <TextField
-            select
-            label="Ordenar por"
-            size="small"
-            value={sort}
-            onChange={(e) => setSort(e.target.value)}
-            variant="outlined"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SortIcon color="action" />
-                </InputAdornment>
-              ),
-            }}
-            sx={{ minWidth: 220 }}
-          >
-            <MenuItem value="asc">Precio: menor a mayor</MenuItem>
-            <MenuItem value="desc">Precio: mayor a menor</MenuItem>
-          </TextField>
-        </Paper>
+        <Divider
+          sx={{
+            width: 80,
+            mx: "auto",
+            borderBottomWidth: 3,
+            mb: 4,
+            borderColor: "primary.main",
+          }}
+        />
       </Box>
+
+      {/* ================== FILTROS ================== */}
+      <Paper
+        elevation={4}
+        sx={{
+          p: 3,
+          borderRadius: 3,
+          display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
+          gap: 2,
+          justifyContent: "center",
+          alignItems: "center",
+          mb: 2,
+        }}
+      >
+        {/* Buscar */}
+        <TextField
+          label="Buscar producto"
+          size="small"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          variant="outlined"
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon color="action" />
+              </InputAdornment>
+            ),
+          }}
+          sx={{ minWidth: 250 }}
+        />
+
+        {/* Categoría */}
+        <TextField
+          select
+          label="Categoría"
+          size="small"
+          value={categoria}
+          onChange={(e) => setCategoria(e.target.value)}
+          variant="outlined"
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <StorefrontIcon color="action" />
+              </InputAdornment>
+            ),
+          }}
+          sx={{ minWidth: 200 }}
+        >
+          <MenuItem value="">Todas</MenuItem>
+          {categorias.map((cat) => (
+            <MenuItem key={cat.id} value={cat.id}>
+              {cat.nombre}
+            </MenuItem>
+          ))}
+        </TextField>
+
+        {/* Ordenar */}
+        <TextField
+          select
+          label="Ordenar por"
+          size="small"
+          value={sort}
+          onChange={(e) => setSort(e.target.value)}
+          variant="outlined"
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SortIcon color="action" />
+              </InputAdornment>
+            ),
+          }}
+          sx={{ minWidth: 220 }}
+        >
+          <MenuItem value="asc">Precio: menor a mayor</MenuItem>
+          <MenuItem value="desc">Precio: mayor a menor</MenuItem>
+        </TextField>
+      </Paper>
 
       {/* ================== PRODUCTOS ================== */}
       <Grid container spacing={3} justifyContent="center">
@@ -229,7 +230,11 @@ export default function Home() {
       />
 
       {/* ================== LIGHTBOX ================== */}
-      <LightboxModal open={!!lightbox} onClose={() => setLightbox(null)} src={lightbox} />
+      <LightboxModal
+        open={!!lightbox}
+        onClose={() => setLightbox(null)}
+        src={lightbox}
+      />
     </>
   );
-          }
+      }
