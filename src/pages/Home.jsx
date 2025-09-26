@@ -104,8 +104,9 @@ export default function Home() {
     justifyContent: "center",
     alignItems: "center",
     mb: 4,
-    backgroundColor: "rgba(255, 255, 255, 0.7)", // semi-transparente
-    backdropFilter: "blur(6px)", // efecto vidrio esmerilado
+    backgroundColor: "transparent", // 🔑 sin fondo
+    boxShadow: "none", // opcional: elimina la sombra
+    border: "none", // opcional: elimina borde
   }}
 >
   {/* Buscar */}
