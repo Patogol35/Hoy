@@ -14,6 +14,7 @@ import {
   Paper,
 } from "@mui/material";
 import { motion } from "framer-motion";
+import StorefrontIcon from "@mui/icons-material/Storefront";
 import SearchIcon from "@mui/icons-material/Search";
 import HomeIcon from "@mui/icons-material/Home";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
