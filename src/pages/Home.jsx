@@ -94,81 +94,83 @@ export default function Home() {
 
       {/* ================== FILTROS ================== */}
       <Paper
-elevation={4}
-sx={{
-p: 3,
-borderRadius: 3,
-display: "flex",
-flexDirection: { xs: "column", sm: "row" },
-gap: 2,
-justifyContent: "center",
-alignItems: "center",
-mb: 4,
-}}
+  elevation={4}
+  sx={{
+    p: 3,
+    borderRadius: 3,
+    display: "flex",
+    flexDirection: { xs: "column", sm: "row" },
+    gap: 2,
+    justifyContent: "center",
+    alignItems: "center",
+    mb: 4,
+    backgroundColor: "rgba(255, 255, 255, 0.7)", // semi-transparente
+    backdropFilter: "blur(6px)", // efecto vidrio esmerilado
+  }}
 >
-{/* Buscar */}
-<TextField
-label="Buscar producto"
-size="small"
-value={search}
-onChange={(e) => setSearch(e.target.value)}
-variant="outlined"
-InputProps={{
-startAdornment: (
-<InputAdornment position="start">
-<SearchIcon color="action" />
-</InputAdornment>
-),
-}}
-sx={{ minWidth: 250 }}
-/>
+  {/* Buscar */}
+  <TextField
+    label="Buscar producto"
+    size="small"
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+    variant="outlined"
+    InputProps={{
+      startAdornment: (
+        <InputAdornment position="start">
+          <SearchIcon color="action" />
+        </InputAdornment>
+      ),
+    }}
+    sx={{ minWidth: 250 }}
+  />
 
-{/* Categoría */}  
-    <TextField  
-      select  
-      label="Categoría"  
-      size="small"  
-      value={categoria}  
-      onChange={(e) => setCategoria(e.target.value)}  
-      variant="outlined"  
-      InputProps={{  
-        startAdornment: (  
-          <InputAdornment position="start">  
-            <StorefrontIcon color="action" />  
-          </InputAdornment>  
-        ),  
-      }}  
-      sx={{ minWidth: 200 }}  
-    >  
-      <MenuItem value="">Todas</MenuItem>  
-      {categorias.map((cat) => (  
-        <MenuItem key={cat.id} value={cat.id}>  
-          {cat.nombre}  
-        </MenuItem>  
-      ))}  
-    </TextField>  
+  {/* Categoría */}
+  <TextField
+    select
+    label="Categoría"
+    size="small"
+    value={categoria}
+    onChange={(e) => setCategoria(e.target.value)}
+    variant="outlined"
+    InputProps={{
+      startAdornment: (
+        <InputAdornment position="start">
+          <StorefrontIcon color="action" />
+        </InputAdornment>
+      ),
+    }}
+    sx={{ minWidth: 200 }}
+  >
+    <MenuItem value="">Todas</MenuItem>
+    {categorias.map((cat) => (
+      <MenuItem key={cat.id} value={cat.id}>
+        {cat.nombre}
+      </MenuItem>
+    ))}
+  </TextField>
 
-    {/* Ordenar */}  
-    <TextField  
-      select  
-      label="Ordenar por"  
-      size="small"  
-      value={sort}  
-      onChange={(e) => setSort(e.target.value)}  
-      variant="outlined"  
-      InputProps={{  
-        startAdornment: (  
-          <InputAdornment position="start">  
-            <SortIcon color="action" />  
-          </InputAdornment>  
-        ),  
-      }}  
-      sx={{ minWidth: 220 }}  
-    >  
-      <MenuItem value="asc">Precio: menor a mayor</MenuItem>  
-      <MenuItem value="desc">Precio: mayor a menor</MenuItem>  
-    </TextField>  
-  </Paper> los filtros están en un cuadrado verdad
+  {/* Ordenar */}
+  <TextField
+    select
+    label="Ordenar por"
+    size="small"
+    value={sort}
+    onChange={(e) => setSort(e.target.value)}
+    variant="outlined"
+    InputProps={{
+      startAdornment: (
+        <InputAdornment position="start">
+          <SortIcon color="action" />
+        </InputAdornment>
+      ),
+    }}
+    sx={{ minWidth: 220 }}
+  >
+    <MenuItem value="asc">Precio: menor a mayor</MenuItem>
+    <MenuItem value="desc">Precio: mayor a menor</MenuItem>
+  </TextField>
+</Paper>
 
       
 
