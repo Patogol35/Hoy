@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import { motion } from "framer-motion";
 import SearchIcon from "@mui/icons-material/Search";
-import StorefrontIcon from "@mui/icons-material/Storefront";
+import HomeIcon from "@mui/icons-material/Home";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import SortIcon from "@mui/icons-material/Sort";
 import CloseIcon from "@mui/icons-material/Close";
@@ -76,17 +76,27 @@ export default function Home() {
   return (
     <>
       {/* ================== ENCABEZADO ================== */}
-      <Box sx={{ mb: 4, textAlign: "center" }}>
-        <Typography variant="h4" fontWeight="bold" sx={{ color: "primary.main", mt: 4 }}>
-          <StorefrontIcon sx={{ fontSize: 32, mr: 1 }} />
-          Catálogo 
-        </Typography>
+    
+<Box sx={{ mb: 4, textAlign: "center" }}>
+  <Typography
+    variant="h4"
+    fontWeight="bold"
+    sx={{ color: "primary.main", mt: 4, display: "flex", alignItems: "center", justifyContent: "center" }}
+  >
+    <HomeIcon sx={{ fontSize: 32, mr: 1 }} />
+    Inicio
+  </Typography>
 
-        <Divider
-  sx={{ width: 80, mx: "auto", borderBottomWidth: 3, mb: 4,
-    borderColor: "primary.main"
-  }}
-/>
+  <Divider
+    sx={{
+      width: 80,
+      mx: "auto",
+      borderBottomWidth: 3,
+      mb: 4,
+      borderColor: "primary.main",
+    }}
+  />
+</Box>
 
         {/* ================== FILTROS ================== */}
         <Paper
