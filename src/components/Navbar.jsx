@@ -50,7 +50,13 @@ export default function Navbar() {
 
   const renderUserSection = (showLogout = true) =>
     isAuthenticated && (
-      <Stack direction="row" spacing={1} alignItems="center" sx={{ my: 2 }}>
+
+<Stack
+  direction="column"      // cambia "row" a "column"
+  spacing={1}
+  alignItems="center"     // nuevo para centrar horizontalmente
+  sx={{ my: 2, textAlign: "center" }}
+>
         <AccountCircleIcon sx={{ color: "#fff" }} />
         <Typography sx={{ color: "#fff", fontWeight: 600 }}>
           {user?.username}
