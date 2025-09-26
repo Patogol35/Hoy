@@ -103,7 +103,7 @@ flexDirection: { xs: "column", sm: "row" },
 gap: 2,
 justifyContent: "center",
 alignItems: "center",
-mb: 2,
+mb: 4,
 }}
 
 > 
