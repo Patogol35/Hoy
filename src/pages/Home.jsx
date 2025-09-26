@@ -94,7 +94,7 @@ export default function Home() {
 
       {/* ================== FILTROS ================== */}
       <Paper
-  elevation={4}
+  elevation={2}
   sx={{
     p: 3,
     borderRadius: 3,
