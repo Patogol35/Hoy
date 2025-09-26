@@ -50,7 +50,13 @@ export default function Navbar() {
 
   const renderUserSection = (showLogout = true) =>
     isAuthenticated && (
-      <Stack direction="row" spacing={1} alignItems="center" sx={{ my: 2 }}>
+      <Stack
+        direction="row"
+        spacing={1}
+        alignItems="center"
+        justifyContent={showLogout ? "flex-start" : "center"}
+        sx={{ my: 2 }}
+      >
         <AccountCircleIcon sx={{ color: "#fff" }} />
         <Typography sx={{ color: "#fff", fontWeight: 600 }}>
           {user?.username}
@@ -143,91 +149,84 @@ export default function Navbar() {
       </motion.div>
 
       {/* Drawer Móvil */}
-
-
-<Drawer
-  anchor="right"
-  open={open}
-  onClose={() => setOpen(false)}
-  PaperProps={{
-    sx: {
-      width: 280,
-      background: "#1976d2",
-      borderRadius: "16px 0 0 16px",
-      p: 2,
-      display: "flex",
-      flexDirection: "column",
-    },
-  }}
->
-  {/* Header drawer */}
-  <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-    <IconButton
-      onClick={() => setOpen(false)}
-      sx={{ color: "#fff" }}
-      aria-label="Cerrar menú"
-    >
-      <CloseIcon />
-    </IconButton>
-  </Box>
-
-  {/* User info */}
-  {renderUserSection(false)}
-
-  {/* Menú items */}
-  <Stack spacing={2} sx={{ flex: 1, mt: 2 }}>
-    {renderMenuItems(() => setOpen(false))}
-    {isAuthenticated && (
-      <Button
-        onClick={handleLogout}
-        startIcon={<LogoutIcon />}
-        sx={{
-          fontWeight: 600,
-          color: "#fff",
-          borderRadius: "12px",
-          background: "linear-gradient(135deg, #d32f2f, #f44336)",
+      <Drawer
+        anchor="right"
+        open={open}
+        onClose={() => setOpen(false)}
+        PaperProps={{
+          sx: {
+            width: 280,
+            background: "#1976d2",
+            borderRadius: "16px 0 0 16px",
+            p: 2,
+            display: "flex",
+            flexDirection: "column",
+          },
         }}
       >
-        Cerrar sesión
-      </Button>
-    )}
-  </Stack>
+        {/* Header drawer */}
+        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <IconButton
+            onClick={() => setOpen(false)}
+            sx={{ color: "#fff" }}
+            aria-label="Cerrar menú"
+          >
+            <CloseIcon />
+          </IconButton>
+        </Box>
 
-  {/* --- Botones utilitarios al final --- */}
-  <Stack
-    spacing={2}
-    alignItems="center"
-    sx={{ mt: 3, pb: 2 }}
-  >
-    <IconButton
-      onClick={toggleMode}
-      sx={{
-        color: "#fff",
-        background: "rgba(0,0,0,0.4)",
-        "&:hover": { background: "rgba(0,0,0,0.7)" },
-        width: 48,
-        height: 48,
-      }}
-    >
-      {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
-    </IconButton>
+        {/* User info centrado */}
+        {renderUserSection(false)}
 
-    <IconButton
-      onClick={() => setOpen(false)}
-      sx={{
-        color: "#fff",
-        background: "rgba(0,0,0,0.6)",
-        "&:hover": { background: "rgba(0,0,0,0.9)" },
-        width: 42,
-        height: 42,
-      }}
-      aria-label="Cerrar menú"
-    >
-      <CloseIcon sx={{ fontSize: 26 }} />
-    </IconButton>
-  </Stack>
-</Drawer>
-      
+        {/* Menú items */}
+        <Stack spacing={2} sx={{ flex: 1, mt: 2 }}>
+          {renderMenuItems(() => setOpen(false))}
+          {isAuthenticated && (
+            <Button
+              onClick={handleLogout}
+              startIcon={<LogoutIcon />}
+              sx={{
+                fontWeight: 600,
+                color: "#fff",
+                borderRadius: "12px",
+                background: "linear-gradient(135deg, #d32f2f, #f44336)",
+              }}
+            >
+              Cerrar sesión
+            </Button>
+          )}
+        </Stack>
+
+        {/* Botones utilitarios al final */}
+        <Stack spacing={2} alignItems="center" sx={{ mt: 3, pb: 2 }}>
+          <IconButton
+            onClick={toggleMode}
+            sx={{
+              color: "#fff",
+              background: "rgba(0,0,0,0.4)",
+              "&:hover": { background: "rgba(0,0,0,0.7)" },
+              width: 48,
+              height: 48,
+            }}
+          >
+            {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
+          </IconButton>
+
+          <IconButton
+            onClick={() => setOpen(false)}
+            sx={{
+              color: "#fff",
+              background: "rgba(0,0,0,0.6)",
+              "&:hover": { background: "rgba(0,0,0,0.9)" },
+              width: 42,
+              height: 42,
+            }}
+            aria-label="Cerrar menú"
+          >
+            <CloseIcon sx={{ fontSize: 26 }} />
+          </IconButton>
+        </Stack>
+      </Drawer>
     </>
   );
 }
