@@ -97,7 +97,7 @@ export default function Home() {
       borderColor: "primary.main",
     }}
   />
-</Box>
+
 
         {/* ================== FILTROS ================== */}
         <Paper
