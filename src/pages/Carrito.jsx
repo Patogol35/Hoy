@@ -77,7 +77,7 @@ export default function Carrito() {
   gutterBottom
   fontWeight="bold"
   align="center"   
-  sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 1, color: "primary.main"  }}
+  sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 1, color: "primary.main", mt: 2,}}
 >
   <ShoppingCartIcon color="primary" sx={{ fontSize: 36 }} />
   Tu Carrito
