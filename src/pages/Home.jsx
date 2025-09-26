@@ -18,7 +18,6 @@ import HomeIcon from "@mui/icons-material/Home";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import SortIcon from "@mui/icons-material/Sort";
 import CloseIcon from "@mui/icons-material/Close";
-import StorefrontIcon from "@mui/icons-material/Storefront"; // ⚠️ te faltaba este import
 import CategoryIcon from '@mui/icons-material/Category';
 import ProductoCard from "../components/ProductoCard";
 import { useProductos } from "../hooks/useProductos";
