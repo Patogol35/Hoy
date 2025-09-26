@@ -1,231 +1,158 @@
-import { useState } from "react";
+// src/components/Navbar.jsx
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { useThemeMode } from "../context/ThemeContext";
-import { useScrollTrigger } from "../hooks/useScrollTrigger";
-import { authMenu, guestMenu } from "../config/menuConfig";
-import NavButton from "./NavButton";
-
 import {
   AppBar,
   Toolbar,
-  Typography,
-  IconButton,
-  Box,
-  Stack,
   Button,
+  Typography,
+  Box,
+  IconButton,
+  Stack,
   Drawer,
 } from "@mui/material";
 import {
   Menu as MenuIcon,
   Close as CloseIcon,
-  ShoppingBag as ShoppingBagIcon,
-  Logout as LogoutIcon,
-  Brightness4 as DarkModeIcon,
-  Brightness7 as LightModeIcon,
   AccountCircle as AccountCircleIcon,
+  Brightness4,
+  Brightness7,
+  Logout,
 } from "@mui/icons-material";
-import { motion } from "framer-motion";
+import NavButton from "./NavButton";
+import menuConfig from "../config/menuConfig";
 
-export default function Navbar() {
+export default function Navbar({ darkMode, toggleDarkMode }) {
   const { isAuthenticated, logout, user } = useAuth();
-  const { mode, toggleMode } = useThemeMode();
   const navigate = useNavigate();
-
   const [open, setOpen] = useState(false);
-  const scrolled = useScrollTrigger(50);
-
-  const menuItems = isAuthenticated ? authMenu : guestMenu;
 
   const handleLogout = () => {
     logout();
     navigate("/login");
-    setOpen(false);
   };
 
   const renderMenuItems = (onClick) =>
-    menuItems.map((item, i) => (
-      <NavButton key={i} item={item} onClick={onClick} />
+    menuConfig.map((item) => (
+      <NavButton
+        key={item.path}
+        item={item}
+        onClick={onClick}
+        sx={{ mb: { xs: 1.5, md: 0 } }} // margen inferior solo en móvil
+      />
     ));
-
-  const renderUserSection = (showLogout = true) =>
-    isAuthenticated && (
-      <Stack
-        direction="row"
-        spacing={1}
-        alignItems="center"
-        justifyContent={showLogout ? "flex-start" : "center"}
-        sx={{ my: 2 }}
-      >
-        <AccountCircleIcon sx={{ color: "#fff" }} />
-        <Typography sx={{ color: "#fff", fontWeight: 600 }}>
-          {user?.username}
-        </Typography>
-        {showLogout && (
-          <Button
-            onClick={handleLogout}
-            startIcon={<LogoutIcon />}
-            sx={{
-              ml: 2,
-              fontWeight: 600,
-              color: "#fff",
-              background: "linear-gradient(135deg, #d32f2f, #f44336)",
-              borderRadius: "12px",
-              px: 2.5,
-              py: 1,
-            }}
-          >
-            Cerrar sesión
-          </Button>
-        )}
-      </Stack>
-    );
 
   return (
     <>
-      {/* Navbar Desktop */}
-      <motion.div
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6 }}
-      >
-        <AppBar
-          position="fixed"
-          elevation={scrolled ? 6 : 2}
-          sx={{
-            backgroundColor: "#1976d2",
-            boxShadow: scrolled ? "0 4px 20px rgba(0,0,0,0.3)" : "none",
-            zIndex: 1400,
-          }}
-        >
-          <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-            {/* Logo */}
-            <Typography
-              variant="h6"
-              component={Link}
-              to="/"
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 1,
-                fontWeight: "bold",
-                color: "#fff",
-                textDecoration: "none",
-              }}
-            >
-              <ShoppingBagIcon
-                sx={{
-                  fontSize: 28,
-                  background: "linear-gradient(135deg, #FF5722, #FFC107)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                }}
-              />
-              Tienda Patricio
-            </Typography>
+      <AppBar position="static" sx={{ bgcolor: "background.paper" }}>
+        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+          {/* Logo */}
+          <Typography
+            variant="h6"
+            component={Link}
+            to="/"
+            sx={{ textDecoration: "none", color: "inherit", fontWeight: "bold" }}
+          >
+            MiTienda
+          </Typography>
 
-            {/* Desktop Menu */}
-            <Box
-              sx={{ display: { xs: "none", md: "flex" }, gap: 2, alignItems: "center" }}
-            >
-              {renderMenuItems()}
-              <IconButton onClick={toggleMode} sx={{ color: "#fff" }}>
-                {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
-              </IconButton>
-              {renderUserSection(true)}
-            </Box>
-
-            {/* Mobile menu button */}
-            <IconButton
-              sx={{ display: { xs: "block", md: "none" }, color: "#fff" }}
-              onClick={() => setOpen(true)}
-              aria-label="Abrir menú"
-              aria-expanded={open}
-            >
-              <MenuIcon fontSize="large" />
+          {/* Menú Desktop */}
+          <Box
+            sx={{
+              display: { xs: "none", md: "flex" },
+              alignItems: "center",
+              gap: 2,
+            }}
+          >
+            {renderMenuItems()}
+            {isAuthenticated && (
+              <Button
+                onClick={handleLogout}
+                startIcon={<Logout />}
+                sx={{ color: "error.main", fontWeight: 600 }}
+              >
+                Cerrar sesión
+              </Button>
+            )}
+            <IconButton onClick={toggleDarkMode} color="inherit">
+              {darkMode ? <Brightness7 /> : <Brightness4 />}
             </IconButton>
-          </Toolbar>
-        </AppBar>
-      </motion.div>
+            {isAuthenticated && (
+              <Stack direction="row" spacing={1} alignItems="center">
+                <AccountCircleIcon />
+                <Typography sx={{ fontWeight: 600 }}>
+                  {user?.username}
+                </Typography>
+              </Stack>
+            )}
+          </Box>
 
-      {/* Drawer Móvil */}
-      <Drawer
-        anchor="right"
-        open={open}
-        onClose={() => setOpen(false)}
-        PaperProps={{
-          sx: {
-            width: 280,
-            background: "#1976d2",
-            borderRadius: "16px 0 0 16px",
-            p: 2,
+          {/* Botón menú móvil */}
+          <IconButton
+            onClick={() => setOpen(true)}
+            sx={{ display: { xs: "flex", md: "none" } }}
+          >
+            <MenuIcon />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+
+      {/* Drawer móvil */}
+      <Drawer anchor="right" open={open} onClose={() => setOpen(false)}>
+        <Box
+          sx={{
+            width: 250,
+            height: "100%",
             display: "flex",
             flexDirection: "column",
-          },
-        }}
-      >
-        {/* Header drawer */}
-        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-          <IconButton
-            onClick={() => setOpen(false)}
-            sx={{ color: "#fff" }}
-            aria-label="Cerrar menú"
-          >
-            <CloseIcon />
-          </IconButton>
-        </Box>
+            bgcolor: "background.default",
+          }}
+        >
+          {/* Botón cerrar */}
+          <Box sx={{ display: "flex", justifyContent: "flex-end", p: 1 }}>
+            <IconButton onClick={() => setOpen(false)}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
 
-        {/* User info centrado */}
-        {renderUserSection(false)}
-
-        {/* Menú items */}
-        <Stack spacing={2} sx={{ flex: 1, mt: 2 }}>
-          {renderMenuItems(() => setOpen(false))}
+          {/* Usuario centrado */}
           {isAuthenticated && (
-            <Button
-              onClick={handleLogout}
-              startIcon={<LogoutIcon />}
-              sx={{
-                fontWeight: 600,
-                color: "#fff",
-                borderRadius: "12px",
-                background: "linear-gradient(135deg, #d32f2f, #f44336)",
-              }}
+            <Stack
+              direction="row"
+              spacing={1}
+              alignItems="center"
+              justifyContent="center"
+              sx={{ my: 2 }}
             >
-              Cerrar sesión
-            </Button>
+              <AccountCircleIcon />
+              <Typography sx={{ fontWeight: 600 }}>
+                {user?.username}
+              </Typography>
+            </Stack>
           )}
-        </Stack>
 
-        {/* Botones utilitarios al final */}
-        <Stack spacing={2} alignItems="center" sx={{ mt: 3, pb: 2 }}>
-          <IconButton
-            onClick={toggleMode}
-            sx={{
-              color: "#fff",
-              background: "rgba(0,0,0,0.4)",
-              "&:hover": { background: "rgba(0,0,0,0.7)" },
-              width: 48,
-              height: 48,
-            }}
-          >
-            {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
-          </IconButton>
+          {/* Opciones */}
+          <Stack spacing={2} sx={{ flex: 1, mt: 2, px: 2 }}>
+            {renderMenuItems(() => setOpen(false))}
+            {isAuthenticated && (
+              <Button
+                onClick={handleLogout}
+                startIcon={<Logout />}
+                sx={{ color: "error.main", fontWeight: 600 }}
+              >
+                Cerrar sesión
+              </Button>
+            )}
+          </Stack>
 
-          <IconButton
-            onClick={() => setOpen(false)}
-            sx={{
-              color: "#fff",
-              background: "rgba(0,0,0,0.6)",
-              "&:hover": { background: "rgba(0,0,0,0.9)" },
-              width: 42,
-              height: 42,
-            }}
-            aria-label="Cerrar menú"
-          >
-            <CloseIcon sx={{ fontSize: 26 }} />
-          </IconButton>
-        </Stack>
+          {/* Dark mode toggle abajo */}
+          <Box sx={{ p: 2 }}>
+            <IconButton onClick={toggleDarkMode} color="inherit" fullWidth>
+              {darkMode ? <Brightness7 /> : <Brightness4 />}
+            </IconButton>
+          </Box>
+        </Box>
       </Drawer>
     </>
   );
