@@ -80,7 +80,7 @@ export default function Carrito() {
   sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 1, color: "primary.main", mt: 3,}}
 >
   <ShoppingCartIcon color="primary" sx={{ fontSize: 36 }} />
-  Tu Carrito
+  Mi Carrito
 </Typography>
 
       {loading && <Typography>Cargando carrito...</Typography>}
