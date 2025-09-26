@@ -89,15 +89,6 @@ export default function Home() {
           <HomeIcon sx={{ fontSize: 32, mr: 1 }} />
           Inicio
         </Typography>
-
-        <Divider
-          sx={{
-            width: 80,
-            mx: "auto",
-            borderBottomWidth: 3,
-            mb: 4,
-            borderColor: "primary.main",
-          }}
         />
       </Box>
 
@@ -112,7 +103,7 @@ export default function Home() {
           gap: 2,
           justifyContent: "center",
           alignItems: "center",
-          mb: 2,
+          mb: 4,
         }}
       >
         {/* Buscar */}
