@@ -8,6 +8,9 @@ function NavButton({ item, onClick }) {
   const isActive = location.pathname === item.path;
   const Icon = item.icon;
 
+  // Rutas que deben mostrarse siempre con fondo en desktop
+  const alwaysColoredPaths = ["/login", "/register"];
+
   return (
     <motion.div whileHover={{ y: -2, scale: 1.05 }} whileTap={{ scale: 0.95 }}>
       <Button
@@ -27,10 +30,13 @@ function NavButton({ item, onClick }) {
           transition: "all 0.25s ease",
           "& .MuiButton-startIcon": { color: "#fff" },
 
-          // Fondo
+          // Fondo dinámico
           background: {
-            xs: item.color, // en móvil siempre con gradiente
-            md: isActive ? item.color : "transparent", // en desktop solo si está activo
+            xs: item.color, // móvil siempre con color
+            md:
+              isActive || alwaysColoredPaths.includes(item.path)
+                ? item.color
+                : "transparent", // desktop: activo o login/register
           },
 
           // Sombras y efecto activo
@@ -46,7 +52,7 @@ function NavButton({ item, onClick }) {
             filter: "brightness(1.1)",
           },
 
-          // Ajuste si está en dark mode (para mejor contraste)
+          // Ajuste dark mode
           ...(theme.palette.mode === "dark" && {
             color: "#fff",
             "&:hover": {
