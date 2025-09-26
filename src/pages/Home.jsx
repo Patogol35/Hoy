@@ -94,7 +94,7 @@ export default function Home() {
 
       {/* ================== FILTROS ================== */}
       <Paper
-  elevation={8}
+  elevation={4}
   sx={{
     p: 3,
     borderRadius: 3,
@@ -103,7 +103,7 @@ export default function Home() {
     gap: 2,
     justifyContent: "center",
     alignItems: "center",
-    mb: 2,
+    mb: 0,
     backgroundColor: "transparent", // 🔑 sin fondo
     boxShadow: "none", // opcional: elimina la sombra
     border: "none", // opcional: elimina borde
