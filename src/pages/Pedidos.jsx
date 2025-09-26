@@ -77,7 +77,7 @@ export default function Pedidos() {
   }}
 >
   <ListAltIcon color="primary" sx={{ fontSize: 36 }} />
-  Tus Pedidos
+  Mis Pedidos
 </Typography>
 
       {pedidos.map((p) => (
