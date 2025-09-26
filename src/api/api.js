@@ -3,7 +3,7 @@
 // =====================
 const BASE_URL =
   import.meta?.env?.VITE_API_URL ||
-  "https://tiendajorge.onrender.com/api";
+  "https://ecommerce-django-nzwa.onrender.com/api";
 
 // =====================
 // REFRESH TOKEN
@@ -148,4 +148,5 @@ export const getUserProfile = async (token) => {
   const API_ROOT = BASE_URL.replace("/api", "");
   return authFetch(`${API_ROOT}/user/profile/`, { method: "GET" }, token);
 };
+
 
