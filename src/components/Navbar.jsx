@@ -48,15 +48,14 @@ export default function Navbar() {
       <NavButton key={i} item={item} onClick={onClick} />
     ));
 
-  const renderUserSection = (showLogout = true) =>
+  const renderUserSection = (showLogout = true, isMobile = false) =>
     isAuthenticated && (
-
-<Stack
-  direction="column"      // cambia "row" a "column"
-  spacing={1}
-  alignItems="center"     // nuevo para centrar horizontalmente
-  sx={{ my: 2, textAlign: "center" }}
->
+      <Stack
+        direction={isMobile ? "column" : "row"}
+        spacing={1.5}
+        alignItems="center"
+        sx={{ my: isMobile ? 2 : 0, textAlign: "center" }}
+      >
         <AccountCircleIcon sx={{ color: "#fff" }} />
         <Typography sx={{ color: "#fff", fontWeight: 600 }}>
           {user?.username}
@@ -66,7 +65,6 @@ export default function Navbar() {
             onClick={handleLogout}
             startIcon={<LogoutIcon />}
             sx={{
-              ml: 2,
               fontWeight: 600,
               color: "#fff",
               background: "linear-gradient(135deg, #d32f2f, #f44336)",
@@ -124,7 +122,7 @@ export default function Navbar() {
               Tienda Patricio
             </Typography>
 
-            {/* Desktop Menu (solo desde lg en adelante) */}
+            {/* Desktop Menu */}
             <Box
               sx={{
                 display: { xs: "none", lg: "flex" },
@@ -136,10 +134,10 @@ export default function Navbar() {
               <IconButton onClick={toggleMode} sx={{ color: "#fff" }}>
                 {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
               </IconButton>
-              {renderUserSection(true)}
+              {renderUserSection(true, false)} {/* Desktop */}
             </Box>
 
-            {/* Botón menú móvil (hasta lg) */}
+            {/* Botón menú móvil */}
             <IconButton
               sx={{ display: { xs: "block", lg: "none" }, color: "#fff" }}
               onClick={() => setOpen(true)}
@@ -179,8 +177,8 @@ export default function Navbar() {
           </IconButton>
         </Box>
 
-        {/* User info */}
-        {renderUserSection(false)}
+        {/* User info móvil */}
+        {renderUserSection(false, true)}
 
         {/* Menú items */}
         <Stack spacing={2} sx={{ flex: 1, mt: 2 }}>
@@ -200,7 +198,7 @@ export default function Navbar() {
             </Button>
           )}
 
-          {/* --- Botones utilitarios al final (después de las opciones) --- */}
+          {/* Botones utilitarios */}
           <Stack spacing={2} alignItems="center" sx={{ mt: 3, pb: 2 }}>
             <IconButton
               onClick={toggleMode}
@@ -233,4 +231,4 @@ export default function Navbar() {
       </Drawer>
     </>
   );
-}
+              }
