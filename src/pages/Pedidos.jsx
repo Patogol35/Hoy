@@ -73,6 +73,7 @@ export default function Pedidos() {
     alignItems: "center",
     gap: 1,
     color: "primary.main",
+    mb:4,
   }}
 >
   <ListAltIcon color="primary" sx={{ fontSize: 36 }} />
