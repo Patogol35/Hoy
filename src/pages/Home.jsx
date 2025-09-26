@@ -89,7 +89,7 @@ export default function Home() {
           <HomeIcon sx={{ fontSize: 32, mr: 1 }} />
           Inicio
         </Typography>
-        />
+        
       </Box>
 
       {/* ================== FILTROS ================== */}
@@ -103,7 +103,7 @@ export default function Home() {
           gap: 2,
           justifyContent: "center",
           alignItems: "center",
-          mb: 4,
+          mb: 2,
         }}
       >
         {/* Buscar */}
