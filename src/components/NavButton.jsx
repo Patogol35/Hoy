@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Button, Box } from "@mui/material";
 import { motion } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import React from "react";
@@ -12,6 +12,10 @@ const baseStyle = {
   width: "100%",
   py: 1.2,
   transition: "all 0.3s ease",
+  display: "flex",          // ✅ flex para centrar contenido
+  justifyContent: "center", // ✅ centra texto + icono horizontalmente
+  alignItems: "center",     // ✅ centra verticalmente
+  gap: 1,                   // ✅ espacio entre icono y texto
   "& .MuiButton-startIcon": {
     color: "#fff",
   },
@@ -56,6 +60,17 @@ function NavButton({ item, onClick }) {
         {item.label}
       </Button>
     </motion.div>
+  );
+}
+
+// ===== Contenedor de ejemplo para centrar todos los botones del menú =====
+export function NavMenu({ items, onClick }) {
+  return (
+    <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
+      {items.map((item) => (
+        <NavButton key={item.path} item={item} onClick={onClick} />
+      ))}
+    </Box>
   );
 }
 
