@@ -119,7 +119,7 @@ export default function Navbar() {
                   WebkitTextFillColor: "transparent",
                 }}
               />
-              E-commerce Jorge Patricio 
+              E-commerce Patricio 
             </Typography>
 
             {/* Desktop Menu */}
