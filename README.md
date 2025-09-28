@@ -81,6 +81,14 @@ npm run dev
   
 http://localhost:5173
 
+6. Para producción crea un archivo .env en la raíz del proyecto y añade:
+
+VITE_API_URL=https://TU_API_URL/aquí
+
+De esta manera, cualquiera puede reemplazar https://TU_API_URL/aquí con la URL de su propio backend en producción.
+
+
+
 ---
 
 👨‍💻 Autor
