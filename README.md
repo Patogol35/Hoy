@@ -63,19 +63,35 @@ https://ecommerce-jorge-patricio.vercel.app/
 
 1. Clona el repositorio:
 
-git clone https://github.com/Patogol35/Tienda-Frontend-React
+```bash
+
+git clone https://github.com/Patogol35/Ecommerce-React
+
+```
 
 2. Ingresa a la carpeta del proyecto:
 
-cd Tienda-Frontend-React
+```bash
+
+cd Ecommerce-React
+
+```
 
 3. Instala las dependencias:
+
+```bash
   
 npm install
 
+```
+
 4. Ejecuta el proyecto:
 
-npm run dev 
+```bash
+
+npm run dev
+
+```
 
 5. Abre en el navegador:
   
@@ -83,7 +99,11 @@ http://localhost:5173
 
 6. Para producción crea un archivo .env en la raíz del proyecto y añade:
 
+```bash
+
 VITE_API_URL=https://TU_API_URL/aquí
+
+```
 
 De esta manera, cualquiera puede reemplazar https://TU_API_URL/aquí con la URL de su propio backend en producción.
 
