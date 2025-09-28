@@ -1,10 +1,10 @@
 🛍️ Tienda Frontend
 
-Aplicación desarrollada con React + Vite que implementa la interfaz de usuario de una tienda en línea, conectada a un backend desarrollado en Django REST Framework.
+Aplicación desarrollada con React + Vite, lista para producción que implementa la interfaz de usuario de una tienda en línea, conectada a un backend desarrollado en Django REST Framework.
 
 El backend se encuentra disponible aquí:
 
-👉 https://github.com/Patogol35/Tienda-Backend-Django
+👉 https://github.com/Patogol35/Ecommerce-Django
 
 ---
 
@@ -47,17 +47,15 @@ https://ecommerce-jorge-patricio.vercel.app/
 
 ⚙️ Tecnologías utilizadas
 
-- React 18+
+- React con Vite
 
-- Vite (entorno de desarrollo rápido)
+- React Router 
 
-- React Router (navegación)
-
-- Context API / Local Storage (persistencia de sesión y carrito)
+- Context API / Local Storage
 
 - JavaScript
 
-- HTML & CSS personalizado
+- Material UI (MUI)
 
 --- 
 
