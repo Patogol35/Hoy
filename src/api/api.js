@@ -1,7 +1,7 @@
 // =====================
 // BASE URL
 // =====================
-const BASE_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = import.meta?.env?.VITE_API_URL || "http://localhost:8000/api";
 
 // =====================
 // REFRESH TOKEN
@@ -146,7 +146,6 @@ export const getUserProfile = async (token) => {
   const API_ROOT = BASE_URL.replace("/api", "");
   return authFetch(`${API_ROOT}/user/profile/`, { method: "GET" }, token);
 };
-
 
 
 
