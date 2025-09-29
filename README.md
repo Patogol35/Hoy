@@ -1,10 +1,10 @@
 🛍️ Tienda Frontend
 
-Aplicación desarrollada con React + Vite, lista para producción que implementa la interfaz de usuario de una tienda en línea, conectada a un backend desarrollado en Django REST Framework.
+Aplicación desarrollada con React + Vite que implementa la interfaz de usuario de una tienda en línea, conectada a un backend desarrollado en Django REST Framework.
 
 El backend se encuentra disponible aquí:
 
-👉 https://github.com/Patogol35/Ecommerce-Django
+👉 https://github.com/Patogol35/Tienda-Backend-Django
 
 ---
 
@@ -41,21 +41,23 @@ Integración con API REST
 
 💻 Ver la aplicación desplegada en Vercel:
 
-https://ecommerce-jorge-patricio.vercel.app/
+https://tienda-frontend-react-nine.vercel.app/
 
 ---
 
 ⚙️ Tecnologías utilizadas
 
-- React con Vite
+- React 18+
 
-- React Router 
+- Vite (entorno de desarrollo rápido)
 
-- Context API / Local Storage
+- React Router (navegación)
+
+- Context API / Local Storage (persistencia de sesión y carrito)
 
 - JavaScript
 
-- Material UI (MUI)
+- HTML & CSS personalizado
 
 --- 
 
@@ -65,7 +67,7 @@ https://ecommerce-jorge-patricio.vercel.app/
 
 ```bash
 
-git clone https://github.com/Patogol35/Ecommerce-React
+git clone https://github.com/Patogol35/Tienda-Frontend-React
 
 ```
 
@@ -73,7 +75,7 @@ git clone https://github.com/Patogol35/Ecommerce-React
 
 ```bash
 
-cd Ecommerce-React
+cd Tienda-Frontend-React
 
 ```
 
@@ -96,18 +98,6 @@ npm run dev
 5. Abre en el navegador:
   
 http://localhost:5173
-
-6. Para producción crea un archivo .env en la raíz del proyecto y añade:
-
-```bash
-
-VITE_API_URL=https://TU_API_URL/aquí
-
-```
-
-De esta manera, cualquiera puede reemplazar https://TU_API_URL/aquí con la URL de su propio backend en producción.
-
-
 
 ---
 
