@@ -41,7 +41,7 @@ Integración con API REST
 
 💻 Ver la aplicación desplegada en Vercel:
 
-https://tienda-frontend-react-nine.vercel.app/
+https://tienda-frontend-jorge.vercel.app/
 
 ---
 
